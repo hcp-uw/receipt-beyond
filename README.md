@@ -2,9 +2,8 @@
 ## Team Members:
 * David Ye
 * Aarnav Gogri
-* Hello
-* Hello2
+* Kyunghyun Kim
+* (add name)
 * (add name)
 * (add name)
 ## About:
-BLAHHHH
