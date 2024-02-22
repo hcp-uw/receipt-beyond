@@ -2,7 +2,7 @@
 ## Team Members:
 * David Ye
 * Aarnav Gogri
-* (add name)
+* Kyunghyun Kim
 * (add name)
 * (add name)
 * (add name)
