@@ -1,7 +1,7 @@
 # receipt-plus
 ## Team Members:
 * David Ye
-* (add name)
+* Kyunghyun Kim
 * (add name)
 * (add name)
 * (add name)
