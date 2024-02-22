@@ -1,7 +1,7 @@
 # receipt-plus
 ## Team Members:
 * David Ye
-* (add name)
+* Aarnav Gogri
 * (add name)
 * (add name)
 * (add name)
