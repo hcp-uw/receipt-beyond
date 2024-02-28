@@ -3,6 +3,6 @@
 * David Ye
 * Aarnav Gogri
 * Kyunghyun Kim
-* (add name)
+* Joshua Yoo
 * (add name)
 * (add name)
