@@ -4,5 +4,5 @@
 * Aarnav Gogri
 * Kyunghyun Kim
 * Joshua Yoo
-* (add name)
+* Suyash Pandit
 * (add name)
