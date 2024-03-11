@@ -38,6 +38,7 @@ def read():
   except Exception as e:
     return f"An Error Occurred: {e}"
 
+### TODO - change date in receipt dictionary from String to Firebase Date object
 @app.route("/addReceipt", methods=['POST'])
 def addReceipt():
   """
