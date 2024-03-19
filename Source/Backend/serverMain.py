@@ -2,20 +2,28 @@ from flask import Flask, request, jsonify
 from firebase import firebase
 from firebase_admin import credentials, firestore, initialize_app
 import json
+from datetime import datetime
+from flask_restful import Resource, Api
+
 
 app = Flask(__name__)
+api = Api(app)
 
 # Initialize Firestore DB
-
-cred = credentials.Certificate("Source/Backend/Firebase/key.json")
+cred = credentials.Certificate("Source/Backend/Database/key.json")
 default_app = initialize_app(cred)
 db = firestore.client()
-# users_ref = db.collection('Users')
 
 
-# "None" in initialization of firebase means no authentication defined yet
-# firebase = firebase.FirebaseApplication('https://receiptplus-c6878-default-rtdb.firebaseio.com/', None)
+class Receipts(Resource):
+  def get (self):
+    userId = request.args.get('userId')
+    user_ref = db.collection('Users').document(userId).get()
+    return jsonify(user_ref.to_dict()), 200
 
+
+
+# root endpoint
 @app.route("/")
 def hello():
   return "Welcome to Receipt+!"
@@ -40,22 +48,26 @@ def read():
 
 ### TODO - change date in receipt dictionary from String to Firebase Date object
 @app.route("/addReceipt", methods=['POST'])
+### arguments: userID (String) and receipt object
+### Adds the given receipt to the Receipts collection of the given user.
 def addReceipt():
   """
     addReceipt() : adds input receipt to Firestore
   """
-  print(request.args.items())
+  # print(request.args.items())
   try:
-    for key, value in request.args.items():
-        print(f"{key}: {value}")
-    userId = request.args.get('id')
-    userReceipt = request.args.get('receipt')
-    userReceipt = json.loads(userReceipt)
+    # for key, value in request.args.items():
+    #     print(f"{key}: {value}")
+    userId = request.args['id']
+    userReceipt = request.args['receipt']
+    userReceipt = json.loads(userReceipt) # receipt object to json
+    userReceipt['date'] = datetime.strptime(userReceipt['date'], "%Y-%m-%d") # date string to datetime object
     userReceipts_ref = db.collection('Users').document(userId).collection('Receipts')
     _, addReceipt_ref = userReceipts_ref.add(userReceipt)
     return f"Added document with id {addReceipt_ref.id}"
   except Exception as e:
+    print('error')
     return f"An Error Occurred: {e}"
 
-if __name__ == "__main__":
-  app.run(debug=True)
+
+app.run(debug=True)
