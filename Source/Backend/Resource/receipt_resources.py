@@ -6,7 +6,6 @@ from Model.receipt import receipt
 class Receipt(Resource):
 
     parser_post = reqparse.RequestParser()
-    # parser_post.add_argument('receiptData', type=dict, required=True, help='receiptData is required')
     parser_post.add_argument('store', type=dict, required=True, help='Store is required.')
     parser_post.add_argument('date', type=str, required=True, help='Date is required.')
     parser_post.add_argument('purchases', action='append', type=dict, required=True, help='Purchases is required.')
