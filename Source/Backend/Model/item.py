@@ -19,8 +19,5 @@ class item:
         'price': self.price
         }
 
-
-
-
     def __repr__(self):
         return f"item(name={self.name}, price={self.price})"

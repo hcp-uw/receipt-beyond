@@ -1,7 +1,3 @@
-from firebase_admin import firestore
-from flask_restful import Resource
-from flask import Response, request
-import json
 from datetime import datetime
 from Model.store import store as modelStore
 from Model.item import item as modelItem
@@ -47,25 +43,3 @@ class receipt:
         'date': date,
         'purchases': purchasesDict
         }
-
-
-    ### arguments: userID (String) and receipt object
-    ### Adds the given receipt to the Receipts collection of the given user.
-    def addReceipt():
-        """
-            addReceipt() : adds input receipt to Firestore
-        """
-        # print(request.args.items())
-        try:
-            # for key, value in request.args.items():
-            #     print(f"{key}: {value}")
-            userId = request.args['id']
-            userReceipt = request.args['receipt']
-            userReceipt = json.loads(userReceipt) # receipt object to json
-            userReceipt['date'] = datetime.strptime(userReceipt['date'], "%Y-%m-%d") # date string to datetime object
-            userReceipts_ref = db.collection('Users').document(userId).collection('Receipts')
-            _, addReceipt_ref = userReceipts_ref.add(userReceipt)
-            return f"Added document with id {addReceipt_ref.id}"
-        except Exception as e:
-            print('error')
-            return f"An Error Occurred: {e}"
