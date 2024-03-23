@@ -14,7 +14,7 @@ class store:
     def to_dict(self):
         return {
         'name': self.name,
-        'price': self.address
+        'address': self.address
         }
 
     def __repr__(self):

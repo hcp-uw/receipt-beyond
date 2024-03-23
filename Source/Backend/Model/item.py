@@ -1,5 +1,6 @@
 class item:
 
+    # TODO: add amount!!
     # dictionary of items objects
     def __init__(self, name, price):
         self.name = name
@@ -17,6 +18,8 @@ class item:
         'name': self.name,
         'price': self.price
         }
+
+
 
 
     def __repr__(self):
