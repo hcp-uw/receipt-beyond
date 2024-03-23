@@ -1,0 +1,17 @@
+Source/Backend/__pycache__/auth.cpython-312.pyc
+Source/Backend/__pycache__/config.cpython-312.pyc
+Source/Backend/__pycache__/db.cpython-312.pyc
+Source/Backend/__pycache__/jwt.cpython-312.pyc
+Source/Backend/__pycache__/server_main.cpython-312.pyc
+Source/Backend/Model/__pycache__/item.cpython-310.pyc
+Source/Backend/Model/__pycache__/item.cpython-312.pyc
+Source/Backend/Model/__pycache__/receipt.cpython-310.pyc
+Source/Backend/Model/__pycache__/receipt.cpython-312.pyc
+Source/Backend/Model/__pycache__/store.cpython-310.pyc
+Source/Backend/Model/__pycache__/store.cpython-312.pyc
+Source/Backend/Model/__pycache__/user.cpython-312.pyc
+Source/Backend/Resource/__pycache__/receipt_resources.cpython-312.pyc
+Source/Backend/Resource/__pycache__/ReceiptApi.cpython-312.pyc
+Source/Backend/Resource/__pycache__/RegisterApi.cpython-312.pyc
+Source/Backend/Resource/__pycache__/user_resources.cpython-312.pyc
+Source/Backend/Resource/__pycache__/User.cpython-312.pyc
