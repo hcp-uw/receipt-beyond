@@ -1,6 +1,7 @@
 class Item:
 
-    # TODO: add amount!!
+    # TODO: add a field for amount (e.g. quantity/weight)
+
     # dictionary of items objects
     def __init__(self, name, price):
         self.name = name

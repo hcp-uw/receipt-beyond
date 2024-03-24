@@ -71,7 +71,7 @@ class Logout(Resource):
     def __init__(self, db):
         self.db = db
 
-    # TODO: add JWT token to blocklist
+    # TODO: add JWT token to blocklist, add the blocklist as collection in Firebase
     @jwt_required()
     def post(self):
         try:
