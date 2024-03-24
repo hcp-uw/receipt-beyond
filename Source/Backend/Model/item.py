@@ -1,4 +1,4 @@
-class item:
+class Item:
 
     # TODO: add amount!!
     # dictionary of items objects
@@ -11,7 +11,7 @@ class item:
     def from_dict(source):
         name = source.get('name')
         price = source.get('price')
-        return item(name=name, price=price)
+        return Item(name=name, price=price)
 
     def to_dict(self):
         return {

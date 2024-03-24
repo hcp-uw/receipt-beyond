@@ -1,5 +1,5 @@
 from flask_restful import Resource, reqparse, abort
-from Model.user import user as model_user
+from model.user import User
 from passlib.hash import sha256_crypt
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from werkzeug.exceptions import HTTPException
@@ -7,8 +7,8 @@ from werkzeug.exceptions import HTTPException
 
 # Global Variables
 parser = reqparse.RequestParser()
-parser.add_argument('userID', type=str, required=True, help='userID is required.')
-parser.add_argument('password', type=str, required=True, help='password is required.')
+parser.add_argument('user_id', type=str, required=True, help='User id is required.')
+parser.add_argument('password', type=str, required=True, help='Password is required.')
 
 # TODO: Configure logging
 # logging.basicConfig(filename='app.log', level=logging.ERROR, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -21,17 +21,17 @@ class Register(Resource):
     def post(self):
         try:
             args = parser.parse_args()
-            userID = args['userID']
+            user_id = args['user_id']
             password = args['password']
-            if userID is None or password is None:
+            if user_id is None or password is None:
                 abort(400, message="User ID and password are required.")
-            user_ref = self.db.collection('Users').document(userID).get()
+            user_ref = self.db.collection('Users').document(user_id).get()
             if user_ref.exists:
-                abort(409, message=f'The user ID {userID} is already taken. Please choose different user ID.')
-            user = model_user(userID)
+                abort(409, message=f'The user ID {user_id} is already taken. Please choose different user ID.')
+            user = User(user_id)
             user.hashPassword(password)
-            self.db.collection("Users").document(userID).set({'passwordHash' : user.passwordHash})
-            return {'jwt': create_access_token(identity=userID)}, 201
+            self.db.collection("Users").document(user_id).set({'passwordHash' : user.passwordHash})
+            return {'jwt': create_access_token(identity=user_id)}, 201
         except HTTPException as e:
             # TODO: add logging
             return e.data, e.code
@@ -47,16 +47,16 @@ class Login(Resource):
     def post(self):
         try:
             args = parser.parse_args()
-            userID = args['userID']
+            user_id = args['user_id']
             password = args['password']
-            if userID is None or password is None:
-                abort(400, message="userID and password are required.")
-            user_ref = self.db.collection('Users').document(userID).get()
+            if user_id is None or password is None:
+                abort(400, message="User id and password are required.")
+            user_ref = self.db.collection('Users').document(user_id).get()
             if not user_ref.exists:
                 abort(404, message="User does not exist.")
             true_password_hash = user_ref.get('passwordHash')
             if sha256_crypt.verify(password, true_password_hash):
-                return {'jwt': create_access_token(identity=userID)}, 200
+                return {'jwt': create_access_token(identity=user_id)}, 200
             else:
                 abort(401, message="Invalid password, please try again.")
         except HTTPException as e:

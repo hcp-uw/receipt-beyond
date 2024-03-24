@@ -1,8 +1,8 @@
 from datetime import datetime
-from Model.store import store as modelStore
-from Model.item import item as modelItem
+from model.store import Store
+from model.item import Item
 
-class receipt:
+class Receipt:
 
     def __init__(self, store, date, purchases = []):
         self.store = store
@@ -10,18 +10,18 @@ class receipt:
         self.purchases = purchases
 
     @staticmethod
-    def from_dict(source):
-        store = modelStore.from_dict(source.get('store')) # store dict -> store object
-        date_value = source.get('date')
+    def from_dict(dict):
+        store = Store.from_dict(dict.get('store')) # store dict -> store object
+        date_value = dict.get('date')
         if isinstance(date_value, str):
             date = datetime.strptime(date_value, "%Y-%m-%d") # YYYY-MM-DD -> datetime object
         else:
             date = datetime.fromisoformat(str(date_value))
-        purchases = source.get('purchases')
+        purchases = dict.get('purchases')
         items = []
         for purchase in purchases:
-            items.append(modelItem.from_dict(purchase)) # item dict -> item object
-        return receipt(store=store, date=date, purchases=items)
+            items.append(Item.from_dict(purchase)) # item dict -> item object
+        return Receipt(store=store, date=date, purchases=items)
 
 
     def to_dict(self):

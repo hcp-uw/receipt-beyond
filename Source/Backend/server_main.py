@@ -1,8 +1,8 @@
 from flask import Flask
 from firebase_admin import credentials, initialize_app, firestore
 from flask_restful import Api
-from Resource.receipt_resources import Receipt
-from Resource.user_resources import Register, Login, Logout
+from resource.resource_receipt import ReceiptResource
+from resource.resource_user import Register, Login, Logout
 from flask_jwt_extended import JWTManager
 from config import Config
 # import logging
@@ -21,8 +21,8 @@ jwt = JWTManager(app)
 
 # Define user identity loader
 @jwt.user_identity_loader
-def user_identity_lookup(userID):
-    return userID
+def user_identity_lookup(user_id):
+    return user_id
 
 # Initialize Firestore database and Firestore client
 cred = credentials.Certificate(app.config['FIRESTORE_KEY'])
@@ -30,7 +30,7 @@ initialize_app(cred)
 db = firestore.client()
 
 # Add resources to API
-api.add_resource(Receipt, '/receipt', resource_class_args=(db,))
+api.add_resource(ReceiptResource, '/receipt', resource_class_args=(db,))
 api.add_resource(Register, '/register', resource_class_args=(db,))
 api.add_resource(Login, '/login', resource_class_args=(db,))
 api.add_resource(Logout, '/logout', resource_class_args=(db,))

@@ -1,9 +1,9 @@
 from passlib.hash import sha256_crypt
 
-class user:
+class User:
 
-    def __init__(self, userID):
-        self.userID = userID
+    def __init__(self, user_id):
+        self.user_id = user_id
         self.passwordHash = None  # Initialize passwordHash to None
 
     def hashPassword(self, password):
@@ -14,6 +14,6 @@ class user:
 
     def to_dict(self):
         return {
-        'userID': self.userID,
+        'userID': self.user_id,
         'passwordHash': self.hashPassword
         }

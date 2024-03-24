@@ -1,9 +1,8 @@
 from flask_restful import Resource, reqparse, abort
-from Model.receipt import receipt as modelReceipt
+from model.receipt import Receipt
 from flask_jwt_extended import get_jwt_identity, jwt_required
-from Model.receipt import receipt
 
-class Receipt(Resource):
+class ReceiptResource(Resource):
 
     parser_post = reqparse.RequestParser()
     parser_post.add_argument('store', type=dict, required=True, help='Store is required.')
@@ -17,10 +16,10 @@ class Receipt(Resource):
     # If current user has no receipts, returns an empty list.
     @jwt_required()
     def get(self):
-        userID = get_jwt_identity()
+        user_id = get_jwt_identity()
         try:
-            user_receipts_ref = self.db.collection('Users').document(userID).collection('Receipts').get()
-            user_receipts = [modelReceipt.from_dict(receipt.to_dict()).to_json() for receipt in user_receipts_ref]
+            user_receipts_ref = self.db.collection('Users').document(user_id).collection('Receipts').get()
+            user_receipts = [Receipt.from_dict(receipt.to_dict()).to_json() for receipt in user_receipts_ref]
             return user_receipts, 200
         except Exception as e:
             # TODO: add logging
@@ -31,12 +30,12 @@ class Receipt(Resource):
     def post(self):
         try:
             args = self.parser_post.parse_args()
-            userID = get_jwt_identity()
+            user_id = get_jwt_identity()
             store = args['store']
             date = args['date']
             purchases = args['purchases']
-            myReceipt = receipt.from_dict({'store':store, 'date': date, 'purchases': purchases})
-            user_receipts_ref = self.db.collection('Users').document(userID).collection('Receipts')
+            myReceipt = Receipt.from_dict({'store':store, 'date': date, 'purchases': purchases})
+            user_receipts_ref = self.db.collection('Users').document(user_id).collection('Receipts')
             user_receipts_ref.add(myReceipt.to_dict())
             return {'message': 'Receipt received successfully'}, 201
         except Exception as e:

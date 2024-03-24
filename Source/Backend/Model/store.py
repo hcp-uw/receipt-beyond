@@ -1,4 +1,4 @@
-class store:
+class Store:
 
     # dictionary of items objects
     def __init__(self, name, address):
@@ -9,7 +9,7 @@ class store:
     def from_dict(source):
         name = source.get('name')
         address = source.get('address')
-        return store(name=name, address=address)
+        return Store(name=name, address=address)
 
     def to_dict(self):
         return {
