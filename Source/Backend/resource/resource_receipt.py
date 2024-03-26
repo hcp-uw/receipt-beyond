@@ -20,7 +20,11 @@ class ReceiptResource(Resource):
         user_id = get_jwt_identity()
         try:
             user_receipts_ref = self.db.collection('Users').document(user_id).collection('Receipts').get()
-            user_receipts = [Receipt.from_dict(receipt.to_dict()).to_dict() for receipt in user_receipts_ref]
+            user_receipts = []
+            for receipt in user_receipts_ref:
+                receipt_data = Receipt.from_dict(receipt.to_dict()).to_dict()
+                receipt_data['id'] = receipt.id
+                user_receipts.append(receipt_data)
             return user_receipts, 200
         except Exception as e:
             # TODO: add logging

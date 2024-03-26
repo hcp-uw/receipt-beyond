@@ -10,6 +10,7 @@ class MonthlyRunningTotal(Resource):
     def get(self):
         pass
 
+
 #TODO: create a get endpoint that takes in a month, and returns a json
 #       of the total amount spend so far in each category
 class MonthlyCategoryExpenditure(Resource):
