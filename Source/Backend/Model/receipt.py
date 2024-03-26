@@ -5,10 +5,12 @@ from model.item import Item
 class Receipt:
 
     #TODO: add a field to store receipt image, and proper way to make it into dict/json form
-    def __init__(self, store, date, purchases = []):
+    def __init__(self, store, date, category, purchases, total):
         self.store = store
         self.date = date
         self.purchases = purchases
+        self.category = category
+        self.total = total
 
     #TODO: create an exception for handling failure to create receipt from dict
     @staticmethod
@@ -23,7 +25,9 @@ class Receipt:
         items = []
         for purchase in purchases:
             items.append(Item.from_dict(purchase)) # item dict -> item object
-        return Receipt(store=store, date=date, purchases=items)
+        category = dict.get('category')
+        total = dict.get('total')
+        return Receipt(store=store, date=date, purchases=items, category=category, total = total)
 
 
     def to_dict(self):
@@ -33,10 +37,12 @@ class Receipt:
         return {
         'store': storeDict,
         'date': date,
-        'purchases': purchasesDict
+        'purchases': purchasesDict,
+        'category' : self.category,
+        'total' : self.total
         }
 
-    #TODO: verify receipt
+    #TODO: verify input
     @staticmethod
     def verify_receipt(dict):
         pass

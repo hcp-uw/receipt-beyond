@@ -8,7 +8,9 @@ class ReceiptResource(Resource):
     parser_post = reqparse.RequestParser()
     parser_post.add_argument('store', type=dict, required=True, help='Store is required.')
     parser_post.add_argument('date', type=str, required=True, help='Date is required.')
-    parser_post.add_argument('purchases', action='append', type=dict, required=True, help='Purchases is required.')
+    parser_post.add_argument('purchases', action='append', type=dict, required=True, help='Purchases is required.') # use append for a list of objects
+    parser_post.add_argument('category', type=str, required=True, help='Category is required.')
+    parser_post.add_argument('total', type=int, required=True, help='Total is required.')
 
     def __init__(self, db):
         self.db = db
@@ -36,11 +38,7 @@ class ReceiptResource(Resource):
         try:
             args = self.parser_post.parse_args()
             user_id = get_jwt_identity()
-            store = args['store']
-            date = args['date']
-            purchases = args['purchases']
-            myReceipt = Receipt.from_dict({'store':store, 'date': date, 'purchases': purchases}).to_dict()
-            myReceipt = myReceipt
+            myReceipt = Receipt.from_dict(args).to_dict()
             myReceipt['date'] = datetime.strptime(myReceipt['date'], '%Y-%m-%d')
             user_receipts_ref = self.db.collection('Users').document(user_id).collection('Receipts')
             user_receipts_ref.add(myReceipt)
