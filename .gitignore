@@ -18,3 +18,4 @@ Source/Backend/Resource/__pycache__/User.cpython-312.pyc
 source/backend/config.py
 source/backend/resource/__pycache__/resource_receipt.cpython-312.pyc
 source/backend/resource/__pycache__/resource_user.cpython-312.pyc
+source/backend/resource/__pycache__/resource_summary.cpython-312.pyc

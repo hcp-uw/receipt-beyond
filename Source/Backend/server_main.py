@@ -3,6 +3,7 @@ from firebase_admin import credentials, initialize_app, firestore
 from flask_restful import Api
 from resource.resource_receipt import ReceiptResource
 from resource.resource_user import Register, Login, Logout
+from resource.resource_summary import MonthlyCategoryExpenditure, MonthlySpending
 from flask_jwt_extended import JWTManager
 from config import Config
 # import logging
@@ -34,6 +35,8 @@ api.add_resource(ReceiptResource, '/receipt', resource_class_args=(db,))
 api.add_resource(Register, '/register', resource_class_args=(db,))
 api.add_resource(Login, '/login', resource_class_args=(db,))
 api.add_resource(Logout, '/logout', resource_class_args=(db,))
+api.add_resource(MonthlyCategoryExpenditure, '/month_cat_exp', resource_class_args=(db,))
+api.add_resource(MonthlySpending, '/month_exp', resource_class_args=(db,))
 
 # Run app
 if __name__ == '__main__':
