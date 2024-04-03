@@ -84,8 +84,11 @@ class ReceiptResource(Resource):
             else:
                 ################## WRITE YOUR IMPLEMENTATION HERE#######################
                 ########################################################################
-                pass
-
+                if not (myReceipt['category'] in category):
+                    category[myReceipt['category']] = myReceipt['total']
+                else:
+                    category[myReceipt['category']] = category[myReceipt['category']] + myReceipt['total']
+                self.db.collection("Users").document(user_id).update({"category": category})
             return {'message': 'Receipt received successfully'}, 201
         except Exception as e:
             # TODO: add logging
