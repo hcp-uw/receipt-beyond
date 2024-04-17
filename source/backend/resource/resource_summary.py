@@ -44,4 +44,16 @@ class MonthlyCategoryExpenditure(Resource):
     @jwt_required()
     def get(self):
         user_id = get_jwt_identity()
-        pass
+        try:
+            print("hi")
+            user_receipts_ref = self.db.collection('Users').document(user_id).get().to_dict()
+            return user_receipts_ref['category']
+            
+            # for receipt in user_receipts_ref:
+            #     receipt_data = Receipt.from_dict(receipt.to_dict()).to_dict()
+            #     receipt_data['id'] = receipt.id
+            #     user_receipts.append(receipt_data)
+            # return user_receipts, 200
+        except Exception as e:
+            # TODO: add logging
+            return {'message': 'An internal server error occurred: ' + str(e)}, 500
