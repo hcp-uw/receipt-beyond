@@ -19,3 +19,11 @@ source/backend/config.py
 source/backend/resource/__pycache__/resource_receipt.cpython-312.pyc
 source/backend/resource/__pycache__/resource_user.cpython-312.pyc
 source/backend/resource/__pycache__/resource_summary.cpython-312.pyc
+source/backend/receipt_parsing.ipynb
+source/backend/__pycache__/config.cpython-312.pyc
+source/backend/model/__pycache__/item.cpython-312.pyc
+source/backend/model/__pycache__/store.cpython-312.pyc
+source/backend/model/__pycache__/receipt.cpython-312.pyc
+source/backend/receipt_parsing.ipynb
+source/backend/model/__pycache__/user.cpython-312.pyc
+source/backend/resource/__pycache__/__init__.cpython-312.pyc
