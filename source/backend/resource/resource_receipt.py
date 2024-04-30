@@ -38,12 +38,41 @@ class ReceiptResource(Resource):
         try:
             args = self.parser_post.parse_args()
             user_id = get_jwt_identity()
+            myReceipt = Receipt.from_dict(args)
+
+
+
+
             myReceipt = Receipt.from_dict(args).to_dict()
             myReceipt['date'] = datetime.strptime(myReceipt['date'], '%Y-%m-%d')
             user_receipts_ref = self.db.collection('Users').document(user_id).collection('Receipts')
             user_receipts_ref.add(myReceipt) # add receipt
             user_db = self.db.collection("Users").document(user_id).get().to_dict()
 
+            ############### Add to Items Collection ##############################
+            # Functional... but still needs a lot of cleaning up. Price is converted to
+            # string because key in firestore maps must be of type string.
+            for purchase in myReceipt['purchases']:
+                item_db = self.db.collection("Items").document(purchase['name']).get()
+                if item_db.exists:
+                    item_data = item_db.to_dict()
+                    if myReceipt['store']['address'] in item_data:
+                        if str(purchase['price']) in item_data[myReceipt['store']['address']]['price']:
+                            item_data[myReceipt['store']['address']]['price'][str(purchase['price'])] = item_data[myReceipt['store']['address']]['price'][str(purchase['price'])] + 1
+                            self.db.collection("Items").document(purchase['name']).update(item_data)
+                        else:
+                            item_data[myReceipt['store']['address']]['price'][str(purchase['price'])] = 1
+                            self.db.collection("Items").document(purchase['name']).update(item_data)
+                    else:
+                        new_item = {myReceipt['store']['address']:{'name': myReceipt['store']['name'], 'price': {str(purchase['price']):1}}}
+                        self.db.collection("Items").document(purchase['name']).update(new_item)
+                else:
+                    new_item = {myReceipt['store']['address']:{'name': myReceipt['store']['name'], 'price': {str(purchase['price']):1}}}
+                    print(new_item)
+                    self.db.collection("Items").document(purchase['name']).set(new_item)
+
+
+            ###############################################################
             #TODO (Suyash): Update the 'total' field of the current user.
             # If the day (key) already exists in 'total', add the total
             # from this receipt to the total (value) for that day.
@@ -92,6 +121,7 @@ class ReceiptResource(Resource):
             return {'message': 'Receipt received successfully'}, 201
         except Exception as e:
             # TODO: add logging
+            print({'message': 'An internal server error occurred: ' + str(e)}, 500)
             return {'message': 'An internal server error occurred: ' + str(e)}, 500
 
     #TODO: add a put endpoint for when the user edits receipts. Make sure to roll changes over to resource_summary
