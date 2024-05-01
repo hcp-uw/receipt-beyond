@@ -64,7 +64,12 @@ class ReceiptResource(Resource):
             else:
                 ################## WRITE YOUR IMPLEMENTATION HERE#######################
                 ########################################################################
-                pass
+                if not (str(myReceipt['date'].day) in total):
+                    total[str(myReceipt['date'].day)] = myReceipt['total']
+                else:
+                    total[str(myReceipt['date'].day)] = total[str(myReceipt['date'].day)] + myReceipt['total']
+                self.db.collection("Users").document(user_id).update({"total": total})
+                #pass
 
             #TODO (Aarnav): Update the 'category' field of the current user.
             # If the category of this receipt does not exist as a key
