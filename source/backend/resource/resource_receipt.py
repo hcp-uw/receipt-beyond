@@ -9,11 +9,11 @@ class ReceiptResource(Resource):
 
     parser_post = reqparse.RequestParser()
     parser_post.add_argument('store', type=dict, required=True, help='Store is required.')
-    parser_post.add_argument('date', type=str, required=True, help='Date is required.')
+    parser_post.add_argument('receipt_date', type=str, required=True, help='Receipt date is required.')
     parser_post.add_argument('purchases', action='append', type=dict, required=True, help='Purchases is required.') # use append for a list of objects
     parser_post.add_argument('category', type=str, required=True, help='Category is required.')
     parser_post.add_argument('total', type=int, required=True, help='Total is required.')
-    parser_post.add_argument('month', type=int, required=True, help='Month is required.')
+    parser_post.add_argument('date', type=str, required=True, help='Date is required.')
     def __init__(self, db):
         self.db = db
 
@@ -40,16 +40,17 @@ class ReceiptResource(Resource):
         try:
             user_id = get_jwt_identity()
             args = self.parser_post.parse_args()
-            month = args['month']
-            reset_user_summary(self.db, user_id, month)
-            args.pop("month")
+            date = args['date']
+            reset_user_summary(self.db, user_id, date)
+            args.pop("date")
             myReceipt = Receipt.from_dict(args).to_dict()
-            myReceipt['date'] = datetime.strptime(myReceipt['date'], '%Y-%m-%d')
+            myReceipt['receipt_date'] = datetime.strptime(myReceipt['receipt_date'], '%Y-%m-%d')
             user_receipts_ref = self.db.collection('Users').document(user_id).collection('Receipts')
             user_receipts_ref.add(myReceipt) # add receipt
             user_db = self.db.collection("Users").document(user_id).get().to_dict()
 
-            if (myReceipt['date'].month == self.db.collection('Users').document(user_id).get().to_dict()['month']):
+            if (myReceipt['receipt_date'].month == self.db.collection('Users').document(user_id).get().to_dict()['month']
+                and myReceipt['receipt_date'].year == self.db.collection('Users').document(user_id).get().to_dict()['year']):
                 #TODO (Suyash): Update the 'total' field of the current user.
                 # If the day (key) already exists in 'total', add the total
                 # from this receipt to the total (value) for that day.
@@ -64,16 +65,16 @@ class ReceiptResource(Resource):
                 total = user_db.get("total")
                 if total is None: # create total map if not in database
                     total = {
-                        str(myReceipt['date'].day):myReceipt['total'] # add first day and total from this receipt
+                        str(myReceipt['receipt_date'].day):myReceipt['total'] # add first day and total from this receipt
                     }
                     self.db.collection("Users").document(user_id).update({"total": total})
                 else:
                     ################## WRITE YOUR IMPLEMENTATION HERE#######################
                     ########################################################################
-                    if not (str(myReceipt['date'].day) in total):
-                        total[str(myReceipt['date'].day)] = myReceipt['total']
+                    if not (str(myReceipt['receipt_date'].day) in total):
+                        total[str(myReceipt['receipt_date'].day)] = myReceipt['total']
                     else:
-                        total[str(myReceipt['date'].day)] = total[str(myReceipt['date'].day)] + myReceipt['total']
+                        total[str(myReceipt['receipt_date'].day)] = total[str(myReceipt['receipt_date'].day)] + myReceipt['total']
                     self.db.collection("Users").document(user_id).update({"total": total})
                     #pass
 

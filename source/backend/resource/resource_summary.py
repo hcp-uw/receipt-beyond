@@ -2,22 +2,28 @@ from flask_restful import Resource, reqparse, abort
 from model.receipt import Receipt
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from werkzeug.exceptions import HTTPException
+from datetime import datetime
 
 ### TODO: what if field does not exist in database, return none...
 parser = reqparse.RequestParser()
-parser.add_argument('month', type=int, required=True, help='Month is required.')
+parser.add_argument('date', type=str, required=True, help='Date is required.')
 
-def reset_user_summary(db, user_id, month):
+def reset_user_summary(db, user_id, date):
     user_ref = db.collection('Users').document(user_id)
     user = user_ref.get()
+    try:
+        date = datetime.strptime(date, "%Y-%m-%d")
+    except Exception as e:
+        return {'message': 'Bad date format YYYY-MM-DD: ' + str(e)}, 400
+    year = date.year
+    month = date.month
     if user.exists:
         user_data = user.to_dict()
-        db_month = user_data['month']
-        if (month!=db_month):
+        if (year > user_data['year'] or month!=user_data['month']):
             db.collection('Users').document(user_id).update({'total': {}})
             db.collection('Users').document(user_id).update({'category': {}})
             db.collection('Users').document(user_id).update({'month': month})
-
+            db.collection('Users').document(user_id).update({'year': year})
 
 class MonthlySpending(Resource):
     def __init__(self, db):
@@ -41,8 +47,8 @@ class MonthlySpending(Resource):
     def get(self):
         user_id = get_jwt_identity()
         args = parser.parse_args()
-        month = args['month']
-        reset_user_summary(self.db, user_id, month)
+        date = args['date']
+        reset_user_summary(self.db, user_id, date)
         try:
             user_receipts_ref = self.db.collection('Users').document(user_id).get().to_dict()
             return user_receipts_ref['total']
@@ -71,8 +77,8 @@ class MonthlyCategoryExpenditure(Resource):
     def get(self):
         user_id = get_jwt_identity()
         args = parser.parse_args()
-        month = args['month']
-        reset_user_summary(self.db, user_id, month)
+        date = args['date']
+        reset_user_summary(self.db, user_id, date)
         try:
             print("hi")
             user_receipts_ref = self.db.collection('Users').document(user_id).get().to_dict()

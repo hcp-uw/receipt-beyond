@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask_restful import Resource, reqparse, abort
 from model.user import User
 from passlib.hash import sha256_crypt
@@ -10,7 +11,7 @@ from resource.resource_summary import reset_user_summary
 parser = reqparse.RequestParser()
 parser.add_argument('user_id', type=str, required=True, help='User id is required.')
 parser.add_argument('password', type=str, required=True, help='Password is required.')
-parser.add_argument('month', type=int, required=True, help='Month is required.')
+parser.add_argument('date', type=str, required=True, help='Date is required.')
 
 # TODO: Configure logging
 # logging.basicConfig(filename='app.log', level=logging.ERROR, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -26,7 +27,7 @@ class Register(Resource):
             args = parser.parse_args()
             user_id = args['user_id']
             password = args['password']
-            month = args['month']
+            date = datetime.strptime(args['date'], '%Y-%m-%d')
             if user_id is None or password is None:
                 abort(400, message="User ID and password are required.")
             user_ref = self.db.collection('Users').document(user_id).get()
@@ -37,7 +38,8 @@ class Register(Resource):
             self.db.collection('Users').document(user_id).set({'passwordHash' : user.passwordHash})
             self.db.collection('Users').document(user_id).update({'total': {}})
             self.db.collection('Users').document(user_id).update({'category': {}})
-            self.db.collection('Users').document(user_id).update({'month': month})
+            self.db.collection('Users').document(user_id).update({'month': date.month})
+            self.db.collection('Users').document(user_id).update({'year': date.year})
             return {'jwt': create_access_token(identity=user_id)}, 201
         except HTTPException as e:
             # TODO: add logging
@@ -56,7 +58,7 @@ class Login(Resource):
             args = parser.parse_args()
             user_id = args['user_id']
             password = args['password']
-            month = args['month']
+            date = args['date']
             if user_id is None or password is None:
                 abort(400, message="User id and password are required.")
             user_ref = self.db.collection('Users').document(user_id).get()
@@ -64,7 +66,7 @@ class Login(Resource):
                 abort(404, message="User does not exist.")
             true_password_hash = user_ref.get('passwordHash')
             if sha256_crypt.verify(password, true_password_hash):
-                reset_user_summary(self.db, user_id, month)
+                reset_user_summary(self.db, user_id, date)
                 return {'jwt': create_access_token(identity=user_id)}, 200
             else:
                 abort(401, message="Invalid password, please try again.")
