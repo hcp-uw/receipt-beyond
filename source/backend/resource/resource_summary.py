@@ -1,7 +1,22 @@
 from flask_restful import Resource, reqparse, abort
 from model.receipt import Receipt
 from flask_jwt_extended import get_jwt_identity, jwt_required
+from werkzeug.exceptions import HTTPException
 
+### TODO: what if field does not exist in database, return none...
+parser = reqparse.RequestParser()
+parser.add_argument('month', type=int, required=True, help='Month is required.')
+
+def reset_user_summary(db, user_id, month):
+    user_ref = db.collection('Users').document(user_id)
+    user = user_ref.get()
+    if user.exists:
+        user_data = user.to_dict()
+        db_month = user_data['month']
+        if (month!=db_month):
+            db.collection('Users').document(user_id).update({'total': {}})
+            db.collection('Users').document(user_id).update({'category': {}})
+            db.collection('Users').document(user_id).update({'month': month})
 
 
 class MonthlySpending(Resource):
@@ -25,10 +40,15 @@ class MonthlySpending(Resource):
     @jwt_required()
     def get(self):
         user_id = get_jwt_identity()
-        pass
+        args = parser.parse_args()
+        month = args['month']
+        reset_user_summary(self.db, user_id, month)
         try:
             user_receipts_ref = self.db.collection('Users').document(user_id).get().to_dict()
             return user_receipts_ref['total']
+        except HTTPException as e:
+            # TODO: add logging
+            return e.data, e.code
         except Exception as e:
             # TODO: add logging
             return {'message': 'An internal server error occurred: ' + str(e)}, 500
@@ -50,16 +70,22 @@ class MonthlyCategoryExpenditure(Resource):
     @jwt_required()
     def get(self):
         user_id = get_jwt_identity()
+        args = parser.parse_args()
+        month = args['month']
+        reset_user_summary(self.db, user_id, month)
         try:
             print("hi")
             user_receipts_ref = self.db.collection('Users').document(user_id).get().to_dict()
             return user_receipts_ref['category']
-            
+
             # for receipt in user_receipts_ref:
             #     receipt_data = Receipt.from_dict(receipt.to_dict()).to_dict()
             #     receipt_data['id'] = receipt.id
             #     user_receipts.append(receipt_data)
             # return user_receipts, 200
+        except HTTPException as e:
+            # TODO: add logging
+            return e.data, e.code
         except Exception as e:
             # TODO: add logging
             return {'message': 'An internal server error occurred: ' + str(e)}, 500

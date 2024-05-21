@@ -2,6 +2,8 @@ from datetime import datetime
 from flask_restful import Resource, reqparse, abort
 from model.receipt import Receipt
 from flask_jwt_extended import get_jwt_identity, jwt_required
+from resource.resource_summary import reset_user_summary
+from werkzeug.exceptions import HTTPException
 
 class ReceiptResource(Resource):
 
@@ -11,7 +13,7 @@ class ReceiptResource(Resource):
     parser_post.add_argument('purchases', action='append', type=dict, required=True, help='Purchases is required.') # use append for a list of objects
     parser_post.add_argument('category', type=str, required=True, help='Category is required.')
     parser_post.add_argument('total', type=int, required=True, help='Total is required.')
-
+    parser_post.add_argument('month', type=int, required=True, help='Month is required.')
     def __init__(self, db):
         self.db = db
 
@@ -36,65 +38,72 @@ class ReceiptResource(Resource):
     @jwt_required()
     def post(self):
         try:
-            args = self.parser_post.parse_args()
             user_id = get_jwt_identity()
+            args = self.parser_post.parse_args()
+            month = args['month']
+            reset_user_summary(self.db, user_id, month)
+            args.pop("month")
             myReceipt = Receipt.from_dict(args).to_dict()
             myReceipt['date'] = datetime.strptime(myReceipt['date'], '%Y-%m-%d')
             user_receipts_ref = self.db.collection('Users').document(user_id).collection('Receipts')
             user_receipts_ref.add(myReceipt) # add receipt
             user_db = self.db.collection("Users").document(user_id).get().to_dict()
 
-            #TODO (Suyash): Update the 'total' field of the current user.
-            # If the day (key) already exists in 'total', add the total
-            # from this receipt to the total (value) for that day.
-            # In other words, update '(day of receipt)':(previous total) to
-            # '(day of receipt)':(previous total + this receipt total).
-            # If the day does not exist in 'total', add the
-            # '(day of receipt)':(this receipt total) to 'total' field.
-            # If a new month rolls over, delete everything in 'total'
-            # from the previous month...
-            # A possible idea is to just delete the 'total' field at the
-            # beginning of each month to "start over from scratch"
-            total = user_db.get("total")
-            if total is None: # create total map if not in database
-                total = {
-                    str(myReceipt['date'].day):myReceipt['total'] # add first day and total from this receipt
-                }
-                self.db.collection("Users").document(user_id).update({"total": total})
-            else:
-                ################## WRITE YOUR IMPLEMENTATION HERE#######################
-                ########################################################################
-                if not (str(myReceipt['date'].day) in total):
-                    total[str(myReceipt['date'].day)] = myReceipt['total']
+            if (myReceipt['date'].month == self.db.collection('Users').document(user_id).get().to_dict()['month']):
+                #TODO (Suyash): Update the 'total' field of the current user.
+                # If the day (key) already exists in 'total', add the total
+                # from this receipt to the total (value) for that day.
+                # In other words, update '(day of receipt)':(previous total) to
+                # '(day of receipt)':(previous total + this receipt total).
+                # If the day does not exist in 'total', add the
+                # '(day of receipt)':(this receipt total) to 'total' field.
+                # If a new month rolls over, delete everything in 'total'
+                # from the previous month...
+                # A possible idea is to just delete the 'total' field at the
+                # beginning of each month to "start over from scratch"
+                total = user_db.get("total")
+                if total is None: # create total map if not in database
+                    total = {
+                        str(myReceipt['date'].day):myReceipt['total'] # add first day and total from this receipt
+                    }
+                    self.db.collection("Users").document(user_id).update({"total": total})
                 else:
-                    total[str(myReceipt['date'].day)] = total[str(myReceipt['date'].day)] + myReceipt['total']
-                self.db.collection("Users").document(user_id).update({"total": total})
-                #pass
+                    ################## WRITE YOUR IMPLEMENTATION HERE#######################
+                    ########################################################################
+                    if not (str(myReceipt['date'].day) in total):
+                        total[str(myReceipt['date'].day)] = myReceipt['total']
+                    else:
+                        total[str(myReceipt['date'].day)] = total[str(myReceipt['date'].day)] + myReceipt['total']
+                    self.db.collection("Users").document(user_id).update({"total": total})
+                    #pass
 
-            #TODO (Aarnav): Update the 'category' field of the current user.
-            # If the category of this receipt does not exist as a key
-            # in category, add '(category of this receipt)':(this receipt total)
-            # to the 'category' field.
-            # If the category of this receipt does exist as a key in category,
-            # update like so '(category of this receipt)':(previous total + this receipt total).
-            # If a new month rolls over, delete all existing categories (from previous month)...
-            # A possible idea is to just delete the 'category' field at the
-            # beginning of each month to "start over from scratch"
-            category = user_db.get("category")
-            if category is None: # create category map if not in database
-                category = {
-                    myReceipt['category']:myReceipt['total'] #add first category and total from this receipt
-                }
-                self.db.collection("Users").document(user_id).update({"category": category})
-            else:
-                ################## WRITE YOUR IMPLEMENTATION HERE#######################
-                ########################################################################
-                if not (myReceipt['category'] in category):
-                    category[myReceipt['category']] = myReceipt['total']
+                #TODO (Aarnav): Update the 'category' field of the current user.
+                # If the category of this receipt does not exist as a key
+                # in category, add '(category of this receipt)':(this receipt total)
+                # to the 'category' field.
+                # If the category of this receipt does exist as a key in category,
+                # update like so '(category of this receipt)':(previous total + this receipt total).
+                # If a new month rolls over, delete all existing categories (from previous month)...
+                # A possible idea is to just delete the 'category' field at the
+                # beginning of each month to "start over from scratch"
+                category = user_db.get("category")
+                if category is None: # create category map if not in database
+                    category = {
+                        myReceipt['category']:myReceipt['total'] #add first category and total from this receipt
+                    }
+                    self.db.collection("Users").document(user_id).update({"category": category})
                 else:
-                    category[myReceipt['category']] = category[myReceipt['category']] + myReceipt['total']
-                self.db.collection("Users").document(user_id).update({"category": category})
+                    ################## WRITE YOUR IMPLEMENTATION HERE#######################
+                    ########################################################################
+                    if not (myReceipt['category'] in category):
+                        category[myReceipt['category']] = myReceipt['total']
+                    else:
+                        category[myReceipt['category']] = category[myReceipt['category']] + myReceipt['total']
+                    self.db.collection("Users").document(user_id).update({"category": category})
             return {'message': 'Receipt received successfully'}, 201
+        except HTTPException as e:
+            # TODO: add logging
+            return e.data, e.code
         except Exception as e:
             # TODO: add logging
             return {'message': 'An internal server error occurred: ' + str(e)}, 500
