@@ -1,92 +1,102 @@
 from datetime import datetime
-from flask_restful import Resource, reqparse, abort
+from flask import Blueprint, jsonify, abort
+from flask_login import login_required, login_user, logout_user
+from flask_login import login_required, login_user, logout_user, current_user
+from flask_restful import reqparse, abort
 from model.user import User
-from passlib.hash import sha256_crypt
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from werkzeug.exceptions import HTTPException
-from resource.resource_summary import reset_user_summary
-# import logging
+from model.user import User
+from google.cloud import firestore
+import firebase_admin
+from firebase_admin import firestore
+from flask import jsonify
+from passlib.hash import sha256_crypt
 
-# Global Variables
-parser = reqparse.RequestParser()
-parser.add_argument('user_id', type=str, required=True, help='User id is required.')
-parser.add_argument('password', type=str, required=True, help='Password is required.')
-parser.add_argument('date', type=str, required=True, help='Date is required.')
+# Parser for login endpoint
+login_parser = reqparse.RequestParser()
+login_parser.add_argument('user_id', type=str, required=True, help='User id is required.')
+login_parser.add_argument('password', type=str, required=True, help='Password is required.')
 
-# TODO: Configure logging
-# logging.basicConfig(filename='app.log', level=logging.ERROR, format='%(asctime)s - %(levelname)s - %(message)s')
+# Parser for register endpoint
+register_parser = reqparse.RequestParser()
+register_parser.add_argument('user_id', type=str, required=True, help='User id is required.')
+register_parser.add_argument('password', type=str, required=True, help='Password is required.')
+register_parser.add_argument('email', type=str, required=True, help='Email is required.')
 
+# Initialize Firestore DB
+firebase_admin.get_app()
+db = firestore.client()
 
-class Register(Resource):
+# Define the blueprint
+auth_bp = Blueprint('auth', __name__)
 
-    def __init__(self, db):
-        self.db = db
+@auth_bp.route('/login', methods = ['POST'])
+def login():
+    try:
+        args = login_parser.parse_args(strict = True) # only defined arguments are accepted
+        user_id = args['user_id']
+        password = args['password']
+        user_ref = db.collection('Users').document(user_id).get()
 
-    def post(self):
-        try:
-            args = parser.parse_args()
-            user_id = args['user_id']
-            password = args['password']
-            date = datetime.strptime(args['date'], '%Y-%m-%d')
-            if user_id is None or password is None:
-                abort(400, message="User ID and password are required.")
-            user_ref = self.db.collection('Users').document(user_id).get()
-            if user_ref.exists:
-                abort(409, message=f'The user ID {user_id} is already taken. Please choose different user ID.')
-            user = User(user_id)
-            user.hashPassword(password)
-            self.db.collection('Users').document(user_id).set({'passwordHash' : user.passwordHash})
-            self.db.collection('Users').document(user_id).update({'total': {}})
-            self.db.collection('Users').document(user_id).update({'category': {}})
-            self.db.collection('Users').document(user_id).update({'month': date.month})
-            self.db.collection('Users').document(user_id).update({'year': date.year})
-            return {'jwt': create_access_token(identity=user_id)}, 201
-        except HTTPException as e:
-            # TODO: add logging
-            return e.data, e.code
-        except Exception as e:
-            return {'message': 'An internal server error occurred.'}, 500
-            #TODO:  add logging
+        if not user_ref.exists:
+            return jsonify({'message': 'User not found.'}), 404
 
-class Login(Resource):
+        true_password_hash = user_ref.get('passwordHash')
+        if not sha256_crypt.verify(password, true_password_hash):
+            return jsonify({'message': 'Invalid password, please try again.'}), 401
 
-    def __init__(self, db):
-        self.db = db
+        user = User(user_id)
+        login_user(user)
+        return jsonify({"message": f'{current_user.id} logged in successfully.'}), 200
 
-    def post(self):
-        try:
-            args = parser.parse_args()
-            user_id = args['user_id']
-            password = args['password']
-            date = args['date']
-            if user_id is None or password is None:
-                abort(400, message="User id and password are required.")
-            user_ref = self.db.collection('Users').document(user_id).get()
-            if not user_ref.exists:
-                abort(404, message="User does not exist.")
-            true_password_hash = user_ref.get('passwordHash')
-            if sha256_crypt.verify(password, true_password_hash):
-                reset_user_summary(self.db, user_id, date)
-                return {'jwt': create_access_token(identity=user_id)}, 200
-            else:
-                abort(401, message="Invalid password, please try again.")
-        except HTTPException as e:
-            # TODO: add logging
-            return e.data, e.code
-        except Exception as e:
-            return {'message': 'An internal server error occurred.'}, 500
-            #TODO:  add logging
+    except HTTPException as e:
+        return {'message': e.description}, e.code
+    except Exception as e:
+        return {'message': str(e)}, 500
 
-class Logout(Resource):
+@auth_bp.route('/logout', methods=['POST'])
+@login_required
+def logout():
+    logout_user()
+    return jsonify({"message": "Logged out successfully"}), 200
 
-    def __init__(self, db):
-        self.db = db
+@auth_bp.route('/register', methods=['POST'])
+def register():
+    try:
+        args = register_parser.parse_args(strict = True)
+        user_id = args['user_id']
+        password = args['password']
+        email = args['email']
+        error_messages = []
 
-    # TODO: add JWT token to blocklist, add the blocklist as collection in Firebase
-    @jwt_required()
-    def post(self):
-        try:
-            user = get_jwt_identity()
-            raise Exception("Not implemented yet!")
-        except Exception as e:
-            return {'message': str(e)}, 500
+        if not user_id:
+            error_messages.append('Username is required.')
+        else:
+            if db.collection('Users').document(user_id).get().exists:
+                error_messages.append('Username is already taken.')
+
+        if not email:
+            error_messages.append('Email is required.')
+
+        if not password:
+            error_messages.append('Password is required.')
+
+        if error_messages:
+            return jsonify({'messages': error_messages}), 400
+
+        passwordHash = sha256_crypt.hash(password)
+        # use set to create new document with specified data (overwrites existing documents)
+        db.collection('Users').document(user_id).set({
+            'passwordHash': passwordHash,
+            'email': email
+        })
+
+        user = User(user_id)
+        login_user(user)
+        return jsonify({"message": f'{current_user.id} logged in successfully.'}), 200
+
+    except HTTPException as e:
+        return {'message': e.description}, e.code
+    except Exception as e:
+        return {'message': str(e)}, 500
+
