@@ -2,113 +2,108 @@ from datetime import datetime
 from flask_restful import Resource, reqparse, abort
 from model.receipt import Receipt
 from flask_jwt_extended import get_jwt_identity, jwt_required
-from resource.resource_summary import reset_user_summary
+# from resource.resource_summary import reset_user_summary
 from werkzeug.exceptions import HTTPException
+from flask_login import login_required
+from flask_login import current_user, login_required
+import firebase_admin
+from firebase_admin import firestore as admin_firestore
+from firebase_admin import credentials, initialize_app, firestore
+from flask import Blueprint, request, jsonify, abort
+from decimal import Decimal
 
-class ReceiptResource(Resource):
+receipt_parser = reqparse.RequestParser()
+# required fields
+receipt_parser.add_argument('receipt_date', type=str, required=True, help='Receipt date is required.') # expects a string: YYYY-MM-DD
+receipt_parser.add_argument('category', type=str, required=True, help='Receipt category is required.')
+receipt_parser.add_argument('total', type=float, required=True, help='Receipt total is required.')
 
-    parser_post = reqparse.RequestParser()
-    parser_post.add_argument('store', type=dict, required=True, help='Store is required.')
-    parser_post.add_argument('receipt_date', type=str, required=True, help='Receipt date is required.')
-    parser_post.add_argument('purchases', action='append', type=dict, required=True, help='Purchases is required.') # use append for a list of objects
-    parser_post.add_argument('category', type=str, required=True, help='Category is required.')
-    parser_post.add_argument('total', type=int, required=True, help='Total is required.')
-    parser_post.add_argument('date', type=str, required=True, help='Date is required.')
-    def __init__(self, db):
-        self.db = db
+# optional fields
+receipt_parser.add_argument('store', type=str, required=False)
+receipt_parser.add_argument('location', type=str, required=False)
+receipt_parser.add_argument('purchases', action='append', type=dict, required=False) # type append for a list of objects
 
-    # Returns a list of all receipts of the current user.
-    # If current user has no receipts, returns an empty list.
-    @jwt_required()
-    def get(self):
-        user_id = get_jwt_identity()
-        try:
-            user_receipts_ref = self.db.collection('Users').document(user_id).collection('Receipts').get()
-            user_receipts = []
-            for receipt in user_receipts_ref:
-                receipt_data = Receipt.from_dict(receipt.to_dict()).to_dict()
-                receipt_data['id'] = receipt.id
-                user_receipts.append(receipt_data)
-            return user_receipts, 200
-        except Exception as e:
-            # TODO: add logging
-            return {'message': 'An internal server error occurred: ' + str(e)}, 500
+# Initialize Firestore DB
+firebase_admin.get_app()
+db = firestore.client()
+receipts_bp = Blueprint('receipts', __name__)
 
-    # Adds a receipt to the user
-    @jwt_required()
-    def post(self):
-        try:
-            user_id = get_jwt_identity()
-            args = self.parser_post.parse_args()
-            date = args['date']
-            reset_user_summary(self.db, user_id, date)
-            args.pop("date")
-            myReceipt = Receipt.from_dict(args).to_dict()
-            myReceipt['receipt_date'] = datetime.strptime(myReceipt['receipt_date'], '%Y-%m-%d')
-            user_receipts_ref = self.db.collection('Users').document(user_id).collection('Receipts')
-            user_receipts_ref.add(myReceipt) # add receipt
-            user_db = self.db.collection("Users").document(user_id).get().to_dict()
+# Adds a receipt to the user
+@receipts_bp.route('/receipts', methods=['POST'])
+@login_required
+def post():
+    try:
+        user_id = current_user.id
+        args = receipt_parser.parse_args()
+        receipt = Receipt(receipt_date=args['receipt_date'], category=args['category'], total=args['total'],
+                          store=args['store'], location=args['location'], purchases=args['purchases'])
 
-            if (myReceipt['receipt_date'].month == self.db.collection('Users').document(user_id).get().to_dict()['month']
-                and myReceipt['receipt_date'].year == self.db.collection('Users').document(user_id).get().to_dict()['year']):
-                #TODO (Suyash): Update the 'total' field of the current user.
-                # If the day (key) already exists in 'total', add the total
-                # from this receipt to the total (value) for that day.
-                # In other words, update '(day of receipt)':(previous total) to
-                # '(day of receipt)':(previous total + this receipt total).
-                # If the day does not exist in 'total', add the
-                # '(day of receipt)':(this receipt total) to 'total' field.
-                # If a new month rolls over, delete everything in 'total'
-                # from the previous month...
-                # A possible idea is to just delete the 'total' field at the
-                # beginning of each month to "start over from scratch"
-                total = user_db.get("total")
-                if total is None: # create total map if not in database
-                    total = {
-                        str(myReceipt['receipt_date'].day):myReceipt['total'] # add first day and total from this receipt
-                    }
-                    self.db.collection("Users").document(user_id).update({"total": total})
-                else:
-                    ################## WRITE YOUR IMPLEMENTATION HERE#######################
-                    ########################################################################
-                    if not (str(myReceipt['receipt_date'].day) in total):
-                        total[str(myReceipt['receipt_date'].day)] = myReceipt['total']
-                    else:
-                        total[str(myReceipt['receipt_date'].day)] = total[str(myReceipt['receipt_date'].day)] + myReceipt['total']
-                    self.db.collection("Users").document(user_id).update({"total": total})
-                    #pass
+        collection_date = receipt.receipt_date.strftime('%Y-%m')
+        receipt_collection = db.collection('Users').document(user_id).collection(collection_date)
+        receipt_collection.add(receipt.to_dict())
+        receipt_summary_ref = receipt_collection.document("Monthly Summary")
+        receipt_summary = receipt_summary_ref.get().to_dict()
+        ### Summary document exists in given date collection
+        if receipt_summary:
 
-                #TODO (Aarnav): Update the 'category' field of the current user.
-                # If the category of this receipt does not exist as a key
-                # in category, add '(category of this receipt)':(this receipt total)
-                # to the 'category' field.
-                # If the category of this receipt does exist as a key in category,
-                # update like so '(category of this receipt)':(previous total + this receipt total).
-                # If a new month rolls over, delete all existing categories (from previous month)...
-                # A possible idea is to just delete the 'category' field at the
-                # beginning of each month to "start over from scratch"
-                category = user_db.get("category")
-                if category is None: # create category map if not in database
-                    category = {
-                        myReceipt['category']:myReceipt['total'] #add first category and total from this receipt
-                    }
-                    self.db.collection("Users").document(user_id).update({"category": category})
-                else:
-                    ################## WRITE YOUR IMPLEMENTATION HERE#######################
-                    ########################################################################
-                    if not (myReceipt['category'] in category):
-                        category[myReceipt['category']] = myReceipt['total']
-                    else:
-                        category[myReceipt['category']] = category[myReceipt['category']] + myReceipt['total']
-                    self.db.collection("Users").document(user_id).update({"category": category})
-            return {'message': 'Receipt received successfully'}, 201
-        except HTTPException as e:
-            # TODO: add logging
-            return e.data, e.code
-        except Exception as e:
-            # TODO: add logging
-            return {'message': 'An internal server error occurred: ' + str(e)}, 500
+            ### Update monthly running total
+            total = receipt_summary['total']
+            if not (str(receipt.receipt_date.day) in total):
+                total[str(receipt.receipt_date.day)] = receipt.total
+            else:
+                total[str(receipt.receipt_date.day)] = total[str(receipt.receipt_date.day)] + receipt.total
 
-    #TODO: add a put endpoint for when the user edits receipts. Make sure to roll changes over to resource_summary
+            ### Update category totals
+            category = receipt_summary["category"]
+            if not (receipt.category in category):
+                category[receipt.category] = receipt.total
+            else:
+                category[receipt.category] = category[receipt.category] + receipt.total
 
-    #TODO: add a delete endpoint for when the user deletes a receipt.
+            ### Update Firebase
+            receipt_summary_ref.update({
+                "total": total,
+                "category": category
+            })
+
+        ### Summary document does not exists in given date collection
+        else:
+
+            ### Update Firebase
+            receipt_summary_ref.set({
+                'total': {str(receipt.receipt_date.day):receipt.total},
+                'category': {receipt.category:receipt.total}
+            })
+        return {'message': 'Receipt uploaded successfully.'}, 201
+    except HTTPException as e:
+        return {'message': e.description}, e.code
+    except Exception as e:
+        return {'message': str(e)}, 500
+
+#TODO: add a put endpoint for when the user edits receipts. Make sure to roll changes over to resource_summary
+
+#TODO: add a delete endpoint for when the user deletes a receipt.
+
+
+
+
+
+# Returns a list of all receipts of the current user.
+# If current user has no receipts, returns an empty list.
+################ NEED TO IMPLEMENT BASED OFF NEW DATABASE STRUCTURE, TAKE START: YYYY-MM and END: YYYY-MM range
+# @receipts_bp.route('/receipts', methods=['GET'])
+# @login_required
+# def get():
+#     user_id = current_user.id
+#     try:
+#         user_receipts_ref = db.collection('Users').document(user_id).collection('Receipts').get()
+#         user_receipts = []
+#         for receipt in user_receipts_ref:
+#             receipt_data = Receipt.from_dict(receipt.to_dict()).to_dict()
+#             receipt_data['id'] = receipt.id
+#             user_receipts.append(receipt_data)
+#         return user_receipts, 200
+#     except Exception as e:
+#         # TODO: add logging
+#         return {'message': 'An internal server error occurred: ' + str(e)}, 500
+
