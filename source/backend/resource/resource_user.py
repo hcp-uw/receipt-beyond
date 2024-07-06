@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import Blueprint, jsonify, request
 from flask_login import login_required, login_user, logout_user, current_user
 from model.user import User
@@ -56,7 +57,11 @@ def register():
     if not email:
         raise MissingEmailError()
     if not date_joined:
-        raise MissingUserDate
+        raise MissingUserDate()
+    try:
+        date = datetime.strptime(date_joined, '%Y-%m-%d')
+    except:
+        raise InvalidDateFormat()
     if db.collection('Users').document(user_id).get().exists:
         raise UserAlreadyExistsError()
     if db.collection('UserEmails').document(email).get().exists:
