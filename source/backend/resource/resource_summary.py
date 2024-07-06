@@ -1,18 +1,12 @@
-from flask_restful import Resource, reqparse, abort
-from model.receipt import Receipt
-from flask_jwt_extended import get_jwt_identity, jwt_required
+from flask_restful import reqparse
 from werkzeug.exceptions import HTTPException
 from datetime import datetime
 from flask_login import login_required
 from flask_login import current_user, login_required
 import firebase_admin
-from firebase_admin import firestore as admin_firestore
-from firebase_admin import credentials, initialize_app, firestore
-from flask import Blueprint, request, jsonify, abort
-
-### TODO: what if field does not exist in database, return none...
-summary_parser = reqparse.RequestParser()
-summary_parser.add_argument('date', type=str, required=True, help='Date is required.')
+from firebase_admin import firestore
+from flask import Blueprint, request, jsonify
+from model.error import *
 
 firebase_admin.get_app()
 db = firestore.client()
@@ -36,17 +30,17 @@ summary_bp = Blueprint('summary', __name__)
 @login_required
 def month_exp():
     user_id = current_user.id
-    args = summary_parser.parse_args()
-    date = datetime.strptime(args['date'], '%Y-%m-%d')
-    collection_date = date.strftime('%Y-%m')
+    data = request.get_json()
+    date = data.get('date')
+    if not date:
+        raise MissingUserDate()
     try:
-        monthly_summary = db.collection('Users').document(user_id).collection(collection_date).document('Monthly Summary').get().to_dict()
-        return jsonify(monthly_summary['total']), 200
-    except HTTPException as e:
-        return {'message': e.description}, e.code
-    except Exception as e:
-        return {'message': str(e)}, 500
-
+        date = datetime.strptime(date, '%Y-%m-%d')
+    except:
+        raise InvalidDateFormat()
+    collection_date = date.strftime('%Y-%m')
+    monthly_summary = db.collection('Users').document(user_id).collection(collection_date).document('Monthly Summary').get().to_dict()
+    return jsonify(monthly_summary['total']), 200
 
 
 #TODO (Aarnav): create a get endpoint
@@ -62,13 +56,14 @@ def month_exp():
 @login_required
 def month_cat_exp():
     user_id = current_user.id
-    args = summary_parser.parse_args()
-    date = datetime.strptime(args['date'], '%Y-%m-%d')
-    collection_date = date.strftime('%Y-%m')
+    data = request.get_json()
+    date = data.get('date')
+    if not date:
+        raise MissingUserDate()
     try:
-        monthly_summary = db.collection('Users').document(user_id).collection(collection_date).document('Monthly Summary').get().to_dict()
-        return jsonify(monthly_summary['category'])
-    except HTTPException as e:
-        return {'message': e.description}, e.code
-    except Exception as e:
-        return {'message': str(e)}, 500
+        date = datetime.strptime(date, '%Y-%m-%d')
+    except:
+        raise InvalidDateFormat()
+    collection_date = date.strftime('%Y-%m')
+    monthly_summary = db.collection('Users').document(user_id).collection(collection_date).document('Monthly Summary').get().to_dict()
+    return jsonify(monthly_summary['category']), 200

@@ -1,27 +1,11 @@
-from datetime import datetime
-from flask_restful import Resource, reqparse, abort
 from model.receipt import Receipt
-from flask_jwt_extended import get_jwt_identity, jwt_required
-# from resource.resource_summary import reset_user_summary
 from werkzeug.exceptions import HTTPException
 from flask_login import login_required
 from flask_login import current_user, login_required
 import firebase_admin
-from firebase_admin import firestore as admin_firestore
-from firebase_admin import credentials, initialize_app, firestore
-from flask import Blueprint, request, jsonify, abort
-from decimal import Decimal
-
-receipt_parser = reqparse.RequestParser()
-# required fields
-receipt_parser.add_argument('receipt_date', type=str, required=True, help='Receipt date is required.') # expects a string: YYYY-MM-DD
-receipt_parser.add_argument('category', type=str, required=True, help='Receipt category is required.')
-receipt_parser.add_argument('total', type=float, required=True, help='Receipt total is required.')
-
-# optional fields
-receipt_parser.add_argument('store', type=str, required=False)
-receipt_parser.add_argument('location', type=str, required=False)
-receipt_parser.add_argument('purchases', action='append', type=dict, required=False) # type append for a list of objects
+from firebase_admin import firestore
+from flask import Blueprint, request, jsonify
+from model.error import *
 
 # Initialize Firestore DB
 firebase_admin.get_app()
@@ -32,60 +16,58 @@ receipts_bp = Blueprint('receipts', __name__)
 @receipts_bp.route('/receipts', methods=['POST'])
 @login_required
 def post():
-    try:
-        user_id = current_user.id
-        args = receipt_parser.parse_args()
-        receipt = Receipt(receipt_date=args['receipt_date'], category=args['category'], total=args['total'],
-                          store=args['store'], location=args['location'], purchases=args['purchases'])
+    user_id = current_user.id
+    data = request.get_json()
+    if not data.get('receipt_date'):
+        raise MissingReceiptDate()
+    if not data.get('total'):
+        raise MissingReceiptTotal()
+    receipt = Receipt(receipt_date=data.get('receipt_date'), category=data.get('category'), total=float(data.get('total')),
+                        store=data.get('store'), location=data.get('location'), purchases=data.get('purchases'))
+    collection_date = receipt.receipt_date.strftime('%Y-%m')
 
-        collection_date = receipt.receipt_date.strftime('%Y-%m')
-        receipt_collection = db.collection('Users').document(user_id).collection(collection_date)
-        receipt_collection.add(receipt.to_dict())
-        receipt_summary_ref = receipt_collection.document("Monthly Summary")
-        receipt_summary = receipt_summary_ref.get().to_dict()
-        ### Summary document exists in given date collection
-        if receipt_summary:
+    receipt_collection = db.collection('Users').document(user_id).collection(collection_date)
+    receipt_collection.add(receipt.to_dict())
+    receipt_summary_ref = receipt_collection.document("Monthly Summary")
+    receipt_summary = receipt_summary_ref.get().to_dict()
+    ### Summary document exists in given date collection
+    if receipt_summary:
 
-            ### Update monthly running total
-            total = receipt_summary['total']
-            if not (str(receipt.receipt_date.day) in total):
-                total[str(receipt.receipt_date.day)] = receipt.total
-            else:
-                total[str(receipt.receipt_date.day)] = total[str(receipt.receipt_date.day)] + receipt.total
-
-            ### Update category totals
-            category = receipt_summary["category"]
-            if not (receipt.category in category):
-                category[receipt.category] = receipt.total
-            else:
-                category[receipt.category] = category[receipt.category] + receipt.total
-
-            ### Update Firebase
-            receipt_summary_ref.update({
-                "total": total,
-                "category": category
-            })
-
-        ### Summary document does not exists in given date collection
+        ### Update monthly running total
+        total = receipt_summary['total']
+        if not (str(receipt.receipt_date.day) in total):
+            total[str(receipt.receipt_date.day)] = receipt.total
         else:
+            total[str(receipt.receipt_date.day)] = total[str(receipt.receipt_date.day)] + receipt.total
 
-            ### Update Firebase
-            receipt_summary_ref.set({
-                'total': {str(receipt.receipt_date.day):receipt.total},
-                'category': {receipt.category:receipt.total}
-            })
-        return {'message': 'Receipt uploaded successfully.'}, 201
-    except HTTPException as e:
-        return {'message': e.description}, e.code
-    except Exception as e:
-        return {'message': str(e)}, 500
+        ### Update category totals
+        category = receipt_summary["category"]
+        if not (receipt.category in category):
+            category[receipt.category] = receipt.total
+        else:
+            category[receipt.category] = category[receipt.category] + receipt.total
 
-#TODO: add a put endpoint for when the user edits receipts. Make sure to roll changes over to resource_summary
+        ### Update Firebase
+        receipt_summary_ref.update({
+            "total": total,
+            "category": category
+        })
 
-#TODO: add a delete endpoint for when the user deletes a receipt.
+    ### Summary document does not exists in given date collection
+    else:
+
+        ### Update Firebase
+        receipt_summary_ref.set({
+            'total': {str(receipt.receipt_date.day):receipt.total},
+            'category': {receipt.category:receipt.total}
+        })
+    return jsonify({'message': 'Receipt uploaded successfully.'}), 201
 
 
+#TODO: add a put endpoint for when the user edits receipts. Make sure to roll changes over to summary info in db.
+# Should take a receipt id, and the changes to be made
 
+#TODO: add a delete endpoint for when the user deletes a receipt. Make sure changes roll over to sumarry info in database.
 
 
 # Returns a list of all receipts of the current user.
