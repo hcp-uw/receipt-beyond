@@ -1,32 +1,46 @@
-from flask import Flask, jsonify
+from flask import Flask
 import firebase_admin
-from firebase_admin import credentials
 from config import Config
 from flask_login import LoginManager
-from flask_login import LoginManager, login_required, UserMixin, login_user, logout_user, current_user
 from google.cloud import firestore
-import firebase_admin
-from firebase_admin import firestore as admin_firestore
-from firebase_admin import credentials, initialize_app, firestore
+from firebase_admin import credentials, firestore
+from model.error import *
 from model.user import User
-# Initialize LoginManager
-login_manager = LoginManager()
+import logging
 
 def create_app():
-
+  # Initialize LoginManager
+  login_manager = LoginManager()
   # App config
   app = Flask(__name__)
   app.config.from_object(Config)
-
+  # Set up logging configuration
+  logging.basicConfig(
+    filename='app.log',  # Log file name
+    level=logging.ERROR,  # Log level
+    format='%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'  # Log format
+  )
+  # Register error handlers
+  app.register_error_handler(UserAlreadyExistsError, handle_user_already_exists)
+  app.register_error_handler(EmailAlreadyExistsError, handle_email_already_exists)
+  app.register_error_handler(MissingUserIDError, handle_missing_user_id)
+  app.register_error_handler(MissingPasswordError, handle_missing_password)
+  app.register_error_handler(MissingEmailError, handle_missing_email)
+  app.register_error_handler(InvalidPassword, handle_invalid_password)
+  app.register_error_handler(UserNotFound, handle_user_not_found)
+  app.register_error_handler(MissingReceiptTotal, handle_missing_receipt_total)
+  app.register_error_handler(MissingReceiptDate, handle_missing_receipt_date)
+  app.register_error_handler(InvalidDateFormat, handle_invalid_date_format)
+  app.register_error_handler(MissingUserDate, handle_missing_user_date)
+  app.register_error_handler(Exception, handle_general_error)
   # Initialize firebase admin SDK app
   cred = credentials.Certificate(app.config['FIRESTORE_KEY'])
   firebase_admin.initialize_app(cred)
   db = firestore.client()
-
   # Flask-Login config
   login_manager.init_app(app)
   login_manager.login_view = 'auth.login'
-
+  # load_user
   @login_manager.user_loader
   def load_user(user_id):
       print(user_id)
@@ -35,7 +49,6 @@ def create_app():
           user = User(user_id)
           return user
       return None
-
   # Import and register blueprints
   from resource.resource_user import auth_bp
   from resource.resource_receipt import receipts_bp
@@ -43,7 +56,6 @@ def create_app():
   app.register_blueprint(auth_bp, url_prefix='/api')
   app.register_blueprint(receipts_bp, url_prefix='/api')
   app.register_blueprint(summary_bp, url_prefix='/api')
-
   return app
 
 # Run app
