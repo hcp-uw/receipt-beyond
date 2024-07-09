@@ -1,6 +1,6 @@
 import { Text, View, Button} from "react-native";
 import React, {Component, ChangeEvent} from "react";
-import {Colors, StartLogo, StyledContainer, InnerContainer, PageTitle, Spacer, StyledFormArea, StyledTextInput, StyledInputLabel, LeftIcon, MsgBox} from "../components/style";
+import {Colors, StartLogo, StyledContainer, InnerContainer, PageTitle, Spacer, StyledFormArea, StyledTextInput, StyledInputLabel, LeftIcon, RightIcon, MsgBox} from "../components/style";
 import { TextInput } from "react-native-gesture-handler";
 import { Octicons } from "@expo/vector-icons";
 import KeyboardAvoidingWrapper from "@/components/keyboardAvoidingWrapper";
@@ -16,6 +16,7 @@ interface SignUpState {
   email: string,
   message: string,
   messageType: string
+  hidePassword: boolean
 }
 
 export class SignUp extends Component<SignUpProps, SignUpState> {
@@ -28,7 +29,8 @@ export class SignUp extends Component<SignUpProps, SignUpState> {
       confirmPassword: "",
       email: "",
       message: "",
-      messageType: ""
+      messageType: "",
+      hidePassword: true
     };
   }
 
@@ -78,9 +80,12 @@ export class SignUp extends Component<SignUpProps, SignUpState> {
                 placeholder="********"
                 placeholderTextColor={Colors.darkLight}
                 value={this.state.password}
-                secureTextEntry={true}
+                secureTextEntry={this.state.hidePassword}
                 onChangeText={(value) => this.handleChange('password', value)}
               />
+              <RightIcon onPress={() => this.handlePassword(!this.state.hidePassword)}>
+                <Octicons name={"eye"} size={30} color={Colors.darkLight}/>
+              </RightIcon>
             </View>
             <View>
             <StyledInputLabel>Confirm Password</StyledInputLabel>
@@ -91,9 +96,12 @@ export class SignUp extends Component<SignUpProps, SignUpState> {
                 placeholder="********"
                 placeholderTextColor={Colors.darkLight}
                 value={this.state.confirmPassword}
-                secureTextEntry={true}
+                secureTextEntry={this.state.hidePassword}
                 onChangeText={(value) => this.handleChange('confirmPassword', value)}
               />
+              <RightIcon onPress={() => this.handlePassword(!this.state.hidePassword)}>
+                <Octicons name="eye" size={30} color={Colors.darkLight}/>
+              </RightIcon>
             </View>
             <View>
             <StyledInputLabel>Email</StyledInputLabel>
@@ -120,16 +128,20 @@ export class SignUp extends Component<SignUpProps, SignUpState> {
     );
   }
 
+  handlePassword = (value: boolean) => {
+    this.setState({hidePassword: value});
+  }
+
   handleChange = (name: keyof SignUpState, value:string) => {
-    this.setState({[name] : value} as Pick<SignUpState, keyof SignUpState>);
+    this.setState({ [name]: value } as unknown as Pick<SignUpState, keyof SignUpState>);
   }
 
   validate = () => {
     {/** Add more cases if needed 
       1. Proper Email Format
-      2. UserID exists?
+      2. UserID exists? (error code 400)
       3. Is it okay for a user to create multiple accounts? Should we also check if an email exists?
-      4. Stronger Password?
+      4. Stronger Password? (more than 8 characters, numbers needed, at least 1 captial & lower case)
       */}
     if (this.state.email === "" || this.state.password === "" || this.state.confirmPassword === "" || this.state.email === "") {
       this.setState({message: "Please fill in all fields", messageType:"ERROR"});
