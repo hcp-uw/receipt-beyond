@@ -1,6 +1,6 @@
 import { Text, View, Button} from "react-native";
 import React, {Component, ChangeEvent} from "react";
-import {Colors, StartLogo, StyledContainer, InnerContainer, PageTitle, Spacer, StyledFormArea, StyledTextInput, StyledInputLabel, LeftIcon, MsgBox} from "../components/style";
+import {Colors, StartLogo, StyledContainer, InnerContainer, PageTitle, Spacer, StyledFormArea, StyledTextInput, StyledInputLabel, LeftIcon, RightIcon, MsgBox} from "../components/style";
 import { TextInput } from "react-native-gesture-handler";
 import { Octicons } from "@expo/vector-icons";
 import KeyboardAvoidingWrapper from "@/components/keyboardAvoidingWrapper";
@@ -15,7 +15,9 @@ interface SignUpState {
   confirmPassword: string,
   email: string,
   message: string,
-  messageType: string
+  messageType: string,
+  hidePassword: boolean,
+  hideconfirmPassword: boolean
 }
 
 export class SignUp extends Component<SignUpProps, SignUpState> {
@@ -28,7 +30,9 @@ export class SignUp extends Component<SignUpProps, SignUpState> {
       confirmPassword: "",
       email: "",
       message: "",
-      messageType: ""
+      messageType: "",
+      hidePassword: true,
+      hideconfirmPassword: true
     };
   }
 
@@ -52,7 +56,7 @@ export class SignUp extends Component<SignUpProps, SignUpState> {
         <StyledContainer>
           <InnerContainer>
             {/** Replace the logo here */}
-            <StartLogo resizeMode="cover" source={require('../ZIgnore/assets/images/react-logo.png')}/>
+            <StartLogo resizeMode="cover" source={require('../assets/react-logo.png')}/>
             <PageTitle>SIGN UP</PageTitle>
             <Spacer></Spacer>
             <StyledFormArea>
@@ -78,9 +82,12 @@ export class SignUp extends Component<SignUpProps, SignUpState> {
                 placeholder="********"
                 placeholderTextColor={Colors.darkLight}
                 value={this.state.password}
-                secureTextEntry={true}
+                secureTextEntry={this.state.hidePassword}
                 onChangeText={(value) => this.handleChange('password', value)}
               />
+              <RightIcon onPress={() => this.handleChange("hidePassword", !this.state.hidePassword)}>
+                <Octicons name="eye" size={30} color={Colors.darkLight}/>
+              </RightIcon>
             </View>
             <View>
             <StyledInputLabel>Confirm Password</StyledInputLabel>
@@ -91,9 +98,12 @@ export class SignUp extends Component<SignUpProps, SignUpState> {
                 placeholder="********"
                 placeholderTextColor={Colors.darkLight}
                 value={this.state.confirmPassword}
-                secureTextEntry={true}
+                secureTextEntry={this.state.hideconfirmPassword}
                 onChangeText={(value) => this.handleChange('confirmPassword', value)}
               />
+              <RightIcon onPress={() => this.handleChange("hideconfirmPassword", !this.state.hideconfirmPassword)}>
+                <Octicons name="eye" size={30} color={Colors.darkLight}/>
+              </RightIcon>
             </View>
             <View>
             <StyledInputLabel>Email</StyledInputLabel>
@@ -105,7 +115,6 @@ export class SignUp extends Component<SignUpProps, SignUpState> {
                 placeholderTextColor={Colors.darkLight}
                 value={this.state.email}
                 onChangeText={(value) => this.handleChange('email', value)}
-                
               />
             </View>
             <Spacer></Spacer>
@@ -120,8 +129,8 @@ export class SignUp extends Component<SignUpProps, SignUpState> {
     );
   }
 
-  handleChange = (name: keyof SignUpState, value:string) => {
-    this.setState({[name] : value} as Pick<SignUpState, keyof SignUpState>);
+  handleChange = (name: keyof SignUpState, value:string | boolean) => {
+    this.setState({[name] : value} as unknown as Pick<SignUpState, keyof SignUpState>);
   }
 
   validate = () => {
