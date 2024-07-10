@@ -27,3 +27,4 @@ source/backend/model/__pycache__/receipt.cpython-312.pyc
 source/backend/receipt_parsing.ipynb
 source/backend/model/__pycache__/user.cpython-312.pyc
 source/backend/resource/__pycache__/__init__.cpython-312.pyc
+app.log
