@@ -2,6 +2,7 @@ import { Text, View } from "react-native";
 import React, { Component} from "react";
 import {Redirect} from 'expo-router';
 import {SignUp} from "../pages/signup";
+import {Login} from "../pages/login";
 
 // Research:
 // import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -17,28 +18,44 @@ import {SignUp} from "../pages/signup";
 4. If User login => summarypage(summary tab)
 */
 
+// Suggestion:
+// Start with the Welcome Page that contains the explanation of the the app to the new users. (Use swipe function to show the text/img)
+// Last page shows a button of "Let's get started" that leads to SignUp Page
+
 interface StartPageState {
   // Talk: 
   // Need the concept of NULL?
   loginStatus: boolean
+  showLogin: boolean
 };
 
 export default class StartPage extends Component<{}, StartPageState> {
 
   constructor(props: {}) {
     super(props);
-    this.state = {loginStatus: false};
+    this.state = {
+      loginStatus: false,
+      showLogin: false
+    };
   }
 
   render = (): JSX.Element => {
-    if (!this.state.loginStatus) {
-      return <SignUp onSignUp={this.updateStatus}/>;
-    } else {
+    if (this.state.loginStatus) {
       return <Redirect href="/SummaryTab"/>;
+    }
+
+    if (!this.state.showLogin) {
+      return <SignUp onSignUp={this.updateStatus} onToLogin={this.navigateToLogin}/>;
+    } else {
+      return <Login onLogin={this.updateStatus}/>
     }
   }
 
-  updateStatus = (): void => {
+  navigateToLogin = () => {
+    this.setState({showLogin: true});
+  }
+
+  updateStatus = () => {
     this.setState({loginStatus: true});
   }
   // return (
