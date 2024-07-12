@@ -111,7 +111,7 @@ export class SignUp extends Component<SignUpProps, SignUpState> {
             <MsgBox type={this.state.messageType}>{this.state.message}</MsgBox>
 
             <Line />
-            <TouchableOpacity onPress={() => this.handleLogin()}>
+            <TouchableOpacity onPress={() => this.handleLink()}>
               <Text style={{color: Colors.blue}}>Already have an account?</Text>
             </TouchableOpacity>
             </StyledFormArea>
@@ -125,7 +125,7 @@ export class SignUp extends Component<SignUpProps, SignUpState> {
     this.setState({[name] : value} as unknown as Pick<SignUpState, keyof SignUpState>);
   }
 
-  handleLogin = () => {
+  handleLink = () => {
     this.props.onToLogin();
   }
 
