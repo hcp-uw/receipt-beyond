@@ -11,7 +11,7 @@ export const Colors = {
   black: '#000000',
   tertiary: '#1F2937',
   darkLight: '#9CA3AF',
-  aqua: '#0096FF',
+  blue: '#007AFF',
   green: '#10B981',
   red: '#EF4444'
 };
@@ -57,6 +57,8 @@ export const StyledFormArea = styled.View`
   width: 90%;
 `;
 
+// Suggestion: change height to 40px. Update the following icons and placeholder size as well.
+// Change the style using FROSTED color pal
 export const StyledTextInput = styled.TextInput`
   background-color: ${black};
   padding: 15px;
@@ -94,4 +96,11 @@ export const MsgBox = styled.Text<{type: string}>`
   text-align: center;
   font-size: 13px;
   color: ${props => props.type == "ERROR" ? Colors.red : Colors.green};
+`;
+
+export const Line = styled.View`
+  height: 1px;
+  width: 100%;
+  background-color: ${darkLight};
+  margin-vertical: 10px;
 `;
