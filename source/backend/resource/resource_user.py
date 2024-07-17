@@ -25,9 +25,12 @@ def login():
         raise MissingUserIDError()
     if not password:
         raise MissingPasswordError()
-    user_ref = db.collection('Users').document(user_id).get()
+    user_ref = db.collection('Users').document(user_id).get() # checks for UserID
     if not user_ref.exists:
-        raise UserNotFound()
+        user_ref = db.collection('UserEmails').document(user_id).get() # checks emails
+        if not user_ref.exists:
+            raise UserNotFound()
+        user_id = user_ref.get('user_id')
     true_password_hash = user_ref.get('passwordHash')
     if not sha256_crypt.verify(password, true_password_hash):
         raise InvalidPassword()
@@ -74,7 +77,8 @@ def register():
         'dateJoined' : date_joined
     })
     db.collection('UserEmails').document(email).set({
-        'user_id':user_id
+        'user_id':user_id,
+        'passwordHash': passwordHash
     })
     user = User(user_id)
     login_user(user)
