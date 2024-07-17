@@ -1,21 +1,17 @@
 from model.receipt import Receipt
-from werkzeug.exceptions import HTTPException
 from flask_login import login_required
 from flask_login import current_user, login_required
-import firebase_admin
-from firebase_admin import firestore
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from model.error import *
 
-# Initialize Firestore DB
-firebase_admin.get_app()
-db = firestore.client()
+
 receipts_bp = Blueprint('receipts', __name__)
 
 # Adds a receipt to the user
 @receipts_bp.route('/receipts', methods=['POST'])
 @login_required
 def post():
+    db = current_app.db
     user_id = current_user.id
     data = request.get_json()
     if not data.get('receipt_date'):

@@ -2,22 +2,16 @@ from datetime import datetime
 from flask import Blueprint, jsonify, request
 from flask_login import login_required, login_user, logout_user, current_user
 from model.user import User
-from google.cloud import firestore
-import firebase_admin
-from firebase_admin import firestore
-from flask import jsonify
+from flask import jsonify, current_app
 from passlib.hash import sha256_crypt
 from model.error import *
-
-# Initialize Firestore DB
-firebase_admin.get_app()
-db = firestore.client()
 
 # Define the blueprint
 auth_bp = Blueprint('auth', __name__)
 
 @auth_bp.route('/login', methods = ['POST'])
 def login():
+    db = current_app.db
     data = request.get_json()
     user_id = data.get('user_id')
     password = data.get('password')
@@ -48,6 +42,7 @@ def logout():
 # return email already exists error code 400
 @auth_bp.route('/register', methods=['POST'])
 def register():
+    db = current_app.db
     data = request.get_json()
     user_id = data.get('user_id')
     password = data.get('password')
@@ -89,6 +84,7 @@ def register():
 @auth_bp.route('/user_info', methods=['GET'])
 @login_required
 def user_info():
+    db = current_app.db
     user_id = current_user.id
     user_ref = db.collection('Users').document(user_id).get()
     email = user_ref.get('email')

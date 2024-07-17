@@ -1,15 +1,9 @@
-from flask_restful import reqparse
-from werkzeug.exceptions import HTTPException
 from datetime import datetime
 from flask_login import login_required
 from flask_login import current_user, login_required
-import firebase_admin
-from firebase_admin import firestore
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from model.error import *
 
-firebase_admin.get_app()
-db = firestore.client()
 summary_bp = Blueprint('summary', __name__)
 
 #TODO (Suyash): create a get endpoint
@@ -29,6 +23,7 @@ summary_bp = Blueprint('summary', __name__)
 @summary_bp.route('/month_exp', methods=['GET'])
 @login_required
 def month_exp():
+    db = current_app.db
     user_id = current_user.id
     data = request.get_json()
     date = data.get('date')
@@ -55,6 +50,7 @@ def month_exp():
 @summary_bp.route('/month_cat_exp', methods=['GET'])
 @login_required
 def month_cat_exp():
+    db = current_app.db
     user_id = current_user.id
     data = request.get_json()
     date = data.get('date')
