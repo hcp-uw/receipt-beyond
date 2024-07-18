@@ -45,3 +45,18 @@ jobs:
       run: |
         export PYTHONPATH=source/backend
         pytest
+    - name: Setup SSH
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+    - name: Add known hosts
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
+    - name: Deploy to PythonAnywhere
+      env:
+        REMOTE_REPO: "receiptplus@ssh.pythonanywhere.com:/home/receiptplus/bare-repos/receiptplus.git"
+        BRANCH: "main"
+      run: |
+        git remote add pythonanywhere $REMOTE_REPO
+        git push -u pythonanywhere $BRANCH
