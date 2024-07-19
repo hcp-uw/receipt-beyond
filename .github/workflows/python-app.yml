@@ -53,9 +53,11 @@ jobs:
       run: |
         mkdir -p ~/.ssh
         echo "${{ secrets.SSH_KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
-    - name: Deploy to PythonAnywhere
+    - name: Set fetch depth
+      uses: actions/checkout@v2
       with:
         fetch-depth: 0
+    - name: Deploy to PythonAnywhere
       if: job.status == 'success'
       run: |
         git remote add pythonanywhereRP receiptplus@ssh.pythonanywhere.com:/home/receiptplus/receipt_god/receipt_god.git
