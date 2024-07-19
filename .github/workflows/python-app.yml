@@ -58,7 +58,7 @@ jobs:
       with:
         fetch-depth: 0
     - name: Deploy to PythonAnywhere
-      if: job.status == 'success'
+      if: github.ref == 'refs/heads/main' && job.status == 'success'
       run: |
         git remote add pythonanywhereRP receiptplus@ssh.pythonanywhere.com:/home/receiptplus/receipt_plus/receipt_plus.git
         git push -u pythonanywhereRP main -f
