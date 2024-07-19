@@ -53,6 +53,9 @@ jobs:
       run: |
         mkdir -p ~/.ssh
         echo "${{ secrets.SSH_KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
+    - name: Set fetch depth
+      with:
+        fetch-depth: 0
     - name: Deploy to PythonAnywhere
       if: job.status == 'success'
       run: |
