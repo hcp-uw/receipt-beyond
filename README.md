@@ -1,4 +1,5 @@
 # receipt-plus
+
 ## Team Members:
 * David Ye
 * Aarnav Gogri
