@@ -54,10 +54,7 @@ jobs:
         mkdir -p ~/.ssh
         echo "${{ secrets.SSH_KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
     - name: Deploy to PythonAnywhere
-      env:
-        REMOTE_REPO: "receiptplus@ssh.pythonanywhere.com:/home/receiptplus/receipt_god/receipt_god.git"
-        BRANCH: "main"
       if: job.status == 'success'
       run: |
-        git remote add pythonanywhereRP $REMOTE_REPO
-        git push -u pythonanywhereRP $BRANCH -f
+        git remote add pythonanywhereRP receiptplus@ssh.pythonanywhere.com:/home/receiptplus/receipt_god/receipt_god.git
+        git push -u pythonanywhereRP main -f
