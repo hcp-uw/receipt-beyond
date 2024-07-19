@@ -51,7 +51,7 @@ app.register_blueprint(summary_bp, url_prefix='/api')
 # Start Endpoint
 @app.route('/')
 def hello():
-    return "Hello and welcome to the Receipt Plus API! We did it!"
+    return "Hello and welcome to the Receipt Plus API!"
 
 # Initialize firebase admin SDK app
 cred = credentials.Certificate(app.config['FIRESTORE_KEY'])
