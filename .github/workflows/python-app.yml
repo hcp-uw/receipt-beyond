@@ -59,4 +59,4 @@ jobs:
         BRANCH: "main"
       run: |
         git remote add pythonanywhere $REMOTE_REPO
-        git push -u pythonanywhere $BRANCH
+        git push -u pythonanywhere $BRANCH --force
