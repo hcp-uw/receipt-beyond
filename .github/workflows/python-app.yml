@@ -60,5 +60,5 @@ jobs:
     - name: Deploy to PythonAnywhere
       if: job.status == 'success'
       run: |
-        git remote add pythonanywhereRP receiptplus@ssh.pythonanywhere.com:/home/receiptplus/receipt_god/receipt_god.git
+        git remote add pythonanywhereRP receiptplus@ssh.pythonanywhere.com:/home/receiptplus/receipt_plus/receipt_plus.git
         git push -u pythonanywhereRP main -f
