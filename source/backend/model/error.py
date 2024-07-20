@@ -37,10 +37,10 @@ class InvalidDateFormat(Exception):
 class MissingReceiptImage(Exception):
     pass
 
-class InvalidImage(Exception):
+class InvalidReceiptImage(Exception):
     pass
 
-def handle_invalid_image(error):
+def handle_invalid_receipt_image(error):
     response = jsonify({'error': 'Invalid image'})
     response.status_code = 400
     return response, response.status_code
