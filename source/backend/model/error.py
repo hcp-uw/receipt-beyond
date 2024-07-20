@@ -34,6 +34,22 @@ class MissingUserDate(Exception):
 class InvalidDateFormat(Exception):
     pass
 
+class MissingReceiptImage(Exception):
+    pass
+
+class InvalidReceiptImage(Exception):
+    pass
+
+def handle_invalid_receipt_image(error):
+    response = jsonify({'error': 'Invalid image'})
+    response.status_code = 400
+    return response, response.status_code
+
+def handle_missing_receipt_image(error):
+    response = jsonify({'error': 'Missing receipt image'})
+    response.status_code = 400
+    return response, response.status_code
+
 def handle_user_already_exists(error):
     response = jsonify({'error': 'User already exists'})
     response.status_code = 400

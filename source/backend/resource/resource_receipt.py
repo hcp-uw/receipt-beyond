@@ -3,14 +3,50 @@ from flask_login import login_required
 from flask_login import current_user, login_required
 from flask import Blueprint, request, jsonify, current_app
 from model.error import *
+from PIL import Image
 
 
 receipts_bp = Blueprint('receipts', __name__)
 
+"""
+Parses a receipt image and returns parsed receipt
+return the following:
+{
+    'receipt_date': {date on receipt},
+    'total': {total},
+    'store': {store name},
+    'location': {store address},
+    'purchases': [{'name':{name of item},'price':{unit price},'amount':{amount/quantity}},
+                {'name':{name of item},'price':{unit price},'amount':{amount/quantity}},
+                {'name':{name of item},'price':{unit price},'amount':{amount/quantity}}
+                ...]
+}
+
+"""
+@receipts_bp.route('/receipts_parsing', methods=['POST'])
+@login_required
+def receipts_parsing():
+    receipt_image = request.files.get('receipt_image')
+    if not receipt_image:
+        raise MissingReceiptImage()
+    try:
+        img = Image.open(receipt_image.stream)
+    except:
+        raise InvalidReceiptImage()
+    ########################################## ADD LOGIC HERE #################################
+
+    # See receipt_parsing.ipynb for sample calls to EdenAI and retrieving data
+
+
+    ###########################################################################################
+    return jsonify({'message': 'to be implemented'}), 201
+
+
+
 # Adds a receipt to the user
 @receipts_bp.route('/receipts', methods=['POST'])
 @login_required
-def post():
+def receipts():
     db = current_app.db
     user_id = current_user.id
     data = request.get_json()
@@ -60,10 +96,10 @@ def post():
     return jsonify({'message': 'Receipt uploaded successfully.'}), 201
 
 
-#TODO: add a put endpoint for when the user edits receipts. Make sure to roll changes over to summary info in db.
+#TODO: (lower priority) add a put endpoint for when the user edits receipts. Make sure to roll changes over to summary info in db.
 # Should take a receipt id, and the changes to be made
 
-#TODO: add a delete endpoint for when the user deletes a receipt. Make sure changes roll over to sumarry info in database.
+#TODO: (lower priority) add a delete endpoint for when the user deletes a receipt. Make sure changes roll over to sumarry info in database.
 
 
 # Returns a list of all receipts of the current user.
