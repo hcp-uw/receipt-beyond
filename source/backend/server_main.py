@@ -24,6 +24,13 @@ logging.basicConfig(
   format='%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'  # Log format
 )
 
+# Add logging to show in console
+console = logging.StreamHandler()
+console.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]')
+console.setFormatter(formatter)
+logging.getLogger().addHandler(console)
+
 # Register error handlers
 error_handlers = [
     (UserAlreadyExistsError, handle_user_already_exists),
@@ -38,7 +45,7 @@ error_handlers = [
     (InvalidDateFormat, handle_invalid_date_format),
     (MissingUserDate, handle_missing_user_date),
     (MissingReceiptImage, handle_missing_receipt_image),
-    (InvalidImage, handle_invalid_image),
+    (InvalidReceiptImage, handle_invalid_receipt_image),
     (Exception, handle_general_error)
 ]
 
