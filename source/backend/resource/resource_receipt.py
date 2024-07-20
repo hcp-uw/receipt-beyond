@@ -8,9 +8,21 @@ from PIL import Image
 
 receipts_bp = Blueprint('receipts', __name__)
 
+"""
+Parses a receipt image and returns parsed receipt
+return the following:
+{
+    'receipt_date': {date on receipt},
+    'total': {total},
+    'store': {store name},
+    'location': {store address},
+    'purchases': [{'name':{name of item},'price':{unit price},'amount':{amount/quantity}},
+                {'name':{name of item},'price':{unit price},'amount':{amount/quantity}},
+                {'name':{name of item},'price':{unit price},'amount':{amount/quantity}}
+                ...]
+}
 
-# Parses a receipt image and returns parsed receipt
-
+"""
 @receipts_bp.route('/receipts_parsing', methods=['POST'])
 @login_required
 def receipts_parsing():
@@ -20,9 +32,14 @@ def receipts_parsing():
     try:
         img = Image.open(receipt_image.stream)
     except:
-        raise InvalidImage()
+        raise InvalidReceiptImage()
     ########################################## ADD LOGIC HERE #################################
-    return jsonify({'msg': 'success', 'size': [img.width, img.height]})
+
+    # See receipt_parsing.ipynb for sample calls to EdenAI and retrieving data
+
+
+    ###########################################################################################
+    return jsonify({'message': 'to be implemented'}), 201
 
 
 
@@ -79,10 +96,10 @@ def receipts():
     return jsonify({'message': 'Receipt uploaded successfully.'}), 201
 
 
-#TODO: add a put endpoint for when the user edits receipts. Make sure to roll changes over to summary info in db.
+#TODO: (lower priority) add a put endpoint for when the user edits receipts. Make sure to roll changes over to summary info in db.
 # Should take a receipt id, and the changes to be made
 
-#TODO: add a delete endpoint for when the user deletes a receipt. Make sure changes roll over to sumarry info in database.
+#TODO: (lower priority) add a delete endpoint for when the user deletes a receipt. Make sure changes roll over to sumarry info in database.
 
 
 # Returns a list of all receipts of the current user.
