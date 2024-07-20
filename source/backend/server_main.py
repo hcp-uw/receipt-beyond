@@ -37,6 +37,8 @@ error_handlers = [
     (MissingReceiptDate, handle_missing_receipt_date),
     (InvalidDateFormat, handle_invalid_date_format),
     (MissingUserDate, handle_missing_user_date),
+    (MissingReceiptImage, handle_missing_receipt_image),
+    (InvalidImage, handle_invalid_image),
     (Exception, handle_general_error)
 ]
 

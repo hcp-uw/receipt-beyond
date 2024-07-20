@@ -3,14 +3,33 @@ from flask_login import login_required
 from flask_login import current_user, login_required
 from flask import Blueprint, request, jsonify, current_app
 from model.error import *
+from PIL import Image
 
 
 receipts_bp = Blueprint('receipts', __name__)
 
+
+# Parses a receipt image and returns parsed receipt
+
+@receipts_bp.route('/receipts_parsing', methods=['POST'])
+@login_required
+def receipts_parsing():
+    receipt_image = request.files.get('receipt_image')
+    if not receipt_image:
+        raise MissingReceiptImage()
+    try:
+        img = Image.open(receipt_image.stream)
+    except:
+        raise InvalidImage()
+    ########################################## ADD LOGIC HERE #################################
+    return jsonify({'msg': 'success', 'size': [img.width, img.height]})
+
+
+
 # Adds a receipt to the user
 @receipts_bp.route('/receipts', methods=['POST'])
 @login_required
-def post():
+def receipts():
     db = current_app.db
     user_id = current_user.id
     data = request.get_json()
