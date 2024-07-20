@@ -17,6 +17,10 @@ def client():
     with app.test_client() as client:
         yield client
 
+def test_start_endpoint(client):
+    response = client.get('/')
+    assert response.data.decode('utf-8') == "Hello and welcome to the Receipt Plus API!"
+
 def test_register_successful_or_fail(client, global_variables):
     new_user = {
         'user_id': global_variables['user_id'],

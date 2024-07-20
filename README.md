@@ -1,4 +1,5 @@
 # receipt-plus
+
 ## Team Members:
 * David Ye
 * Aarnav Gogri
@@ -6,3 +7,5 @@
 * Joshua Yoo
 * Suyash Pandit
 * Carl Pontino
+
+(Hello)
