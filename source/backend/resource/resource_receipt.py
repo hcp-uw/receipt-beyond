@@ -4,6 +4,11 @@ from flask_login import current_user, login_required
 from flask import Blueprint, request, jsonify, current_app
 from model.error import *
 from PIL import Image
+# from backend import config
+from config import Config
+import requests
+import io
+import json
 
 
 receipts_bp = Blueprint('receipts', __name__)
@@ -30,14 +35,63 @@ def receipts_parsing():
     if not receipt_image:
         raise MissingReceiptImage()
     try:
-        img = Image.open(receipt_image.stream)
+        print(type(receipt_image))
+        img = receipt_image.read() # Image.open(receipt_image.stream, 'rb')
+        # print(img)
     except:
         raise InvalidReceiptImage()
     ########################################## ADD LOGIC HERE #################################
 
     # See receipt_parsing.ipynb for sample calls to EdenAI and retrieving data
 
+    # # Create a BytesIO object
+    # image_bytes = io.BytesIO()
 
+    # # Save the image to the BytesIO object
+    # img.save(image_bytes, format='JPEG')
+
+    # # Get the byte data
+    # image_bytes = image_bytes.getvalue()
+    # print(type(image_bytes))
+    # # print(image_bytes)
+    
+    headers = {"Authorization": f"Bearer {Config.EDENAI_API_KEY}"}
+
+    url = "https://api.edenai.run/v2/ocr/financial_parser"
+    data = {
+        "providers": "amazon", # DO NOT CHANGE PROVIDER
+        "language": "en",
+        "document_type" : "receipt",
+    }
+    files = {'file': img}
+    response = requests.post(url, data=data, files=files, headers=headers)
+    result = response.json()
+    print(json.dumps(result, indent=4))
+
+    output = {
+        'receipt_date': result['amazon']['extracted_data'][0]["financial_document_information"]['invoice_date'],
+        'total': result['amazon']['extracted_data'][0]['payment_information']['amount_due'],
+        'store': result['amazon']['extracted_data'][0]['merchant_information']['name'],
+        'location': result['amazon']['extracted_data'][0]['merchant_information']['address'],
+        'purchases': []
+    }
+    
+    # {'name':{name of item},'price':{unit price},'amount':{amount/quantity}},{'name':{name of item},'price':{unit price},'amount':{amount/quantity}}
+    items = result['amazon']['extracted_data'][0]['item_lines']
+    for item in items:
+        info = {}
+        info['name'] = item['description']
+        
+        if item['quantity'] == None: 
+            info['amount'] = 1
+        else:
+            info['amount'] = item['quantity']
+            
+        info['price'] = item['amount_line']/info['amount']
+        
+        output['purchases'].append(info)
+    print(output)
+    return output
     ###########################################################################################
     return jsonify({'message': 'to be implemented'}), 201
 
