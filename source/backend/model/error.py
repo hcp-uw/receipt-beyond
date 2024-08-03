@@ -40,6 +40,14 @@ class MissingReceiptImage(Exception):
 class InvalidReceiptImage(Exception):
     pass
 
+class EdenAIBadRequest(Exception):
+    pass
+
+def handle_edenai_bad_request(error):
+    response = jsonify({'error': 'EdenAI bad request'})
+    response.status_code = 500
+    return response, response.status_code
+
 def handle_invalid_receipt_image(error):
     response = jsonify({'error': 'Invalid image'})
     response.status_code = 400

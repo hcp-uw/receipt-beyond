@@ -4,8 +4,9 @@ from flask_login import current_user, login_required
 from flask import Blueprint, request, jsonify, current_app
 from model.error import *
 from PIL import Image
-
-
+from config import Config
+import requests
+import os
 receipts_bp = Blueprint('receipts', __name__)
 
 """
@@ -27,19 +28,41 @@ return the following:
 @login_required
 def receipts_parsing():
     receipt_image = request.files.get('receipt_image')
-    if not receipt_image:
+    if not receipt_image or receipt_image.filename == '':
         raise MissingReceiptImage()
+    
+    # Create temp directory if it doesn't exist
+    temp_dir = os.path.join(os.getcwd(), 'temp')
+    os.makedirs(temp_dir, exist_ok=True)
+
+    # Save image into temp folder
+    file_path = os.path.join(temp_dir, receipt_image.filename)
+    receipt_image.save(file_path)
+
+    # EdenAI API parameters 
+    headers = {"Authorization": f"Bearer {Config.EDENAI_API_KEY}"}
+    url = "https://api.edenai.run/v2/ocr/financial_parser"
+    data = {
+        "providers": "amazon", # DO NOT CHANGE PROVIDER
+        "language": "en",
+        "document_type" : "receipt",
+    }
     try:
-        img = Image.open(receipt_image.stream)
+        with open(file_path, 'rb') as file:
+            files = {'file': file}
+            response = requests.post(url, data=data, files=files, headers=headers)
     except:
-        raise InvalidReceiptImage()
+        raise EdenAIBadRequest()
+    finally:
+        os.remove(file_path)
+    result = response.json()
     ########################################## ADD LOGIC HERE #################################
 
     # See receipt_parsing.ipynb for sample calls to EdenAI and retrieving data
 
-
     ###########################################################################################
-    return jsonify({'message': 'to be implemented'}), 201
+    # return jsonify({'message': 'to be implemented'}), 201
+    return jsonify(result), 201
 
 
 
