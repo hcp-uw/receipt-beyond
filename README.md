@@ -7,5 +7,3 @@
 * Joshua Yoo
 * Suyash Pandit
 * Carl Pontino
-
-(Hello)
