@@ -56,6 +56,34 @@ def receipts_parsing():
     finally:
         os.remove(file_path)
     result = response.json()
+    
+    output = {
+        'receipt_date': result['amazon']['extracted_data'][0]["financial_document_information"]['invoice_date'],
+        'total': result['amazon']['extracted_data'][0]['payment_information']['amount_due'],
+        'store': result['amazon']['extracted_data'][0]['merchant_information']['name'],
+        'location': result['amazon']['extracted_data'][0]['merchant_information']['address'],
+        'purchases': []
+    }
+    
+    # {'name':{name of item},'price':{unit price},'amount':{amount/quantity}},{'name':{name of item},'price':{unit price},'amount':{amount/quantity}}
+    items = result['amazon']['extracted_data'][0]['item_lines']
+    for item in items:
+        info = {}
+        info['name'] = item['description']
+        
+        if item['quantity'] == None: 
+            info['quantity'] = 1.0
+        else:
+            info['quantity'] = round(item['amount_line']/item['unit_price'], 2)
+            
+        if item['unit_price'] == None:
+            info['price'] = item['amount_line']
+        else:
+            info['price'] = item['unit_price']
+        
+        output['purchases'].append(info)
+    print(output)
+    return output
     ########################################## ADD LOGIC HERE #################################
 
     # See receipt_parsing.ipynb for sample calls to EdenAI and retrieving data
