@@ -79,17 +79,17 @@ def register():
     login_user(user)
     return jsonify({"message": f'{current_user.id} logged in successfully.'}), 200
 
-
-
-@auth_bp.route('/user_info', methods=['GET'])
-@login_required
-def user_info():
+def get_user_info(user_id):
     db = current_app.db
-    user_id = current_user.id
     user_ref = db.collection('Users').document(user_id).get()
     email = user_ref.get('email')
     date_joined = user_ref.get('dateJoined')
     return jsonify({"user_id": user_id, "email":email, "date_joined":date_joined}), 200
+
+@auth_bp.route('/user_info', methods=['GET'])
+@login_required
+def user_info():
+    return get_user_info(current_user.id)
 
 
 # input json includes 'old_email', 'new_email', old_user_id', 'new_user_id'
@@ -114,7 +114,7 @@ def change_user_info():
         # In UserEmails collection: create new document with {new_email} loaded with old {email} data, then delete old {email} document
         # In Users collection: find document {user_id} amd change the email to {new_email}
         pass
-
+    return get_user_info(new_user_id)
 
 # input json includes 'old_password', 'new_password'
 @auth_bp.route('/change_user_password', methods=['POST'])
