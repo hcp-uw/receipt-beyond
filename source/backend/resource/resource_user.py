@@ -90,3 +90,42 @@ def user_info():
     email = user_ref.get('email')
     date_joined = user_ref.get('dateJoined')
     return jsonify({"user_id": user_id, "email":email, "date_joined":date_joined}), 200
+
+
+# input json includes 'old_email', 'new_email', old_user_id', 'new_user_id'
+@auth_bp.route('/change_user_info', methods=['POST'])
+@login_required
+def change_user_info():
+    db = current_app.db
+    user_id = current_user.id
+    data = request.get_json()
+    new_user_id = data.get('new_user_id')
+    new_email = data.get('new_email')
+    if new_user_id != "":
+        # In Users collection: create new document with {new_user_id} loaded with old user data, then delete old {user_id} document
+        # see here: https://stackoverflow.com/questions/47885921/can-i-change-the-name-of-a-document-in-firestore
+        # In UserEmails collection: update {user_id} field for the corresponding email
+        user_id = new_user_id
+        user = User(user_id) # create a new object with the new user_id
+        login_user(user) # login user using new user_id
+        pass
+    if new_email != "":
+        # Get old {email} from {user_id} document
+        # In UserEmails collection: create new document with {new_email} loaded with old {email} data, then delete old {email} document
+        # In Users collection: find document {user_id} amd change the email to {new_email}
+        pass
+
+
+# input json includes 'old_password', 'new_password'
+@auth_bp.route('/change_user_password', methods=['POST'])
+@login_required
+def change_user_password():
+    db = current_app.db
+    user_id = current_user.id
+    data = request.get_json()
+    old_password = data.get('old_password')
+    new_password = data.get('new_password')
+    # In Users collection: find current user and get the {passwordHash}. Check if the hashed {old_password} matches {passwordHash} (similar to login endpoint).
+    # If not matches, raise InvalidPassword()
+    # If matches, hash the {new_password} and replace old value for {passwordHash} with new value for {passwordHash} on database.
+        
