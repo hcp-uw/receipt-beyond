@@ -43,6 +43,23 @@ class InvalidReceiptImage(Exception):
 class EdenAIBadRequest(Exception):
     pass
 
+class MissingNewPassword(Exception):
+    pass
+
+class MissingNewEmail(Exception):
+    pass
+
+def handle_missing_new_password(error):
+    response = jsonify({'error': 'Missing new password'})
+    response.status_code = 400
+    return response, response.status_code
+
+def handle_missing_new_email(error):
+    response = jsonify({'error': 'Missing new email'})
+    response.status_code = 400
+    return response, response.status_code
+
+
 def handle_edenai_bad_request(error):
     response = jsonify({'error': 'EdenAI bad request'})
     response.status_code = 500

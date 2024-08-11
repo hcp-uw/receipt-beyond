@@ -7,36 +7,44 @@ from PIL import Image
 from config import Config
 import requests
 import os
+import uuid
+
 receipts_bp = Blueprint('receipts', __name__)
 
-"""
-Parses a receipt image and returns parsed receipt
-return the following:
-{
-    'receipt_date': {date on receipt},
-    'total': {total},
-    'store': {store name},
-    'location': {store address},
-    'purchases': [{'name':{name of item},'price':{unit price},'amount':{amount/quantity}},
-                {'name':{name of item},'price':{unit price},'amount':{amount/quantity}},
-                {'name':{name of item},'price':{unit price},'amount':{amount/quantity}}
-                ...]
-}
 
-"""
 @receipts_bp.route('/receipts_parsing', methods=['POST'])
 @login_required
 def receipts_parsing():
+    """
+    Parses a receipt image and returns parsed receipt
+    return the following:
+    {
+        'receipt_date': {date on receipt},
+        'total': {total},
+        'store': {store name},
+        'location': {store address},
+        'purchases': [{'name':{name of item},'price':{unit price},'amount':{amount/quantity}},
+                    {'name':{name of item},'price':{unit price},'amount':{amount/quantity}},
+                    {'name':{name of item},'price':{unit price},'amount':{amount/quantity}}
+                    ...]
+    }
+    """
     receipt_image = request.files.get('receipt_image')
-    if not receipt_image or receipt_image.filename == '':
+    if not receipt_image:
         raise MissingReceiptImage()
     
     # Create temp directory if it doesn't exist
     temp_dir = os.path.join(os.getcwd(), 'temp')
     os.makedirs(temp_dir, exist_ok=True)
 
-    # Save image into temp folder
-    file_path = os.path.join(temp_dir, receipt_image.filename)
+    # Create a unique filename for image that doesn't exist in temp
+    while True:
+        filename = f"{uuid.uuid4()}.jpg"
+        file_path = os.path.join(temp_dir, filename)
+        if not os.path.exists(file_path):
+            break  # Exit the loop if the filename is unique
+
+    # Save image into temp folder   
     receipt_image.save(file_path)
 
     # EdenAI API parameters 
@@ -50,7 +58,7 @@ def receipts_parsing():
     try:
         with open(file_path, 'rb') as file:
             files = {'file': file}
-            response = requests.post(url, data=data, files=files, headers=headers)
+            response = requests.post(url, data=data, files=files, headers=headers) # EdenAI docs says accepts JPG, PNG, or PDF
     except:
         raise EdenAIBadRequest()
     finally:
@@ -64,7 +72,6 @@ def receipts_parsing():
         'location': result['amazon']['extracted_data'][0]['merchant_information']['address'],
         'purchases': []
     }
-    
     # {'name':{name of item},'price':{unit price},'amount':{amount/quantity}},{'name':{name of item},'price':{unit price},'amount':{amount/quantity}}
     items = result['amazon']['extracted_data'][0]['item_lines']
     for item in items:
@@ -82,16 +89,7 @@ def receipts_parsing():
             info['price'] = item['unit_price']
         
         output['purchases'].append(info)
-    print(output)
-    return output
-    ########################################## ADD LOGIC HERE #################################
-
-    # See receipt_parsing.ipynb for sample calls to EdenAI and retrieving data
-
-    ###########################################################################################
-    # return jsonify({'message': 'to be implemented'}), 201
-    return jsonify(result), 201
-
+    return jsonify(output), 201
 
 
 # Adds a receipt to the user
