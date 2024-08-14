@@ -43,10 +43,10 @@ class InvalidReceiptImage(Exception):
 class EdenAIBadRequest(Exception):
     pass
 
-class MissingNewPassword(Exception):
+class MissingNewEmail(Exception):
     pass
 
-class MissingNewEmail(Exception):
+class MissingNewPasswordError(Exception):
     pass
 
 def handle_missing_new_password(error):
