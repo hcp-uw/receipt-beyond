@@ -36,6 +36,23 @@ export const InnerContainer = styled.View`
   align-items: center;
 `;
 
+export const Container = styled.View`
+  flex: 1;
+  background-color: ${Colors.primary};
+`;
+
+// Change color of the background and border and update the text color(Edit Profile)
+export const TopBar = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  paddingHorizontal: 20px;
+  paddingTop: 30px;
+  height: 100px;
+  background-color: #ffffff;
+  border-bottom-width: 1px;
+  border-bottom-color: #ddd;
+`;
 
 export const PageTitle = styled.Text`
   font-size: 30px;
@@ -61,12 +78,12 @@ export const StyledFormArea = styled.View`
 // Change the style using FROSTED color pal
 export const StyledTextInput = styled.TextInput`
   background-color: ${black};
-  padding: 15px;
+  padding: 12px;
   padding-left: 55px;
-  padding-right: 55px;
+  padding-right: 20px;
   border-radius: 15px;
-  font-size: 16px;
-  height: 60px;
+  font-size: 17px;
+  height: 50px;
   margin-vertical: 3px;
   margin-bottom: 10px;
   color: ${primary};
@@ -74,20 +91,20 @@ export const StyledTextInput = styled.TextInput`
 
 export const StyledInputLabel = styled.Text`
   color: ${tertiary};
-  font-size: 13px;
+  font-size: 15px;
   text-align: left;
 `;
 
 export const LeftIcon = styled.View`
-  left: 15px;
-  top: 38px;
   position: absolute;
+  left: 15px;
+  top: 33px;
   z-index: 1;
 `;
 
 export const RightIcon = styled.TouchableOpacity`
   right: 15px;
-  top: 38px;
+  top: 33px;
   position: absolute;
   z-index: 1;
 `;
