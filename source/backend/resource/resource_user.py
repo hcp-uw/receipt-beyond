@@ -132,7 +132,7 @@ def change_user_password():
         raise MissingNewPasswordError()
     true_password_hash = user_doc.get('passwordHash')
     if not sha256_crypt.verify(current_password, true_password_hash):
-        raise InvalidPassword()
+        raise InvalidOldPassword() 
     newPasswordHash = sha256_crypt.hash(new_password)
     db.collection('Users').document(user_id).update({
         'passwordHash': newPasswordHash,

@@ -48,6 +48,7 @@ error_handlers = [
     (InvalidReceiptImage, handle_invalid_receipt_image),
     (MissingNewPasswordError, handle_missing_new_password),
     (MissingNewEmail, handle_missing_new_email),
+    (InvalidOldPassword, handle_invalid_old_password),
     (Exception, handle_general_error)
 ]
 
