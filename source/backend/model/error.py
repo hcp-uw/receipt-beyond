@@ -49,6 +49,14 @@ class MissingNewEmail(Exception):
 class MissingNewPasswordError(Exception):
     pass
 
+class InvalidOldPassword(Exception):
+    pass
+
+def handle_invalid_old_password(error):
+    response = jsonify({'error': 'Invalid old password'})
+    response.status_code = 401
+    return response, response.status_code
+
 def handle_missing_new_password(error):
     response = jsonify({'error': 'Missing new password'})
     response.status_code = 400
