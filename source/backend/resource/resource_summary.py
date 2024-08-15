@@ -6,7 +6,6 @@ from model.error import *
 
 summary_bp = Blueprint('summary', __name__)
 
-#TODO (Suyash): create a get endpoint
 # Key: date the user spent money, format date as ("YYYY-MM-DD")
 # Value: amount spent on that day (number)
 # The last date should be the current date (e.g. use something like
@@ -37,8 +36,6 @@ def month_exp():
     monthly_summary = db.collection('Users').document(user_id).collection(collection_date).document('Monthly Summary').get().to_dict()
     return jsonify(monthly_summary['total']), 200
 
-
-#TODO (Aarnav): create a get endpoint
 # Key: categories (string)
 # Value: amount spent from beginning of this month to now, aka a running total (number)
 # When a new month rolls in (whether or not a receipt has been posted in the new month),

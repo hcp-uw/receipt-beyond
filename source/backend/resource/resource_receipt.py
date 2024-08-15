@@ -3,14 +3,99 @@ from flask_login import login_required
 from flask_login import current_user, login_required
 from flask import Blueprint, request, jsonify, current_app
 from model.error import *
-
+from PIL import Image
+from config import Config
+import requests
+import os
+import uuid
 
 receipts_bp = Blueprint('receipts', __name__)
+
+
+@receipts_bp.route('/receipts_parsing', methods=['POST'])
+@login_required
+def receipts_parsing():
+    """
+    Parses a receipt image and returns parsed receipt
+    return the following:
+    {
+        'receipt_date': {date on receipt},
+        'total': {total},
+        'store': {store name},
+        'location': {store address},
+        'purchases': [{'name':{name of item},'price':{unit price},'amount':{amount/quantity}},
+                    {'name':{name of item},'price':{unit price},'amount':{amount/quantity}},
+                    {'name':{name of item},'price':{unit price},'amount':{amount/quantity}}
+                    ...]
+    }
+    """
+    receipt_image = request.files.get('receipt_image')
+    if not receipt_image:
+        raise MissingReceiptImage()
+    
+    # Create temp directory if it doesn't exist
+    temp_dir = os.path.join(os.getcwd(), 'temp')
+    os.makedirs(temp_dir, exist_ok=True)
+
+    # Create a unique filename for image that doesn't exist in temp
+    while True:
+        filename = f"{uuid.uuid4()}.jpg"
+        file_path = os.path.join(temp_dir, filename)
+        if not os.path.exists(file_path):
+            break  # Exit the loop if the filename is unique
+
+    # Save image into temp folder   
+    receipt_image.save(file_path)
+
+    # EdenAI API parameters 
+    headers = {"Authorization": f"Bearer {Config.EDENAI_API_KEY}"}
+    url = "https://api.edenai.run/v2/ocr/financial_parser"
+    data = {
+        "providers": "amazon", # DO NOT CHANGE PROVIDER
+        "language": "en",
+        "document_type" : "receipt",
+    }
+    try:
+        with open(file_path, 'rb') as file:
+            files = {'file': file}
+            response = requests.post(url, data=data, files=files, headers=headers) # EdenAI docs says accepts JPG, PNG, or PDF
+    except:
+        raise EdenAIBadRequest()
+    finally:
+        os.remove(file_path)
+    result = response.json()
+    
+    output = {
+        'receipt_date': result['amazon']['extracted_data'][0]["financial_document_information"]['invoice_date'],
+        'total': result['amazon']['extracted_data'][0]['payment_information']['amount_due'],
+        'store': result['amazon']['extracted_data'][0]['merchant_information']['name'],
+        'location': result['amazon']['extracted_data'][0]['merchant_information']['address'],
+        'purchases': []
+    }
+    # {'name':{name of item},'price':{unit price},'amount':{amount/quantity}},{'name':{name of item},'price':{unit price},'amount':{amount/quantity}}
+    items = result['amazon']['extracted_data'][0]['item_lines']
+    for item in items:
+        info = {}
+        info['name'] = item['description']
+        
+        if item['quantity'] == None: 
+            info['quantity'] = 1.0
+        else:
+            info['quantity'] = round(item['amount_line']/item['unit_price'], 2)
+            
+        if item['unit_price'] == None:
+            info['price'] = item['amount_line']
+        else:
+            info['price'] = item['unit_price']
+        
+        output['purchases'].append(info)
+    return jsonify(output), 201
+
 
 # Adds a receipt to the user
 @receipts_bp.route('/receipts', methods=['POST'])
 @login_required
-def post():
+def receipts():
     db = current_app.db
     user_id = current_user.id
     data = request.get_json()
@@ -60,10 +145,10 @@ def post():
     return jsonify({'message': 'Receipt uploaded successfully.'}), 201
 
 
-#TODO: add a put endpoint for when the user edits receipts. Make sure to roll changes over to summary info in db.
+#TODO: (lower priority) add a put endpoint for when the user edits receipts. Make sure to roll changes over to summary info in db.
 # Should take a receipt id, and the changes to be made
 
-#TODO: add a delete endpoint for when the user deletes a receipt. Make sure changes roll over to sumarry info in database.
+#TODO: (lower priority) add a delete endpoint for when the user deletes a receipt. Make sure changes roll over to sumarry info in database.
 
 
 # Returns a list of all receipts of the current user.

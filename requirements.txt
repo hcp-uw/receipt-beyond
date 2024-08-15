@@ -30,8 +30,11 @@ itsdangerous==2.2.0
 Jinja2==3.1.4
 MarkupSafe==2.1.5
 msgpack==1.0.8
+numpy==2.0.1
+opencv-python==4.10.0.84
 packaging==24.1
 passlib==1.7.4
+pillow==10.4.0
 pluggy==1.5.0
 proto-plus==1.24.0
 protobuf==4.25.3
@@ -43,7 +46,9 @@ pyparsing==3.1.2
 pytest==8.2.2
 requests==2.32.3
 rsa==4.9
+setuptools==69.5.1
 tomli==2.0.1
 uritemplate==4.1.1
 urllib3==2.2.2
 Werkzeug==3.0.3
+wheel==0.43.0

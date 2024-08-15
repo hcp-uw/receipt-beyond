@@ -34,6 +34,55 @@ class MissingUserDate(Exception):
 class InvalidDateFormat(Exception):
     pass
 
+class MissingReceiptImage(Exception):
+    pass
+
+class InvalidReceiptImage(Exception):
+    pass
+
+class EdenAIBadRequest(Exception):
+    pass
+
+class MissingNewEmail(Exception):
+    pass
+
+class MissingNewPasswordError(Exception):
+    pass
+
+class InvalidOldPassword(Exception):
+    pass
+
+def handle_invalid_old_password(error):
+    response = jsonify({'error': 'Invalid old password'})
+    response.status_code = 401
+    return response, response.status_code
+
+def handle_missing_new_password(error):
+    response = jsonify({'error': 'Missing new password'})
+    response.status_code = 400
+    return response, response.status_code
+
+def handle_missing_new_email(error):
+    response = jsonify({'error': 'Missing new email'})
+    response.status_code = 400
+    return response, response.status_code
+
+
+def handle_edenai_bad_request(error):
+    response = jsonify({'error': 'EdenAI bad request'})
+    response.status_code = 500
+    return response, response.status_code
+
+def handle_invalid_receipt_image(error):
+    response = jsonify({'error': 'Invalid image'})
+    response.status_code = 400
+    return response, response.status_code
+
+def handle_missing_receipt_image(error):
+    response = jsonify({'error': 'Missing receipt image'})
+    response.status_code = 400
+    return response, response.status_code
+
 def handle_user_already_exists(error):
     response = jsonify({'error': 'User already exists'})
     response.status_code = 400
