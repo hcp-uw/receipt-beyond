@@ -162,7 +162,7 @@ def receipt_date_brackets():
     return jsonify(receipt_date_brackets), 200
 
 # Gets all receipts for a given YYYY-MM
-@receipts_bp.route('/get_receipts', methods=['GET'])
+@receipts_bp.route('/get_receipts', methods=['POST'])
 @login_required
 def get_receipts():
     data = request.get_json()
