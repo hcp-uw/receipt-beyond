@@ -23,9 +23,9 @@ def receipts_parsing():
         'total': {total},
         'store': {store name},
         'location': {store address},
-        'purchases': [{'name':{name of item},'price':{unit price},'amount':{amount/quantity}},
-                    {'name':{name of item},'price':{unit price},'amount':{amount/quantity}},
-                    {'name':{name of item},'price':{unit price},'amount':{amount/quantity}}
+        'purchases': [{'name':{name of item},'price':{unit price},'quantity':{quantity}},
+                    {'name':{name of item},'price':{unit price},'quantity':{quantity}},
+                    {'name':{name of item},'price':{unit price},'quantity':{quantity}}
                     ...]
     }
     """
@@ -72,7 +72,7 @@ def receipts_parsing():
         'location': result['amazon']['extracted_data'][0]['merchant_information']['address'],
         'purchases': []
     }
-    # {'name':{name of item},'price':{unit price},'amount':{amount/quantity}},{'name':{name of item},'price':{unit price},'amount':{amount/quantity}}
+    # {'name':{name of item},'price':{unit price},'quantity':{quantity}},{'name':{name of item},'price':{unit price},'quantity':{quantity}}
     items = result['amazon']['extracted_data'][0]['item_lines']
     for item in items:
         info = {}
@@ -143,6 +143,39 @@ def receipts():
             'category': {receipt.category:receipt.total}
         })
     return jsonify({'message': 'Receipt uploaded successfully.'}), 201
+
+
+# Gets all the YYYY-MM the user has receipts in
+@receipts_bp.route('/receipt_date_brackets', methods=['GET'])
+@login_required
+def receipt_date_brackets():
+    db = current_app.db
+    user_id = current_user.id
+    user_ref = db.collection('Users').document(user_id)
+    receipt_collections = user_ref.collections()
+    receipt_date_brackets = []
+    for receipt_collection in receipt_collections:
+        receipt_date_brackets.append(receipt_collection.id)
+    receipt_date_brackets = sorted(receipt_date_brackets, reverse = True) # sort with most recent YYYY-MM at front of list
+    return jsonify(receipt_date_brackets), 200
+
+# Gets all receipts for a given YYYY-MM
+@receipts_bp.route('/get_receipts', methods=['GET'])
+@login_required
+def get_receipts():
+    data = request.get_json()
+    year_month = data.get('year_month')
+    db = current_app.db
+    user_id = current_user.id
+    receipt_collection_ref = db.collection('Users').document(user_id).collection(year_month)
+    receipts = receipt_collection_ref.stream()
+    receipts_list = []
+    for receipt in receipts:
+        if receipt.id != 'Monthly Summary':
+            receipts_list.append(receipt.to_dict())
+    return receipts_list
+
+    
 
 
 #TODO: (lower priority) add a put endpoint for when the user edits receipts. Make sure to roll changes over to summary info in db.
