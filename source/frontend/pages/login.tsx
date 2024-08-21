@@ -4,8 +4,11 @@ import {Colors, StartLogo, StyledContainer, InnerContainer, PageTitle, Spacer, S
 import { Octicons } from "@expo/vector-icons";
 import KeyboardAvoidingWrapper from "@/components/keyboardAvoidingWrapper";
 
-// COPY the code for userid and password from SignUP
-// could do either userid or email to signin with the password.
+/** 
+ * FUTURE: 
+ *      - Google Auth
+ *      - Forgot Password
+*/
 
 interface LoginProps {
   onLogin: () => void
@@ -44,18 +47,20 @@ export class Login extends Component<LoginProps, LoginState> {
             <PageTitle>Login</PageTitle>
             <Spacer></Spacer>
             <StyledFormArea>
+
             <View>
               <StyledInputLabel>User ID OR Email</StyledInputLabel>
               <LeftIcon>
                 <Octicons name="person" size={30} color={Colors.darkLight}/>
               </LeftIcon>
               <StyledTextInput
-                placeholder="bob123 OR example@gmail.com"
+                placeholder="bob123 OR abc@gmail.com"
                 placeholderTextColor={Colors.darkLight}
                 value={this.state.user_id}
                 onChangeText={(value) => this.handleChange('user_id', value)}
               />
             </View>
+
             <View>
               <StyledInputLabel>Password</StyledInputLabel>
               <LeftIcon>
@@ -74,9 +79,11 @@ export class Login extends Component<LoginProps, LoginState> {
                 <Octicons name="eye" size={30} color={Colors.darkLight}/>
               </RightIcon>
             </View>
+
             <Spacer></Spacer>
             <Button title="Login" onPress={this.handleLogin}/>
             <MsgBox type={this.state.messageType}>{this.state.message}</MsgBox>
+
             </StyledFormArea>
           </InnerContainer>
         </StyledContainer>
@@ -124,11 +131,14 @@ export class Login extends Component<LoginProps, LoginState> {
        * const args = (this.state.user_id !== "") ? args1 : args2;
        */
       // Use this for testing:
+
+      // Could send the email as the user_id attribute
       const args = {user_id: this.state.user_id, password: this.state.password};
 
-      fetch("https://davye.pythonanywhere.com/api/login", {
+      fetch("https://receiptplus.pythonanywhere.com/api/login", {
         method: "POST", body: JSON.stringify(args),
-        headers: {"Content-Type": "application/json"}
+        headers: {"Content-Type": "application/json"},
+        credentials: 'include'
       })
       .then(this.handleResponse)
       .catch(() => this.handleError("failed to connect to the server"));

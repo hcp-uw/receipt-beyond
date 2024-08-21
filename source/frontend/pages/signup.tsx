@@ -49,6 +49,7 @@ export class SignUp extends Component<SignUpProps, SignUpState> {
             <PageTitle>SIGN UP</PageTitle>
             <Spacer></Spacer>
             <StyledFormArea>
+
             <View>
               <StyledInputLabel>User ID</StyledInputLabel>
               <LeftIcon>
@@ -61,6 +62,20 @@ export class SignUp extends Component<SignUpProps, SignUpState> {
                 onChangeText={(value) => this.handleChange('user_id', value)}
               />
             </View>
+
+            <View>
+            <StyledInputLabel>Email</StyledInputLabel>
+              <LeftIcon>
+                <Octicons name="mail" size={30} color={Colors.darkLight}/>
+              </LeftIcon>
+              <StyledTextInput
+                placeholder="bob123@gmail.com"
+                placeholderTextColor={Colors.darkLight}
+                value={this.state.email}
+                onChangeText={(value) => this.handleChange('email', value)}
+              />
+            </View>
+
             <View>
               <StyledInputLabel>Password</StyledInputLabel>
               <LeftIcon>
@@ -78,8 +93,9 @@ export class SignUp extends Component<SignUpProps, SignUpState> {
                 <Octicons name="eye" size={30} color={Colors.darkLight}/>
               </RightIcon>
             </View>
+
             <View>
-            <StyledInputLabel>Confirm Password</StyledInputLabel>
+              <StyledInputLabel>Confirm Password</StyledInputLabel>
               <LeftIcon>
                 <Octicons name="lock" size={30} color={Colors.darkLight}/>
               </LeftIcon>
@@ -94,18 +110,7 @@ export class SignUp extends Component<SignUpProps, SignUpState> {
                 <Octicons name="eye" size={30} color={Colors.darkLight}/>
               </RightIcon>
             </View>
-            <View>
-            <StyledInputLabel>Email</StyledInputLabel>
-              <LeftIcon>
-                <Octicons name="mail" size={30} color={Colors.darkLight}/>
-              </LeftIcon>
-              <StyledTextInput
-                placeholder="bob123@gmail.com"
-                placeholderTextColor={Colors.darkLight}
-                value={this.state.email}
-                onChangeText={(value) => this.handleChange('email', value)}
-              />
-            </View>
+
             <Spacer></Spacer>
             <Button title="Submit" onPress={this.handleSubmit}/>
             <MsgBox type={this.state.messageType}>{this.state.message}</MsgBox>
@@ -114,6 +119,7 @@ export class SignUp extends Component<SignUpProps, SignUpState> {
             <TouchableOpacity onPress={() => this.handleLink()}>
               <Text style={{color: Colors.blue}}>Already have an account?</Text>
             </TouchableOpacity>
+
             </StyledFormArea>
           </InnerContainer>
         </StyledContainer>
@@ -167,9 +173,10 @@ export class SignUp extends Component<SignUpProps, SignUpState> {
       const currDate = `${year}-${month}-${day}`;
 
       const args = {user_id: this.state.user_id, password: this.state.password, email:this.state.email, date: currDate};
-      fetch("https://davye.pythonanywhere.com/api/register", {
+      fetch("https://receiptplus.pythonanywhere.com/api/register", {
         method: "POST", body: JSON.stringify(args),
-        headers: {"Content-Type": "application/json"}
+        headers: {"Content-Type": "application/json"},
+        credentials: "include"
       })
       .then(this.handleResponse)
       .catch(() => this.handleError("failed to connect to the server"));
