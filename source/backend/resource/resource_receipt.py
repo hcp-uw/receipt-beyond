@@ -1,3 +1,4 @@
+from datetime import datetime
 from model.receipt import Receipt
 from flask_login import login_required
 from flask_login import current_user, login_required
@@ -105,7 +106,8 @@ def receipts():
         raise MissingReceiptTotal()
     receipt = Receipt(receipt_date=data.get('receipt_date'), category=data.get('category'), total=float(data.get('total')),
                         store=data.get('store'), location=data.get('location'), purchases=data.get('purchases'))
-    collection_date = receipt.receipt_date.strftime('%Y-%m')
+    receipt_date_object = datetime.strptime(data.get('receipt_date'), '%Y-%m-%d')
+    collection_date = receipt_date_object.strftime('%Y-%m')
 
     receipt_collection = db.collection('Users').document(user_id).collection(collection_date)
     receipt_collection.add(receipt.to_dict())
@@ -116,10 +118,10 @@ def receipts():
 
         ### Update monthly running total
         total = receipt_summary['total']
-        if not (str(receipt.receipt_date.day) in total):
-            total[str(receipt.receipt_date.day)] = receipt.total
+        if not (str(receipt_date_object.day) in total):
+            total[str(receipt_date_object.day)] = receipt.total
         else:
-            total[str(receipt.receipt_date.day)] = total[str(receipt.receipt_date.day)] + receipt.total
+            total[str(receipt_date_object.day)] = total[str(receipt_date_object.day)] + receipt.total
 
         ### Update category totals
         category = receipt_summary["category"]
@@ -139,7 +141,7 @@ def receipts():
 
         ### Update Firebase
         receipt_summary_ref.set({
-            'total': {str(receipt.receipt_date.day):receipt.total},
+            'total': {str(receipt_date_object.day):receipt.total},
             'category': {receipt.category:receipt.total}
         })
     return jsonify({'message': 'Receipt uploaded successfully.'}), 201
