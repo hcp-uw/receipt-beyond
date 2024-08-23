@@ -175,7 +175,7 @@ def get_receipts():
     for receipt in receipts:
         if receipt.id != 'Monthly Summary':
             receipts_list.append(receipt.to_dict())
-    return receipts_list
+    return sorted(receipts_list, key=lambda x: x['date'], reverse=True)
 
     
 
