@@ -22,20 +22,29 @@ def login():
         raise MissingUserIDError()
     if not password:
         raise MissingPasswordError()
-    users_ref = db.collection('Users')
-    docs = users_ref.stream()
-    for doc in docs:
-        user_id_db = doc.id
-        email_db = doc.get('email')
-        if user_id == user_id_db or user_id == email_db:
-            true_password_hash = doc.get('passwordHash')
-            if not sha256_crypt.verify(password, true_password_hash):
-                raise InvalidPassword()
-            else:
-                user = User(user_id)
-                login_user(user)
-                return jsonify({"message": f'{current_user.id} logged in successfully.'}), 200
-    raise UserNotFound()
+    user_ref = db.collection('Users').document(user_id).get()
+    if not user_ref.exists:
+        raise UserNotFound()
+    true_password_hash = user_ref.get('passwordHash')
+    if not sha256_crypt.verify(password, true_password_hash):
+        raise InvalidPassword()
+    user = User(user_id)
+    login_user(user)
+    return jsonify({"message": f'{current_user.id} logged in successfully.'}), 200
+    # users_ref = db.collection('Users')
+    # docs = users_ref.stream()
+    # for doc in docs:
+    #     user_id_db = doc.id
+    #     email_db = doc.get('email')
+    #     if user_id == user_id_db or user_id == email_db:
+    #         true_password_hash = doc.get('passwordHash')
+    #         if not sha256_crypt.verify(password, true_password_hash):
+    #             raise InvalidPassword()
+    #         else:
+    #             user = User(user_id)
+    #             login_user(user)
+    #             return jsonify({"message": f'{current_user.id} logged in successfully.'}), 200
+    # raise UserNotFound()
 
 @auth_bp.route('/logout', methods=['POST'])
 @login_required
