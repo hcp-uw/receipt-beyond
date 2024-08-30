@@ -1,52 +1,69 @@
-import React, { useState, useEffect } from "react";
-import { Text, View, StyleSheet, ScrollView } from "react-native";
-import DateButton from "../components/dateButton";
-import { useRouter } from "expo-router"; // Import the useRouter hook for navigation
+import React, { Component } from "react";
+import { View, StyleSheet, ScrollView } from "react-native";
+import DateBracketButton from "../components/dateButton"; // Adjust the path
+import { NavigationProp, RouteProp } from "@react-navigation/native";
+import { HistoryStackParamList } from "../app/StackParamList";
 
-export default function History() {
-  const [dateBrackets, setDateBrackets] = useState<string[]>([]);
-  const router = useRouter(); // Initialize the router
+interface HistoryProps {
+  navigation: NavigationProp<HistoryStackParamList, "History">;
 
-  useEffect(() => {
-    const fetchDateBrackets = async () => {
-      try {
-        const response = await fetch(
-          "https://receiptplus.pythonanywhere.com/api/receipt_date_brackets",
-          {
-            method: "GET",
-            credentials: "include",
-          }
-        );
-        const data = await response.json();
-        setDateBrackets(data);
-      } catch (error) {
-        console.error("Error fetching date brackets:", error);
-      }
+  route: RouteProp<HistoryStackParamList, "History">;
+}
+
+interface HistoryState {
+  dateBrackets: string[];
+}
+
+export default class History extends Component<HistoryProps, HistoryState> {
+  constructor(props: HistoryProps) {
+    super(props);
+    this.state = {
+      dateBrackets: [],
     };
-    fetchDateBrackets();
-  }, []);
+  }
 
-  const handleButtonPress = (dateString: string) => {
-    // Navigate to the DetailedHistory screen and pass the date as a parameter
-    router.push({
-      pathname: "/DetailedHistoryTab", // Make sure you have the correct path for this screen
-      params: { year_month: dateString },
+  componentDidMount() {
+    this.fetchDateBrackets();
+  }
+
+  fetchDateBrackets = async () => {
+    try {
+      const response = await fetch(
+        "https://receiptplus.pythonanywhere.com/api/receipt_date_brackets",
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      const data = await response.json();
+      this.setState({ dateBrackets: data });
+    } catch (error) {
+      console.error("Error fetching date brackets:", error);
+    }
+  };
+
+  handleButtonPress = (dateString: string) => {
+    // Navigate to DetailedHistory screen and pass the date
+    this.props.navigation.navigate("DetailedHistory", {
+      year_month: dateString,
     });
   };
 
-  return (
-    <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollViewContent}>
-        {dateBrackets.map((dateString, index) => (
-          <DateButton
-            key={index}
-            dateString={dateString}
-            onPress={() => handleButtonPress(dateString)}
-          />
-        ))}
-      </ScrollView>
-    </View>
-  );
+  render() {
+    return (
+      <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.scrollViewContent}>
+          {this.state.dateBrackets.map((dateString, index) => (
+            <DateBracketButton
+              key={index}
+              dateString={dateString}
+              onPress={() => this.handleButtonPress(dateString)}
+            />
+          ))}
+        </ScrollView>
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -58,6 +75,6 @@ const styles = StyleSheet.create({
   },
   scrollViewContent: {
     alignItems: "center",
-    paddingVertical: 20, // Optional: add padding for better spacing
+    paddingVertical: 20,
   },
 });

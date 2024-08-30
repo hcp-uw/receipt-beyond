@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import { View, FlatList, StyleSheet } from "react-native";
+import { RouteProp } from "@react-navigation/native";
+import { HistoryStackParamList } from "@/app/StackParamList";
 import ReceiptForm from "../components/receiptForm";
 
 interface Receipt {
@@ -11,8 +13,9 @@ interface Receipt {
   total: number;
 }
 
+// Define props to include navigation and route
 interface DetailedHistoryProps {
-  year_month: string;
+  route: RouteProp<HistoryStackParamList, "DetailedHistory">;
 }
 
 interface DetailedHistoryState {
@@ -35,8 +38,7 @@ export default class DetailedHistory extends Component<
   }
 
   fetchReceipts = async () => {
-    const { year_month } = this.props;
-    // console.log(year_month);
+    const { year_month } = this.props.route.params;
     try {
       const response = await fetch(
         `https://receiptplus.pythonanywhere.com/api/get_receipts`,
