@@ -78,7 +78,7 @@ function MyTabs() {
   return (
     <Tab.Navigator
       screenOptions={{
-        headerShown: false, // Disable the header in the tab navigator
+        headerShown: false,
       }}
     >
       <Tab.Screen

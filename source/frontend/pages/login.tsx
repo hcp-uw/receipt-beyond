@@ -58,7 +58,7 @@ export class Login extends Component<LoginProps, LoginState> {
             {/** Replace the logo here */}
             <StartLogo
               resizeMode="cover"
-              source={require("../assets/react-logo.png")}
+              source={require("../assets/ReceiptBeyondTransparent.png")}
             />
             <PageTitle>Login</PageTitle>
             <Spacer></Spacer>

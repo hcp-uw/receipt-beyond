@@ -5,10 +5,9 @@ import { Login } from "@/pages/login";
 import { NavigationContainer } from "@react-navigation/native";
 import MyTabs from "./MainNavigator";
 import StartPage from "@/pages/startpage";
-const AuthStack = createStackNavigator();
 
+const AuthStack = createStackNavigator();
 function AuthStackNavigator() {
-  console.log("hello");
   return (
     <AuthStack.Navigator
       initialRouteName="StartPage"
