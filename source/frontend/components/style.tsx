@@ -1,22 +1,21 @@
-import styled from 'styled-components/native';
-import { View, Text, TouchableOpacity, TextInput, Image } from 'react-native';
-import Constants from 'expo-constants';
-
+import styled from "styled-components/native";
+import { View, Text, TouchableOpacity, TextInput, Image } from "react-native";
+import Constants from "expo-constants";
 
 const StatusBarHeight = Constants.statusBarHeight;
 
 // colors
 export const Colors = {
-  primary: '#ffffff',
-  black: '#000000',
-  tertiary: '#1F2937',
-  darkLight: '#9CA3AF',
-  blue: '#007AFF',
-  green: '#10B981',
-  red: '#EF4444'
+  primary: "#ffffff",
+  black: "#000000",
+  tertiary: "#1F2937",
+  darkLight: "#9CA3AF",
+  blue: "#007AFF",
+  green: "#10B981",
+  red: "#EF4444",
 };
 
-const { primary, black, tertiary, darkLight} = Colors;
+const { primary, black, tertiary, darkLight } = Colors;
 
 export const StartLogo = styled.Image`
   width: 150px;
@@ -46,8 +45,8 @@ export const TopBar = styled.View`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  paddingHorizontal: 20px;
-  paddingTop: 30px;
+  paddinghorizontal: 20px;
+  paddingtop: 30px;
   height: 100px;
   background-color: #ffffff;
   border-bottom-width: 1px;
@@ -109,10 +108,10 @@ export const RightIcon = styled.TouchableOpacity`
   z-index: 1;
 `;
 
-export const MsgBox = styled.Text<{type: string}>`
+export const MsgBox = styled.Text<{ type: string }>`
   text-align: center;
   font-size: 13px;
-  color: ${props => props.type == "ERROR" ? Colors.red : Colors.green};
+  color: ${(props) => (props.type == "ERROR" ? Colors.red : Colors.green)};
 `;
 
 export const Line = styled.View`

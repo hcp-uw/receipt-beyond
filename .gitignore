@@ -3,4 +3,5 @@ source/backend/receipt_parsing.ipynb
 app.log
 receiptplusenv/
 __pycache__
-.pyc
+*.pyc
+*.cpython*
