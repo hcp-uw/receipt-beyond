@@ -144,7 +144,50 @@ def receipts():
             'total': {str(receipt_date_object.day):receipt.total},
             'category': {receipt.category:receipt.total}
         })
+    
+    # Call the helper function for each purchase item in the receipt
+    for item in receipt.purchases:
+        update_price_watch(
+            zip_code=data.get('location'),  # Assuming 'location' corresponds to zip_code
+            store_address=data.get('store'), 
+            store_name=receipt.store,
+            item_name=item.get('name'),
+            item_price=item.get('price'),
+            current_date=data.get('receipt_date')
+        )
     return jsonify({'message': 'Receipt uploaded successfully.'}), 201
+
+def update_price_watch(zip_code, store_address, store_name, item_name, item_price, current_date):
+    db = current_app.db
+    address_to_price = db.collection('ZipCodes').document(zip_code).collection('Items').document(item_name).collection('stores').document(store_name).collection('Locations').document(store_address)
+    
+    doc = address_to_price.get()
+
+    if doc.exists:
+        # Document exists; retrieve the stored data
+        stored_data = doc.to_dict()
+        stored_date = stored_data.get('date')
+
+        # Compare the stored date with the current date
+        if stored_date:
+            if current_date > stored_date:
+                address_to_price.update({
+                    'date': current_date,
+                    'price': item_price
+                })
+        else:
+            # If there is no stored date, add the current date and price
+            address_to_price.update({
+                'date': current_date,
+                'price': item_price
+            })
+
+    else:
+        # Document does not exist; create it with the current date and price
+        address_to_price.set({
+            'date': current_date,
+            'price': item_price
+        })
 
 
 # Gets all the YYYY-MM the user has receipts in
