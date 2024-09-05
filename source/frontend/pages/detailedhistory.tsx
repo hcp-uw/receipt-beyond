@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { View, FlatList, StyleSheet } from "react-native";
-import { RouteProp } from "@react-navigation/native";
+import { NavigationProp, RouteProp } from "@react-navigation/native";
 import { HistoryStackParamList } from "@/app/StackParamList";
 import ReceiptForm from "../components/receiptForm";
 
@@ -15,6 +15,7 @@ interface Receipt {
 
 // Define props to include navigation and route
 interface DetailedHistoryProps {
+  navigation: NavigationProp<HistoryStackParamList, "DetailedHistory">;
   route: RouteProp<HistoryStackParamList, "DetailedHistory">;
 }
 

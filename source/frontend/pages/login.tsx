@@ -1,5 +1,8 @@
 import { Text, View, Button, TouchableOpacity } from "react-native";
 import React, { Component, ChangeEvent } from "react";
+import { StackNavigationProp } from "@react-navigation/stack";
+import {RouteProp} from "@react-navigation/native";
+import { AuthStackParamList } from "../app/StackParamList";
 import {
   Colors,
   StartLogo,
@@ -25,7 +28,9 @@ import KeyboardAvoidingWrapper from "@/components/keyboardAvoidingWrapper";
  */
 
 interface LoginProps {
-  onLogin: () => void;
+  navigation: StackNavigationProp<AuthStackParamList, "Login">;
+
+  route: RouteProp<AuthStackParamList, "Login">;
 }
 
 interface LoginState {
@@ -160,16 +165,6 @@ export class Login extends Component<LoginProps, LoginState> {
 
   handleLogin = () => {
     if (this.validate()) {
-      // TODO: change this depending on how the backend is set up
-      /**
-       * const args1 = {user_id: this.state.user_id, password: this.state.password};
-       * const args2 = {email: this.state.email, password: this.state.password};
-       *
-       * const args = (this.state.user_id !== "") ? args1 : args2;
-       */
-      // Use this for testing:
-
-      // Could send the email as the user_id attribute
       const args = {
         user_id: this.state.user_id,
         password: this.state.password,
@@ -191,7 +186,10 @@ export class Login extends Component<LoginProps, LoginState> {
     if (res.ok) {
       console.log("success");
       return res.json().then((data) => {
-        this.props.onLogin();
+        this.props.navigation.reset({
+          index: 0,
+          routes: [{name: "Main"}]
+        });
       });
     } else {
       // errorData is the object return from the Response for error status >= 400

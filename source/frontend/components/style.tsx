@@ -40,19 +40,6 @@ export const Container = styled.View`
   background-color: ${Colors.primary};
 `;
 
-// Change color of the background and border and update the text color(Edit Profile)
-export const TopBar = styled.View`
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  paddinghorizontal: 20px;
-  paddingtop: 30px;
-  height: 100px;
-  background-color: #ffffff;
-  border-bottom-width: 1px;
-  border-bottom-color: #ddd;
-`;
-
 export const PageTitle = styled.Text`
   font-size: 30px;
   text-align: center;
@@ -119,4 +106,27 @@ export const Line = styled.View`
   width: 100%;
   background-color: ${darkLight};
   margin-vertical: 10px;
+`;
+
+export const CenteredView = styled.View`
+  flex: 1;
+  justifyContent: center;
+  alignItems: center;
+  marginTop: 22px;
+`;
+
+export const ModalView = styled.View`
+  margin: 20px;
+  backgroundColor: lightgreen;
+  borderRadius: 20px;
+  padding: 35px;
+  alignItems: center;
+  shadowColor: #000;
+  shadowOffset: {
+    width: 0px;
+    height: 2px;
+  };
+  shadowOpacity: 0.25;
+  shadowRadius: 4px;
+  elevation: 5;
 `;

@@ -1,4 +1,10 @@
 // Define param lists for each stack if they have unique parameters
+export type AuthStackParamList = {
+  Start: undefined;
+  SignUp: undefined;
+  Login: undefined;
+  Main: undefined;
+};
 
 // Param list for the Summary stack
 export type SummaryStackParamList = {
@@ -28,5 +34,6 @@ export type HistoryStackParamList = {
 // Param list for the Account stack
 export type AccountStackParamList = {
   Account: undefined;
+  EditProfile: { view: "email" | "password"}
   // Add other screens and their params in Account Stack if necessary
 };

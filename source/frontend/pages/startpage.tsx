@@ -1,42 +1,45 @@
 import React, { Component } from "react";
+import {View, Text, Button} from "react-native";
 import { SignUp } from "./signup";
 import { Login } from "./login";
+import { StackNavigationProp } from "@react-navigation/stack";
+import {RouteProp} from "@react-navigation/native";
+import { AuthStackParamList } from "../app/StackParamList";
+
+interface StartPageProps {
+  navigation: StackNavigationProp<AuthStackParamList, "Start">;
+
+  route: RouteProp<AuthStackParamList, "Start">;
+}
 
 interface StartPageState {
   loginStatus: boolean;
-  showLogin: boolean;
 }
 
-export default class StartPage extends Component<{}, StartPageState> {
-  constructor(props: {}) {
+export default class StartPage extends Component<StartPageProps, StartPageState> {
+  constructor(props: StartPageProps) {
     super(props);
     this.state = {
-      loginStatus: false,
-      showLogin: false,
+      loginStatus: false
     };
   }
 
-  componentDidUpdate() {
-    if (this.state.loginStatus) {
-      this.props.navigation.replace("Main"); // Navigate to the main app
-    }
-  }
-
   render() {
-    if (!this.state.showLogin) {
-      return (
-        <SignUp onSignUp={this.updateStatus} onToLogin={this.navigateToLogin} />
-      );
-    } else {
-      return <Login onLogin={this.updateStatus} />;
-    }
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Text>Welcome to Receipt & Beyond</Text>
+        <Button title="Get Started" onPress={this.navigateToSignUp} />
+      </View>
+    );
   }
 
-  navigateToLogin = () => {
-    this.setState({ showLogin: true });
-  };
-
-  updateStatus = () => {
-    this.setState({ loginStatus: true });
+  navigateToSignUp = () => {
+    this.props.navigation.replace("SignUp");
   };
 }
