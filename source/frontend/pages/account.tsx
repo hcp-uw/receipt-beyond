@@ -1,10 +1,13 @@
 import { Text, View, Button, TouchableOpacity } from "react-native";
 import React, { Component } from "react";
-import { Container, Spacer, TopBar } from "../components/style";
+import { Container, Spacer } from "../components/style";
 import Feather from "@expo/vector-icons/Feather";
+import { NavigationProp, RouteProp } from "@react-navigation/native";
+import { AccountStackParamList } from "../app/StackParamList";
 
 interface AccountProps {
-  onClicked: (newView: "email" | "password") => void;
+  navigation: NavigationProp<AccountStackParamList, "Account">;
+  route: RouteProp<AccountStackParamList, "Account">;
 }
 
 interface AccountState {
@@ -22,32 +25,24 @@ export class Account extends Component<AccountProps, AccountState> {
       name: "",
       email: "",
       date_joined: "",
-      loading: true,
+      loading: true
     };
   }
 
   componentDidMount(): void {
-    this.fetchUserData();
+    this.props.navigation.addListener("focus", () => {
+      this.fetchUserData();
+    })
   }
 
   render = (): JSX.Element => {
+    // TODO: Show something when loading
     if (this.state.loading) {
       return <View></View>;
     }
 
     return (
       <Container>
-        {/**
-         * STYLE IDEA: Bar Block on the top
-         * <View
-          style={{
-            paddingTop: 200,
-            backgroundColor: "#768A96",
-            borderBottomWidth: 1,
-            borderBottomColor: "#ddd"
-          }} 
-        >
-        </View>*/}
         <View
           style={{
             flex: 1,
@@ -121,7 +116,9 @@ export class Account extends Component<AccountProps, AccountState> {
     }
   };
 
-  handleEdit = (view: "email" | "password") => {
-    this.props.onClicked(view);
+  handleEdit = (newView: "email" | "password") => {
+    this.props.navigation.navigate("EditProfile", {
+      view: newView
+    });
   };
 }

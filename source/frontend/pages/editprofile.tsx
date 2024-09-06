@@ -1,12 +1,16 @@
-import { Text, View, Button, TextInput, TouchableOpacity} from "react-native";
+import { Text, View, TouchableOpacity, Modal} from "react-native";
+// npx expo install expo-blur
+// import { BlurView } from "expo-blur";
 import React, {Component} from "react";
-import {Ionicons, Octicons} from '@expo/vector-icons';
-import {Colors, Spacer, StyledTextInput, StyledInputLabel, LeftIcon, RightIcon, MsgBox, Container, TopBar} from "../components/style";
+import {Octicons} from '@expo/vector-icons';
+import { NavigationProp, RouteProp } from "@react-navigation/native";
+import { AccountStackParamList } from "@/app/StackParamList";
+import {Colors, Spacer, StyledTextInput, StyledInputLabel, LeftIcon, RightIcon, MsgBox, Container, CenteredView, ModalView} from "../components/style";
 import KeyboardAvoidingWrapper from "@/components/keyboardAvoidingWrapper";
 
 interface EditProfileProps {
-  onClicked: (newView: "account") => void
-  view: "email" | "password"
+  navigation: NavigationProp<AccountStackParamList, "EditProfile">;
+  route: RouteProp<AccountStackParamList, "EditProfile">;
 }
 
 interface EditProfileState {
@@ -20,13 +24,16 @@ interface EditProfileState {
   hideOldPass: boolean,
   hideNewPass: boolean,
   hideConfirmPass: boolean
+  // showModal: boolean
 }
 
 export class EditProfile extends Component<EditProfileProps, EditProfileState> {
   constructor(props: EditProfileProps) {
     super(props);
+    const { view } = props.route.params;
+
     this.state = {
-      view:props.view,
+      view,
       newEmail: "",
       oldPassword: "",
       newPassword: "",
@@ -36,27 +43,45 @@ export class EditProfile extends Component<EditProfileProps, EditProfileState> {
       hideOldPass: true,
       hideNewPass: true,
       hideConfirmPass: true
+      // showModal: false
     };
+  }
+
+  componentDidMount():void {
+      this.props.navigation.setOptions({
+        headerRight: () => (
+          <TouchableOpacity 
+            onPress={this.handleSave}
+            style={{marginRight: 20}}
+          >
+            <Text style={{fontSize: 18, fontWeight: "bold"}}>Save</Text>
+          </TouchableOpacity>
+        )
+      });
   }
 
   render = (): JSX.Element =>  {
     return (
       <KeyboardAvoidingWrapper>
         <Container>
-          {/** STYLE: Might need to change the color of the Text Font. Ex) color: #... */}
-          {/** Top Bar */}
-          <TopBar>
-            <TouchableOpacity
-              onPress={this.handleBack}>
-              <Ionicons name="arrow-back" size={30} color="black"/>
-            </TouchableOpacity>
+          {/* <Modal
+            visible={this.state.showModal}
+            transparent={true}
+            animationType="slide"
+          >
+            <BlurView
+              intensity={250}
+              style={{position: "absolute", flex: 1}}
+            />
 
-            <Text style={{fontSize:22, fontWeight: "bold"}}>Profile</Text>
-
-            <TouchableOpacity onPress={this.handleSave}>
-                <Text style={{fontSize: 18, fontWeight: "bold"}}>Save</Text>
-            </TouchableOpacity>
-          </TopBar>
+            <CenteredView>
+              <ModalView>
+                <Text>
+                  Saved Successfully!
+                </Text>
+              </ModalView>
+            </CenteredView>
+          </Modal> */}
 
           {/** Content */}
           <View
@@ -167,10 +192,6 @@ export class EditProfile extends Component<EditProfileProps, EditProfileState> {
     );
   }
 
-  handleBack = () => {
-    this.props.onClicked("account");
-  }
-
   handleChange = (name: keyof EditProfileState, value:string|boolean) => {
     this.setState({[name] : value} as unknown as Pick<EditProfileState, keyof EditProfileState>);
   }
@@ -230,8 +251,15 @@ export class EditProfile extends Component<EditProfileProps, EditProfileState> {
 
   handleResponse = (res:Response) => {
     if (res.ok) {
-      return res.json().then(data => {
-        this.props.onClicked("account");
+      return res.json().then((data) => {
+        // this.setState({showModal: true});
+
+        // setTimeout(() => {
+        //   this.setState({showModal: false}, () => {
+        //     this.props.navigation.navigate("Account");
+        //   });
+        // }, 2000);
+        this.props.navigation.navigate("Account");
       });
     } else {
       return res.json().then(errorData => {

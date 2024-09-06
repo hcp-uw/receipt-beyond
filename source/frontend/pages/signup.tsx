@@ -1,5 +1,8 @@
 import { Text, View, Button, TouchableOpacity } from "react-native";
 import React, { Component, ChangeEvent } from "react";
+import { StackNavigationProp } from "@react-navigation/stack";
+import {RouteProp} from "@react-navigation/native";
+import { AuthStackParamList } from "../app/StackParamList";
 import {
   Colors,
   StartLogo,
@@ -19,8 +22,9 @@ import { Octicons } from "@expo/vector-icons";
 import KeyboardAvoidingWrapper from "@/components/keyboardAvoidingWrapper";
 
 interface SignUpProps {
-  onSignUp: () => void;
-  onToLogin: () => void;
+  navigation: StackNavigationProp<AuthStackParamList, "SignUp">;
+
+  route: RouteProp<AuthStackParamList, "SignUp">;
 }
 
 interface SignUpState {
@@ -166,7 +170,7 @@ export class SignUp extends Component<SignUpProps, SignUpState> {
   };
 
   handleLink = () => {
-    this.props.onToLogin();
+    this.props.navigation.navigate("Login");
   };
 
   validate = () => {
@@ -246,7 +250,11 @@ export class SignUp extends Component<SignUpProps, SignUpState> {
     // res.ok: 200 ~ 299
     if (res.ok) {
       return res.json().then((data) => {
-        this.props.onSignUp();
+        // this.props.navigation.replace("Main");
+        this.props.navigation.reset({
+          index: 0,
+          routes: [{name: "Main"}]
+        });
       });
     } else {
       // errorData is the object return from the Response for error status >= 400

@@ -5,18 +5,20 @@ import { Login } from "@/pages/login";
 import { NavigationContainer } from "@react-navigation/native";
 import MyTabs from "./MainNavigator";
 import StartPage from "@/pages/startpage";
+import { AuthStackParamList } from "../app/StackParamList";
 
-const AuthStack = createStackNavigator();
+const AuthStack = createStackNavigator<AuthStackParamList>();
+
 function AuthStackNavigator() {
   return (
     <AuthStack.Navigator
-      initialRouteName="StartPage"
+      initialRouteName="Start"
       screenOptions={{ headerShown: false }}
     >
-      <AuthStack.Screen name="StartPage" component={StartPage} />
-      <AuthStack.Screen name="SignUp" component={SignUp} />
-      <AuthStack.Screen name="Login" component={Login} />
-      <AuthStack.Screen name="Main" component={MyTabs} />
+      <AuthStack.Screen name="Start" component={StartPage}/>
+      <AuthStack.Screen name="SignUp" component={SignUp}/>
+      <AuthStack.Screen name="Login" component={Login} options={{headerShown: true, headerTitle: "", headerBackTitleVisible: false}}/>
+      <AuthStack.Screen name="Main" component={MyTabs}/>
     </AuthStack.Navigator>
   );
 }
