@@ -1,17 +1,20 @@
-import { Text, View, Button, TouchableOpacity} from "react-native";
-import React, {Component} from "react";
-import {Container, Spacer, TopBar} from "../components/style";
-import Feather from '@expo/vector-icons/Feather';
+import { Text, View, Button, TouchableOpacity } from "react-native";
+import React, { Component } from "react";
+import { Container, Spacer } from "../components/style";
+import Feather from "@expo/vector-icons/Feather";
+import { NavigationProp, RouteProp } from "@react-navigation/native";
+import { AccountStackParamList } from "../app/StackParamList";
 
 interface AccountProps {
-  onClicked: (newView: "email" | "password") => void;
+  navigation: NavigationProp<AccountStackParamList, "Account">;
+  route: RouteProp<AccountStackParamList, "Account">;
 }
 
 interface AccountState {
-  name: string,
-  email: string,
-  date_joined: string
-  loading: boolean
+  name: string;
+  email: string;
+  date_joined: string;
+  loading: boolean;
 }
 
 export class Account extends Component<AccountProps, AccountState> {
@@ -23,31 +26,23 @@ export class Account extends Component<AccountProps, AccountState> {
       email: "",
       date_joined: "",
       loading: true
-    }
+    };
   }
 
   componentDidMount(): void {
+    this.props.navigation.addListener("focus", () => {
       this.fetchUserData();
+    })
   }
 
   render = (): JSX.Element => {
+    // TODO: Show something when loading
     if (this.state.loading) {
-      return <View></View>
+      return <View></View>;
     }
 
     return (
       <Container>
-        {/**
-         * STYLE IDEA: Bar Block on the top
-         * <View
-          style={{
-            paddingTop: 200,
-            backgroundColor: "#768A96",
-            borderBottomWidth: 1,
-            borderBottomColor: "#ddd"
-          }} 
-        >
-        </View>*/}
         <View
           style={{
             flex: 1,
@@ -63,10 +58,10 @@ export class Account extends Component<AccountProps, AccountState> {
           <View
             style={{
               flexDirection: "row",
-              alignItems: "center"
+              alignItems: "center",
             }}
           >
-            <Text style={{marginRight: 20}}>Email: {this.state.email}</Text>
+            <Text style={{ marginRight: 20 }}>Email: {this.state.email}</Text>
             <TouchableOpacity onPress={() => this.handleEdit("email")}>
               <Feather name="edit" size={24} color="black" />
             </TouchableOpacity>
@@ -77,10 +72,10 @@ export class Account extends Component<AccountProps, AccountState> {
           <View
             style={{
               flexDirection: "row",
-              alignItems: "center"
+              alignItems: "center",
             }}
           >
-            <Text style={{marginRight: 20}}>Password: ********</Text>
+            <Text style={{ marginRight: 20 }}>Password: ********</Text>
             <TouchableOpacity onPress={() => this.handleEdit("password")}>
               <Feather name="edit" size={24} color="black" />
             </TouchableOpacity>
@@ -92,35 +87,38 @@ export class Account extends Component<AccountProps, AccountState> {
         </View>
       </Container>
     );
-  }
+  };
 
   fetchUserData = () => {
-    fetch("https://receiptplus.pythonanywhere.com/api/user_info" , {
+    fetch("https://receiptplus.pythonanywhere.com/api/user_info", {
       method: "GET",
-      headers: {"Content-Type": "application/json"},
-      credentials: "include"
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
     })
-    .then(this.handleChange)
-    .catch(error => {console.error("Error fetching api/user_info")})
-  }
+      .then(this.handleChange)
+      .catch((error) => {
+        console.error("Error fetching api/user_info");
+      });
+  };
 
   handleChange = (res: Response) => {
     if (res.ok) {
-      res.json().then(data => {
+      res.json().then((data) => {
         this.setState({
-          name: data.user_id, 
-          email: data.email, 
+          name: data.user_id,
+          email: data.email,
           date_joined: data.date_joined,
-          loading: false
+          loading: false,
         });
       });
     } else {
       console.error("Error receiving user info");
     }
-  }
+  };
 
-  handleEdit = (view: "email" | "password") => {
-    this.props.onClicked(view);
-  }
-
+  handleEdit = (newView: "email" | "password") => {
+    this.props.navigation.navigate("EditProfile", {
+      view: newView
+    });
+  };
 }
