@@ -122,11 +122,15 @@ export const ModalView = styled.View`
   padding: 35px;
   alignItems: center;
   shadowColor: #000;
-  shadowOffset: {
-    width: 0px;
-    height: 2px;
-  };
   shadowOpacity: 0.25;
   shadowRadius: 4px;
   elevation: 5;
 `;
+
+/**
+ * 
+  shadowOffset: {
+    width: 0px,
+    height: 2px,
+  };
+ */

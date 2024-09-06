@@ -1,5 +1,6 @@
 import { Text, View, TouchableOpacity, Modal} from "react-native";
-import { BlurView } from "expo-blur";
+// npx expo install expo-blur
+// import { BlurView } from "expo-blur";
 import React, {Component} from "react";
 import {Octicons} from '@expo/vector-icons';
 import { NavigationProp, RouteProp } from "@react-navigation/native";
@@ -22,8 +23,8 @@ interface EditProfileState {
   messageType: string,
   hideOldPass: boolean,
   hideNewPass: boolean,
-  hideConfirmPass: boolean,
-  showModal: boolean
+  hideConfirmPass: boolean
+  // showModal: boolean
 }
 
 export class EditProfile extends Component<EditProfileProps, EditProfileState> {
@@ -41,8 +42,8 @@ export class EditProfile extends Component<EditProfileProps, EditProfileState> {
       messageType: "",
       hideOldPass: true,
       hideNewPass: true,
-      hideConfirmPass: true,
-      showModal: false
+      hideConfirmPass: true
+      // showModal: false
     };
   }
 
@@ -63,24 +64,24 @@ export class EditProfile extends Component<EditProfileProps, EditProfileState> {
     return (
       <KeyboardAvoidingWrapper>
         <Container>
-          <Modal
+          {/* <Modal
             visible={this.state.showModal}
             transparent={true}
             animationType="slide"
           >
             <BlurView
               intensity={250}
-              style={{flex: 1}}
-            >
-              <CenteredView>
-                <ModalView>
-                  <Text>
-                    Saved Successfully!
-                  </Text>
-                </ModalView>
-              </CenteredView>
-            </BlurView>
-          </Modal>
+              style={{position: "absolute", flex: 1}}
+            />
+
+            <CenteredView>
+              <ModalView>
+                <Text>
+                  Saved Successfully!
+                </Text>
+              </ModalView>
+            </CenteredView>
+          </Modal> */}
 
           {/** Content */}
           <View
@@ -251,13 +252,14 @@ export class EditProfile extends Component<EditProfileProps, EditProfileState> {
   handleResponse = (res:Response) => {
     if (res.ok) {
       return res.json().then((data) => {
-        this.setState({showModal: true});
+        // this.setState({showModal: true});
 
-        setTimeout(() => {
-          this.setState({showModal: false}, () => {
-            this.props.navigation.navigate("Account");
-          });
-        }, 2000);
+        // setTimeout(() => {
+        //   this.setState({showModal: false}, () => {
+        //     this.props.navigation.navigate("Account");
+        //   });
+        // }, 2000);
+        this.props.navigation.navigate("Account");
       });
     } else {
       return res.json().then(errorData => {
