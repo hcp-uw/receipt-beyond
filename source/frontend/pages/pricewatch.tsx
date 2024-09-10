@@ -1,15 +1,13 @@
 import { Text, View } from "react-native";
+import {
+  ScrollableContainerVerticallyCentered,
+  StyledText,
+} from "../components/style";
 
 export default function PriceWatch() {
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-    <Text>PriceWatch Screen</Text>
-    </View>
+    <ScrollableContainerVerticallyCentered>
+      <StyledText>PriceWatch Screen</StyledText>
+    </ScrollableContainerVerticallyCentered>
   );
 }

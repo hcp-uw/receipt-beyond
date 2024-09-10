@@ -15,10 +15,22 @@ function AuthStackNavigator() {
       initialRouteName="Start"
       screenOptions={{ headerShown: false }}
     >
-      <AuthStack.Screen name="Start" component={StartPage}/>
-      <AuthStack.Screen name="SignUp" component={SignUp}/>
-      <AuthStack.Screen name="Login" component={Login} options={{headerShown: true, headerTitle: "", headerBackTitleVisible: false}}/>
-      <AuthStack.Screen name="Main" component={MyTabs}/>
+      <AuthStack.Screen name="Start" component={StartPage} />
+      <AuthStack.Screen name="SignUp" component={SignUp} />
+      <AuthStack.Screen
+        name="Login"
+        component={Login}
+        options={{
+          headerShown: true,
+          headerTitle: "",
+          headerBackTitleVisible: true,
+          headerStyle: {
+            backgroundColor: "#29353C", // Set the top banner background to black
+            shadowOpacity: 0, // Remove shadow on iOS
+          },
+        }}
+      />
+      <AuthStack.Screen name="Main" component={MyTabs} />
     </AuthStack.Navigator>
   );
 }

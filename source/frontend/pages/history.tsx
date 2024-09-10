@@ -3,6 +3,7 @@ import { View, StyleSheet, ScrollView } from "react-native";
 import DateBracketButton from "../components/dateButton"; // Adjust the path
 import { NavigationProp, RouteProp } from "@react-navigation/native";
 import { HistoryStackParamList } from "../app/StackParamList";
+import { Container, ScrollableContainer } from "../components/style";
 
 interface HistoryProps {
   navigation: NavigationProp<HistoryStackParamList, "History">;
@@ -51,30 +52,15 @@ export default class History extends Component<HistoryProps, HistoryState> {
 
   render() {
     return (
-      <View style={styles.container}>
-        <ScrollView contentContainerStyle={styles.scrollViewContent}>
-          {this.state.dateBrackets.map((dateString, index) => (
-            <DateBracketButton
-              key={index}
-              dateString={dateString}
-              onPress={() => this.handleButtonPress(dateString)}
-            />
-          ))}
-        </ScrollView>
-      </View>
+      <ScrollableContainer>
+        {this.state.dateBrackets.map((dateString, index) => (
+          <DateBracketButton
+            key={index}
+            dateString={dateString}
+            onPress={() => this.handleButtonPress(dateString)}
+          />
+        ))}
+      </ScrollableContainer>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  scrollViewContent: {
-    alignItems: "center",
-    paddingVertical: 20,
-  },
-});

@@ -1,6 +1,10 @@
 import { Text, View, Button, TouchableOpacity } from "react-native";
 import React, { Component } from "react";
-import { Container, Spacer } from "../components/style";
+import {
+  Spacer,
+  ScrollableContainerVerticallyCentered,
+  StyledText,
+} from "../components/style";
 import Feather from "@expo/vector-icons/Feather";
 import { NavigationProp, RouteProp } from "@react-navigation/native";
 import { AccountStackParamList } from "../app/StackParamList";
@@ -25,14 +29,14 @@ export class Account extends Component<AccountProps, AccountState> {
       name: "",
       email: "",
       date_joined: "",
-      loading: true
+      loading: true,
     };
   }
 
   componentDidMount(): void {
     this.props.navigation.addListener("focus", () => {
       this.fetchUserData();
-    })
+    });
   }
 
   render = (): JSX.Element => {
@@ -42,16 +46,21 @@ export class Account extends Component<AccountProps, AccountState> {
     }
 
     return (
-      <Container>
+      // <Container>
+      <ScrollableContainerVerticallyCentered>
         <View
           style={{
-            flex: 1,
+            // flex: 1,
+            alignItems: "flex-start",
             justifyContent: "center",
             paddingLeft: 50,
-            width: "100%",
+            // width: "100%",
+            backgroundColor: "#44576D",
+            borderRadius: 8,
+            padding: 14,
           }}
         >
-          <Text>Name: {this.state.name}</Text>
+          <StyledText>Name: {this.state.name}</StyledText>
           <Spacer></Spacer>
           <Spacer></Spacer>
 
@@ -61,9 +70,12 @@ export class Account extends Component<AccountProps, AccountState> {
               alignItems: "center",
             }}
           >
-            <Text style={{ marginRight: 20 }}>Email: {this.state.email}</Text>
+            <StyledText style={{ marginRight: 20 }}>
+              {" "}
+              Email: {this.state.email}{" "}
+            </StyledText>
             <TouchableOpacity onPress={() => this.handleEdit("email")}>
-              <Feather name="edit" size={24} color="black" />
+              <Feather name="edit" size={24} color="#E6E6E6" />
             </TouchableOpacity>
           </View>
 
@@ -75,17 +87,21 @@ export class Account extends Component<AccountProps, AccountState> {
               alignItems: "center",
             }}
           >
-            <Text style={{ marginRight: 20 }}>Password: ********</Text>
+            <StyledText style={{ marginRight: 20 }}>
+              {" "}
+              Password: ********{" "}
+            </StyledText>
             <TouchableOpacity onPress={() => this.handleEdit("password")}>
-              <Feather name="edit" size={24} color="black" />
+              <Feather name="edit" size={24} color="#E6E6E6" />
             </TouchableOpacity>
           </View>
           <Spacer></Spacer>
           <Spacer></Spacer>
 
-          <Text>Joined: {this.state.date_joined}</Text>
+          <StyledText>Joined: {this.state.date_joined}</StyledText>
         </View>
-      </Container>
+      </ScrollableContainerVerticallyCentered>
+      // </Container>
     );
   };
 
@@ -118,7 +134,7 @@ export class Account extends Component<AccountProps, AccountState> {
 
   handleEdit = (newView: "email" | "password") => {
     this.props.navigation.navigate("EditProfile", {
-      view: newView
+      view: newView,
     });
   };
 }

@@ -1,5 +1,8 @@
 import React from "react";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import {
+  createBottomTabNavigator,
+  useBottomTabBarHeight,
+} from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import {
   Entypo,
@@ -13,8 +16,8 @@ import Summary from "@/pages/summary";
 import PriceWatch from "@/pages/pricewatch";
 import UserValid from "@/pages/uservalid";
 import History from "@/pages/history";
-import {Account} from "@/pages/account";
-import {EditProfile} from "@/pages/editprofile";
+import { Account } from "@/pages/account";
+import { EditProfile } from "@/pages/editprofile";
 import DetailedHistory from "@/pages/detailedhistory";
 import {
   SummaryStackParamList,
@@ -41,10 +44,27 @@ const AccountStack = createStackNavigator<AccountStackParamList>();
   account.tsx(7, 3): 'onClicked' is declared here.
   types.d.ts(318, 5): The expected type comes from property 'component' which is declared here on type 'IntrinsicAttributes & RouteConfig<AccountStackParamList,
  */
+
+const defaultScreenOptions = {
+  headerStyle: {
+    backgroundColor: "#44576D", // Vibrant background color
+  },
+  headerTintColor: "#E6E6E6", // Text and icon color
+  headerTitleStyle: {
+    fontWeight: "bold",
+    fontSize: 22,
+    fontFamily: "roboto", // Custom font
+  },
+};
+
 function SummaryStackNavigator() {
   return (
-    <SummaryStack.Navigator>
-      <SummaryStack.Screen name="Summary" component={Summary} />
+    <SummaryStack.Navigator screenOptions={defaultScreenOptions}>
+      <SummaryStack.Screen
+        name="Summary"
+        component={Summary}
+        options={{ title: "Summary" }}
+      />
       {/* Add more screens if necessary */}
     </SummaryStack.Navigator>
   );
@@ -52,34 +72,58 @@ function SummaryStackNavigator() {
 
 function PriceWatchStackNavigator() {
   return (
-    <PriceWatchStack.Navigator>
-      <PriceWatchStack.Screen name="PriceWatch" component={PriceWatch} />
+    <PriceWatchStack.Navigator screenOptions={defaultScreenOptions}>
+      <PriceWatchStack.Screen
+        name="PriceWatch"
+        component={PriceWatch}
+        options={{ title: "Price Watch" }}
+      />
     </PriceWatchStack.Navigator>
   );
 }
 
 function UserValidStackNavigator() {
   return (
-    <UserValidStack.Navigator>
-      <UserValidStack.Screen name="UserValidation" component={UserValid} />
+    <UserValidStack.Navigator screenOptions={defaultScreenOptions}>
+      <UserValidStack.Screen
+        name="UserValid"
+        component={UserValid}
+        options={{ title: "Add Receipt" }}
+      />
     </UserValidStack.Navigator>
   );
 }
 
 function HistoryStackNavigator() {
   return (
-    <HistoryStack.Navigator>
-      <HistoryStack.Screen name="History" component={History} />
-      <HistoryStack.Screen name="DetailedHistory" component={DetailedHistory} />
+    <HistoryStack.Navigator screenOptions={defaultScreenOptions}>
+      <HistoryStack.Screen
+        name="History"
+        component={History}
+        options={{ title: "History" }}
+      />
+      <HistoryStack.Screen
+        name="DetailedHistory"
+        component={DetailedHistory}
+        options={{ title: "Monthly History" }}
+      />
     </HistoryStack.Navigator>
   );
 }
 
 function AccountStackNavigator() {
   return (
-    <AccountStack.Navigator>
-      <AccountStack.Screen name="Account" component={Account} />
-      <AccountStack.Screen name="EditProfile" component={EditProfile}/>
+    <AccountStack.Navigator screenOptions={defaultScreenOptions}>
+      <AccountStack.Screen
+        name="Account"
+        component={Account}
+        options={{ title: "Account" }}
+      />
+      <AccountStack.Screen
+        name="EditProfile"
+        component={EditProfile}
+        options={{ title: "Edit Profile" }}
+      />
     </AccountStack.Navigator>
   );
 }
@@ -91,6 +135,9 @@ function MyTabs() {
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
+        tabBarStyle: {
+          backgroundColor: "#44576D", // Set the background color of the tab bar
+        },
       }}
     >
       <Tab.Screen
@@ -99,7 +146,11 @@ function MyTabs() {
         options={{
           tabBarShowLabel: false,
           tabBarIcon: ({ focused }) => (
-            <Entypo name="home" size={24} color={focused ? "black" : "gray"} />
+            <Entypo
+              name="home"
+              size={24}
+              color={focused ? "#E6E6E6" : "gray"}
+            />
           ),
         }}
       />
@@ -112,7 +163,7 @@ function MyTabs() {
             <AntDesign
               name="eye"
               size={24}
-              color={focused ? "black" : "gray"}
+              color={focused ? "#E6E6E6" : "gray"}
             />
           ),
         }}
@@ -126,7 +177,7 @@ function MyTabs() {
             <Entypo
               name="camera"
               size={24}
-              color={focused ? "black" : "gray"}
+              color={focused ? "#E6E6E6" : "gray"}
             />
           ),
         }}
@@ -140,7 +191,7 @@ function MyTabs() {
             <Foundation
               name="list-bullet"
               size={24}
-              color={focused ? "black" : "gray"}
+              color={focused ? "#E6E6E6" : "gray"}
             />
           ),
         }}
@@ -154,7 +205,7 @@ function MyTabs() {
             <MaterialIcons
               name="account-circle"
               size={24}
-              color={focused ? "black" : "gray"}
+              color={focused ? "#E6E6E6" : "gray"}
             />
           ),
         }}

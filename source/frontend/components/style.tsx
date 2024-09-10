@@ -6,7 +6,8 @@ const StatusBarHeight = Constants.statusBarHeight;
 
 // colors
 export const Colors = {
-  primary: "#ffffff",
+  primary: "#29353C",
+  secondary: "#E6E6E6",
   black: "#000000",
   tertiary: "#1F2937",
   darkLight: "#9CA3AF",
@@ -15,7 +16,7 @@ export const Colors = {
   red: "#EF4444",
 };
 
-const { primary, black, tertiary, darkLight } = Colors;
+const { primary, black, tertiary, darkLight, secondary } = Colors;
 
 export const StartLogo = styled.Image`
   width: 150px;
@@ -35,6 +36,25 @@ export const InnerContainer = styled.View`
   align-items: center;
 `;
 
+export const ScrollableContainer = styled.ScrollView`
+  flexgrow: 1;
+  background-color: ${Colors.primary};
+  contentcontainerstyle: {
+    align-items: "center";
+    justifycontent: "center";
+  }
+`;
+
+export const ScrollableContainerVerticallyCentered = styled.ScrollView.attrs({
+  contentContainerStyle: {
+    flexGrow: 1,
+    justifyContent: "center", // Centers content vertically
+    alignItems: "center", // Centers content horizontally
+  },
+})`
+  flex: 1;
+  background-color: ${Colors.primary};
+`;
 export const Container = styled.View`
   flex: 1;
   background-color: ${Colors.primary};
@@ -44,7 +64,7 @@ export const PageTitle = styled.Text`
   font-size: 30px;
   text-align: center;
   font-weight: bold;
-  color: ${Colors.tertiary};
+  color: ${Colors.secondary};
   padding: 10px;
 `;
 
@@ -72,11 +92,17 @@ export const StyledTextInput = styled.TextInput`
   height: 50px;
   margin-vertical: 3px;
   margin-bottom: 10px;
-  color: ${primary};
+  color: ${secondary};
+`;
+
+export const StyledText = styled.Text`
+  font-size: 18px;
+  color: #e6e6e6;
+  font-weight: bold;
 `;
 
 export const StyledInputLabel = styled.Text`
-  color: ${tertiary};
+  color: ${secondary};
   font-size: 15px;
   text-align: left;
 `;
@@ -110,20 +136,20 @@ export const Line = styled.View`
 
 export const CenteredView = styled.View`
   flex: 1;
-  justifyContent: center;
-  alignItems: center;
-  marginTop: 22px;
+  justifycontent: center;
+  alignitems: center;
+  margintop: 22px;
 `;
 
 export const ModalView = styled.View`
   margin: 20px;
-  backgroundColor: lightgreen;
-  borderRadius: 20px;
+  backgroundcolor: lightgreen;
+  borderradius: 20px;
   padding: 35px;
-  alignItems: center;
-  shadowColor: #000;
-  shadowOpacity: 0.25;
-  shadowRadius: 4px;
+  alignitems: center;
+  shadowcolor: #000;
+  shadowopacity: 0.25;
+  shadowradius: 4px;
   elevation: 5;
 `;
 
