@@ -19,7 +19,7 @@ summary_bp = Blueprint('summary', __name__)
 #    '2024-3-15':5,
 #    '2024-3-27':0 (in this case, the user spent no money on the current date)
 # }
-@summary_bp.route('/month_exp', methods=['GET'])
+@summary_bp.route('/month_exp', methods=['POST'])
 @login_required
 def month_exp():
     db = current_app.db
@@ -44,7 +44,7 @@ def month_exp():
 #    'restaurants':50,
 #    'gas':50
 # }
-@summary_bp.route('/month_cat_exp', methods=['GET'])
+@summary_bp.route('/month_cat_exp', methods=['POST'])
 @login_required
 def month_cat_exp():
     db = current_app.db

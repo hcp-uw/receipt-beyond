@@ -78,13 +78,20 @@ def register():
         raise InvalidDateFormat()
     users_ref = db.collection('Users')
     docs = users_ref.stream()
+    user_id_already_exists = False
+    user_email_already_exists = False
     for doc in docs:
         existing_user_id = doc.id
         existing_email = doc.get('email')
         if user_id == existing_user_id:
-            raise UserAlreadyExistsError() 
+            user_id_already_exists = True
+            break # break out early because user_id exists is priority error
         if email == existing_email:
-            raise EmailAlreadyExistsError()
+            user_email_already_exists = True
+    if user_id_already_exists:
+        raise UserAlreadyExistsError() 
+    if user_email_already_exists:
+        raise EmailAlreadyExistsError()
     passwordHash = sha256_crypt.hash(password)
     # use set to create new document with specified data (overwrites existing documents)
     db.collection('Users').document(user_id).set({
