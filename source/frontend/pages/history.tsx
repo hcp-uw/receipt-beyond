@@ -3,7 +3,7 @@ import { View, StyleSheet, ScrollView } from "react-native";
 import DateBracketButton from "../components/dateButton"; // Adjust the path
 import { NavigationProp, RouteProp } from "@react-navigation/native";
 import { HistoryStackParamList } from "../app/StackParamList";
-import { Container, ScrollableContainer } from "../components/style";
+import { ScrollableContainer } from "../components/style";
 
 interface HistoryProps {
   navigation: NavigationProp<HistoryStackParamList, "History">;
