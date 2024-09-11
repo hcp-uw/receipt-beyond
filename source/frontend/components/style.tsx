@@ -26,8 +26,26 @@ export const StartLogo = styled.Image`
 export const StyledContainer = styled.View`
   flex: 1;
   padding: 25px;
+  background-color: ${Colors.primary};
+  justify-content: center;
+`;
+
+export const StyledContainerCentered = styled.View`
+  flex: 1;
+  padding: 25px;
+  background-color: ${Colors.primary};
+  justify-content: center;
+  align-items: center;
+`;
+
+// not sure if padding-top is important to keep
+// so duplicated StyledContainer
+export const StyledContainer2 = styled.View`
+  flex: 1;
+  padding: 25px;
   padding-top: ${StatusBarHeight + 30}px;
   background-color: ${Colors.primary};
+  justify-content: center;
 `;
 
 export const InnerContainer = styled.View`
@@ -37,27 +55,8 @@ export const InnerContainer = styled.View`
 `;
 
 export const ScrollableContainer = styled.ScrollView`
-  flexgrow: 1;
   background-color: ${Colors.primary};
-  contentcontainerstyle: {
-    align-items: "center";
-    justifycontent: "center";
-  }
-`;
-
-export const ScrollableContainerVerticallyCentered = styled.ScrollView.attrs({
-  contentContainerStyle: {
-    flexGrow: 1,
-    justifyContent: "center", // Centers content vertically
-    alignItems: "center", // Centers content horizontally
-  },
-})`
-  flex: 1;
-  background-color: ${Colors.primary};
-`;
-export const Container = styled.View`
-  flex: 1;
-  background-color: ${Colors.primary};
+  justifycontent: "center";
 `;
 
 export const PageTitle = styled.Text`

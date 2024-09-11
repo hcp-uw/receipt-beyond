@@ -2,8 +2,9 @@ import { Text, View, Button, TouchableOpacity } from "react-native";
 import React, { Component } from "react";
 import {
   Spacer,
-  ScrollableContainerVerticallyCentered,
   StyledText,
+  StyledContainer,
+  InnerContainer,
 } from "../components/style";
 import Feather from "@expo/vector-icons/Feather";
 import { NavigationProp, RouteProp } from "@react-navigation/native";
@@ -46,62 +47,60 @@ export class Account extends Component<AccountProps, AccountState> {
     }
 
     return (
-      // <Container>
-      <ScrollableContainerVerticallyCentered>
+      <StyledContainer>
+        {/* <View
+        style={{
+          flex: 1,
+          alignItems: "flex-start",
+          justifyContent: "center",
+          paddingLeft: 50,
+          // width: "100%",
+          backgroundColor: "#44576D",
+          borderRadius: 8,
+          padding: 14,
+        }}
+      > */}
+        <StyledText>Name: {this.state.name}</StyledText>
+        <Spacer></Spacer>
+        <Spacer></Spacer>
+
         <View
           style={{
-            // flex: 1,
-            alignItems: "flex-start",
-            justifyContent: "center",
-            paddingLeft: 50,
-            // width: "100%",
-            backgroundColor: "#44576D",
-            borderRadius: 8,
-            padding: 14,
+            flexDirection: "row",
+            alignItems: "center",
           }}
         >
-          <StyledText>Name: {this.state.name}</StyledText>
-          <Spacer></Spacer>
-          <Spacer></Spacer>
-
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-            }}
-          >
-            <StyledText style={{ marginRight: 20 }}>
-              {" "}
-              Email: {this.state.email}{" "}
-            </StyledText>
-            <TouchableOpacity onPress={() => this.handleEdit("email")}>
-              <Feather name="edit" size={24} color="#E6E6E6" />
-            </TouchableOpacity>
-          </View>
-
-          <Spacer></Spacer>
-          <Spacer></Spacer>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-            }}
-          >
-            <StyledText style={{ marginRight: 20 }}>
-              {" "}
-              Password: ********{" "}
-            </StyledText>
-            <TouchableOpacity onPress={() => this.handleEdit("password")}>
-              <Feather name="edit" size={24} color="#E6E6E6" />
-            </TouchableOpacity>
-          </View>
-          <Spacer></Spacer>
-          <Spacer></Spacer>
-
-          <StyledText>Joined: {this.state.date_joined}</StyledText>
+          <StyledText style={{ marginRight: 20 }}>
+            {" "}
+            Email: {this.state.email}{" "}
+          </StyledText>
+          <TouchableOpacity onPress={() => this.handleEdit("email")}>
+            <Feather name="edit" size={24} color="#E6E6E6" />
+          </TouchableOpacity>
         </View>
-      </ScrollableContainerVerticallyCentered>
-      // </Container>
+
+        <Spacer></Spacer>
+        <Spacer></Spacer>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+          }}
+        >
+          <StyledText style={{ marginRight: 20 }}>
+            {" "}
+            Password: ********{" "}
+          </StyledText>
+          <TouchableOpacity onPress={() => this.handleEdit("password")}>
+            <Feather name="edit" size={24} color="#E6E6E6" />
+          </TouchableOpacity>
+        </View>
+        <Spacer></Spacer>
+        <Spacer></Spacer>
+
+        <StyledText>Joined: {this.state.date_joined}</StyledText>
+        {/* </View> */}
+      </StyledContainer>
     );
   };
 

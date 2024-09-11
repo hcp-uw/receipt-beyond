@@ -5,10 +5,7 @@ import { Login } from "./login";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
 import { AuthStackParamList } from "../app/StackParamList";
-import {
-  ScrollableContainerVerticallyCentered,
-  StyledText,
-} from "../components/style";
+import { StyledContainerCentered, StyledText } from "../components/style";
 
 interface StartPageProps {
   navigation: StackNavigationProp<AuthStackParamList, "Start">;
@@ -33,10 +30,10 @@ export default class StartPage extends Component<
 
   render() {
     return (
-      <ScrollableContainerVerticallyCentered>
+      <StyledContainerCentered>
         <StyledText>Welcome to Receipt Beyond</StyledText>
         <Button title="Get Started" onPress={this.navigateToSignUp} />
-      </ScrollableContainerVerticallyCentered>
+      </StyledContainerCentered>
     );
   }
 
