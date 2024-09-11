@@ -184,6 +184,7 @@ export class Login extends Component<LoginProps, LoginState> {
   handleResponse = (res: Response) => {
     // res.ok: 200 ~ 299
     if (res.ok) {
+      // TODO: Delete later
       console.log("success");
       return res.json().then((data) => {
         this.props.navigation.reset({
