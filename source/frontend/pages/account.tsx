@@ -1,4 +1,4 @@
-import { Text, View, Button, TouchableOpacity } from "react-native";
+import { Text, View, TouchableOpacity } from "react-native";
 import React, { Component } from "react";
 import { Container, Spacer } from "../components/style";
 import Feather from "@expo/vector-icons/Feather";

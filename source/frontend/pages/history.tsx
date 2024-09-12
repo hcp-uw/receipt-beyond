@@ -14,7 +14,7 @@ interface HistoryState {
   dateBrackets: string[];
 }
 
-export default class History extends Component<HistoryProps, HistoryState> {
+export class History extends Component<HistoryProps, HistoryState> {
   constructor(props: HistoryProps) {
     super(props);
     this.state = {

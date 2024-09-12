@@ -9,13 +9,13 @@ import {
 } from "@expo/vector-icons";
 
 // Import screens
-import Summary from "@/pages/summary";
+import {Summary} from "@/pages/summary";
 import PriceWatch from "@/pages/pricewatch";
 import UserValid from "@/pages/uservalid";
-import History from "@/pages/history";
+import {History} from "@/pages/history";
 import {Account} from "@/pages/account";
 import {EditProfile} from "@/pages/editprofile";
-import DetailedHistory from "@/pages/detailedhistory";
+import {DetailedHistory} from "@/pages/detailedhistory";
 import {
   SummaryStackParamList,
   PriceWatchStackParamList,
