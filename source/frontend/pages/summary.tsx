@@ -1,20 +1,20 @@
-import { Text, View, Dimensions} from "react-native";
-import React, {Component} from "react";
-import { BarChart, PieChart } from 'react-native-chart-kit';
+import { Text, View, Dimensions } from "react-native";
+import React, { Component } from "react";
+import { BarChart, PieChart } from "react-native-chart-kit";
 import { NavigationProp, RouteProp } from "@react-navigation/native";
 import { SummaryStackParamList } from "../app/StackParamList";
-import {PageTitle, Container} from "../components/style";
+import { PageTitle, Container } from "../components/style";
 
 interface SummaryProps {
   navigation: NavigationProp<SummaryStackParamList, "Summary">;
   route: RouteProp<SummaryStackParamList, "Summary">;
-};
+}
 
 interface SummaryState {
-  month: string,
-  date: string,
-  pieData: any[]
-};
+  month: string;
+  date: string;
+  pieData: any[];
+}
 
 export class Summary extends Component<SummaryProps, SummaryState> {
   constructor(props: SummaryProps) {
@@ -22,11 +22,11 @@ export class Summary extends Component<SummaryProps, SummaryState> {
     this.state = {
       month: "",
       date: "",
-      pieData: []
+      pieData: [],
     };
-  };
+  }
 
-  static categoryColors: { [key:string]: string} = {
+  static categoryColors: { [key: string]: string } = {
     /**
      * TODO: Add more later
      * FURTURE: When a new catergory is add, choose a random color and add
@@ -42,7 +42,7 @@ export class Summary extends Component<SummaryProps, SummaryState> {
     this.props.navigation.addListener("focus", () => {
       this.fetchData();
     });
-  };
+  }
 
   render = (): JSX.Element => {
     return (
@@ -58,18 +58,18 @@ export class Summary extends Component<SummaryProps, SummaryState> {
           }}
         >
           <PieChart
-            data = {this.state.pieData}
-            width={Dimensions.get('window').width} // from react-native
+            data={this.state.pieData}
+            width={Dimensions.get("window").width} // from react-native
             height={220}
             chartConfig={{
-              backgroundColor: '#1cc910',
-              backgroundGradientFrom: '#eff3ff',
-              backgroundGradientTo: '#efefef',
+              backgroundColor: "#1cc910",
+              backgroundGradientFrom: "#eff3ff",
+              backgroundGradientTo: "#efefef",
               color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
             }}
-            accessor={'amount'}
-            backgroundColor={'transparent'}
-            paddingLeft={'15'}
+            accessor={"amount"}
+            backgroundColor={"transparent"}
+            paddingLeft={"15"}
           />
         </View>
       </Container>
@@ -87,19 +87,20 @@ export class Summary extends Component<SummaryProps, SummaryState> {
     // For testing:
     // const currDate = `${2025}-${10}-${30}`;
 
-    const monthName = date.toLocaleString('en-US', {month: 'long'});
-    this.setState({month: monthName, date: currDate});
+    const monthName = date.toLocaleString("en-US", { month: "long" });
+    this.setState({ month: monthName, date: currDate });
 
-    const args = {date: currDate};
+    const args = { date: currDate };
     fetch("https://receiptplus.pythonanywhere.com/api/month_cat_exp", {
-      method: "POST", body: JSON.stringify(args),
+      method: "POST",
+      body: JSON.stringify(args),
       headers: { "Content-Type": "application/json" },
       credentials: "include",
     })
-    .then(this.handleChange)
-    .catch((error) => {
-      console.error("Error fetching api/user_info");
-    });
+      .then(this.handleChange)
+      .catch((error) => {
+        console.error("Error fetching api/user_info");
+      });
   };
 
   handleChange = (res: Response) => {
@@ -113,24 +114,27 @@ export class Summary extends Component<SummaryProps, SummaryState> {
   };
 
   processData = (data: { [key: string]: number }) => {
-    const totalSpending = Object.values(data).reduce((acc, amount) => acc + amount, 0);
+    const totalSpending = Object.values(data).reduce(
+      (acc, amount) => acc + amount,
+      0
+    );
 
     // Transform the data into a format suitable for the PieChart
     const newData = Object.keys(data).map((category) => ({
       name: category,
-      amount: ((data[category] / totalSpending) * 100).toFixed(2),
+      amount: Number(((data[category] / totalSpending) * 100).toFixed(2)),
       color: Summary.categoryColors[category] || this.getRandomColor(),
-      legendFontColor: '#7F7F7F',
-      legendFontSize: 15
-    }));  
+      legendFontColor: "#7F7F7F",
+      legendFontSize: 15,
+    }));
 
     // Update state
     this.setState({ pieData: newData });
-  }
+  };
 
   getRandomColor = () => {
-    const letters = '0123456789ABCDEF';
-    let color = '#';
+    const letters = "0123456789ABCDEF";
+    let color = "#";
     for (let i = 0; i < 6; i++) {
       color += letters[Math.floor(Math.random() * 16)];
     }
