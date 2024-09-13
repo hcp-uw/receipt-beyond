@@ -1,7 +1,5 @@
 import React, { Component } from "react";
 import {View, Text, Button} from "react-native";
-import { SignUp } from "./signup";
-import { Login } from "./login";
 import { StackNavigationProp } from "@react-navigation/stack";
 import {RouteProp} from "@react-navigation/native";
 import { AuthStackParamList } from "../app/StackParamList";

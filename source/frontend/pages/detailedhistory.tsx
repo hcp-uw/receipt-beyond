@@ -23,7 +23,7 @@ interface DetailedHistoryState {
   receipts: Receipt[];
 }
 
-export default class DetailedHistory extends Component<
+export class DetailedHistory extends Component<
   DetailedHistoryProps,
   DetailedHistoryState
 > {
