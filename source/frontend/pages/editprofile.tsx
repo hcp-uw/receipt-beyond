@@ -1,11 +1,22 @@
-import { Text, View, TouchableOpacity, Modal} from "react-native";
+import { Text, View, TouchableOpacity, Modal } from "react-native";
 // npx expo install expo-blur
 // import { BlurView } from "expo-blur";
-import React, {Component} from "react";
-import {Octicons} from '@expo/vector-icons';
+import React, { Component } from "react";
+import { Octicons } from "@expo/vector-icons";
 import { NavigationProp, RouteProp } from "@react-navigation/native";
 import { AccountStackParamList } from "@/app/StackParamList";
-import {Colors, Spacer, StyledTextInput, StyledInputLabel, LeftIcon, RightIcon, MsgBox, Container, CenteredView, ModalView} from "../components/style";
+import {
+  Colors,
+  Spacer,
+  StyledTextInput,
+  StyledInputLabel,
+  LeftIcon,
+  RightIcon,
+  MsgBox,
+  StyledContainer,
+  CenteredView,
+  ModalView,
+} from "../components/style";
 import KeyboardAvoidingWrapper from "@/components/keyboardAvoidingWrapper";
 
 interface EditProfileProps {
@@ -14,16 +25,16 @@ interface EditProfileProps {
 }
 
 interface EditProfileState {
-  view:"email" | "password",
-  newEmail: string,
-  oldPassword: string,
-  newPassword: string,
-  confirmPassword: string,
-  message: string,
-  messageType: string,
-  hideOldPass: boolean,
-  hideNewPass: boolean,
-  hideConfirmPass: boolean
+  view: "email" | "password";
+  newEmail: string;
+  oldPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+  message: string;
+  messageType: string;
+  hideOldPass: boolean;
+  hideNewPass: boolean;
+  hideConfirmPass: boolean;
   // showModal: boolean
 }
 
@@ -42,28 +53,29 @@ export class EditProfile extends Component<EditProfileProps, EditProfileState> {
       messageType: "",
       hideOldPass: true,
       hideNewPass: true,
-      hideConfirmPass: true
+      hideConfirmPass: true,
       // showModal: false
     };
   }
 
-  componentDidMount():void {
-      this.props.navigation.setOptions({
-        headerRight: () => (
-          <TouchableOpacity 
-            onPress={this.handleSave}
-            style={{marginRight: 20}}
+  componentDidMount(): void {
+    this.props.navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity onPress={this.handleSave} style={{ marginRight: 20 }}>
+          <Text
+            style={{ fontSize: 18, fontWeight: "bold", color: Colors.blue }}
           >
-            <Text style={{fontSize: 18, fontWeight: "bold"}}>Save</Text>
-          </TouchableOpacity>
-        )
-      });
+            Save
+          </Text>
+        </TouchableOpacity>
+      ),
+    });
   }
 
-  render = (): JSX.Element =>  {
+  render = (): JSX.Element => {
     return (
       <KeyboardAvoidingWrapper>
-        <Container>
+        <StyledContainer>
           {/* <Modal
             visible={this.state.showModal}
             transparent={true}
@@ -90,7 +102,7 @@ export class EditProfile extends Component<EditProfileProps, EditProfileState> {
               justifyContent: "center",
               alignItems: "center",
               width: "100%",
-              padding: 25
+              padding: 25,
             }}
           >
             {/** Edit Email View */}
@@ -100,19 +112,21 @@ export class EditProfile extends Component<EditProfileProps, EditProfileState> {
                   flex: 1,
                   justifyContent: "center",
                   width: "100%",
-                  paddingVertical: 200
+                  paddingVertical: 200,
                 }}
               >
                 <View>
                   <StyledInputLabel>Email</StyledInputLabel>
                   <LeftIcon>
-                    <Octicons name="mail" size={30} color={Colors.darkLight}/>
+                    <Octicons name="mail" size={30} color={Colors.darkLight} />
                   </LeftIcon>
-                  <StyledTextInput 
+                  <StyledTextInput
                     placeholder="Enter your new email"
                     placeholderTextColor={Colors.darkLight}
                     value={this.state.newEmail}
-                    onChangeText={(value) => this.handleChange('newEmail', value)}
+                    onChangeText={(value) =>
+                      this.handleChange("newEmail", value)
+                    }
                   />
                 </View>
               </View>
@@ -125,23 +139,29 @@ export class EditProfile extends Component<EditProfileProps, EditProfileState> {
                   flex: 1,
                   justifyContent: "center",
                   width: "90%",
-                  paddingVertical: 120
+                  paddingVertical: 120,
                 }}
               >
                 <View>
                   <StyledInputLabel>Old Password</StyledInputLabel>
                   <LeftIcon>
-                    <Octicons name="lock" size={30} color={Colors.darkLight}/>
+                    <Octicons name="lock" size={30} color={Colors.darkLight} />
                   </LeftIcon>
                   <StyledTextInput
                     placeholder="********"
                     placeholderTextColor={Colors.darkLight}
                     value={this.state.oldPassword}
                     secureTextEntry={this.state.hideOldPass}
-                    onChangeText={(value) => this.handleChange('oldPassword', value)}
+                    onChangeText={(value) =>
+                      this.handleChange("oldPassword", value)
+                    }
                   />
-                  <RightIcon onPress={() => this.handleChange("hideOldPass", !this.state.hideOldPass)}>
-                    <Octicons name="eye" size={30} color={Colors.darkLight}/>
+                  <RightIcon
+                    onPress={() =>
+                      this.handleChange("hideOldPass", !this.state.hideOldPass)
+                    }
+                  >
+                    <Octicons name="eye" size={30} color={Colors.darkLight} />
                   </RightIcon>
                 </View>
                 <Spacer></Spacer>
@@ -150,17 +170,23 @@ export class EditProfile extends Component<EditProfileProps, EditProfileState> {
                 <View>
                   <StyledInputLabel>New Password</StyledInputLabel>
                   <LeftIcon>
-                    <Octicons name="lock" size={30} color={Colors.darkLight}/>
+                    <Octicons name="lock" size={30} color={Colors.darkLight} />
                   </LeftIcon>
                   <StyledTextInput
                     placeholder="********"
                     placeholderTextColor={Colors.darkLight}
                     value={this.state.newPassword}
                     secureTextEntry={this.state.hideNewPass}
-                    onChangeText={(value) => this.handleChange('newPassword', value)}
+                    onChangeText={(value) =>
+                      this.handleChange("newPassword", value)
+                    }
                   />
-                  <RightIcon onPress={() => this.handleChange("hideNewPass", !this.state.hideNewPass)}>
-                    <Octicons name="eye" size={30} color={Colors.darkLight}/>
+                  <RightIcon
+                    onPress={() =>
+                      this.handleChange("hideNewPass", !this.state.hideNewPass)
+                    }
+                  >
+                    <Octicons name="eye" size={30} color={Colors.darkLight} />
                   </RightIcon>
                 </View>
                 <Spacer></Spacer>
@@ -169,17 +195,26 @@ export class EditProfile extends Component<EditProfileProps, EditProfileState> {
                 <View>
                   <StyledInputLabel>Confirm New Password</StyledInputLabel>
                   <LeftIcon>
-                    <Octicons name="lock" size={30} color={Colors.darkLight}/>
+                    <Octicons name="lock" size={30} color={Colors.darkLight} />
                   </LeftIcon>
                   <StyledTextInput
                     placeholder="********"
                     placeholderTextColor={Colors.darkLight}
                     value={this.state.confirmPassword}
                     secureTextEntry={this.state.hideConfirmPass}
-                    onChangeText={(value) => this.handleChange('confirmPassword', value)}
+                    onChangeText={(value) =>
+                      this.handleChange("confirmPassword", value)
+                    }
                   />
-                  <RightIcon onPress={() => this.handleChange("hideConfirmPass", !this.state.hideConfirmPass)}>
-                    <Octicons name="eye" size={30} color={Colors.darkLight}/>
+                  <RightIcon
+                    onPress={() =>
+                      this.handleChange(
+                        "hideConfirmPass",
+                        !this.state.hideConfirmPass
+                      )
+                    }
+                  >
+                    <Octicons name="eye" size={30} color={Colors.darkLight} />
                   </RightIcon>
                 </View>
               </View>
@@ -187,44 +222,63 @@ export class EditProfile extends Component<EditProfileProps, EditProfileState> {
 
             <MsgBox type={this.state.messageType}>{this.state.message}</MsgBox>
           </View>
-        </Container>
+        </StyledContainer>
       </KeyboardAvoidingWrapper>
     );
-  }
+  };
 
-  handleChange = (name: keyof EditProfileState, value:string|boolean) => {
-    this.setState({[name] : value} as unknown as Pick<EditProfileState, keyof EditProfileState>);
-  }
+  handleChange = (name: keyof EditProfileState, value: string | boolean) => {
+    this.setState({ [name]: value } as unknown as Pick<
+      EditProfileState,
+      keyof EditProfileState
+    >);
+  };
 
   validate = (): boolean => {
     if (this.state.view === "email") {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(this.state.newEmail)) {
-        this.setState({message: "Please enter a valid email address \n (example@example.com)", messageType:"ERROR"});
+        this.setState({
+          message:
+            "Please enter a valid email address \n (example@example.com)",
+          messageType: "ERROR",
+        });
         return false;
       }
 
       return true;
-
     } else {
-      if (this.state.oldPassword === "" || this.state.newPassword === "" || this.state.confirmPassword === "") {
-        this.setState({message: "Please fill in all fields", messageType:"ERROR"});
+      if (
+        this.state.oldPassword === "" ||
+        this.state.newPassword === "" ||
+        this.state.confirmPassword === ""
+      ) {
+        this.setState({
+          message: "Please fill in all fields",
+          messageType: "ERROR",
+        });
         return false;
       }
 
       if (this.state.newPassword.length < 8) {
-        this.setState({message: "New password must be at least 8 characters long", messageType:"ERROR"});
+        this.setState({
+          message: "New password must be at least 8 characters long",
+          messageType: "ERROR",
+        });
         return false;
       }
 
       if (this.state.newPassword !== this.state.confirmPassword) {
-        this.setState({message: "new and confirm passwords do not matched", messageType:"ERROR"});
+        this.setState({
+          message: "new and confirm passwords do not matched",
+          messageType: "ERROR",
+        });
         return false;
       }
 
       return true;
     }
-  }
+  };
 
   handleSave = () => {
     if (this.validate()) {
@@ -232,24 +286,28 @@ export class EditProfile extends Component<EditProfileProps, EditProfileState> {
       let url;
 
       if (this.state.view === "email") {
-        args = {new_email:this.state.newEmail};
+        args = { new_email: this.state.newEmail };
         url = "https://receiptplus.pythonanywhere.com/api/change_user_email";
       } else {
-        args = {current_password: this.state.oldPassword, new_password: this.state.newPassword};
+        args = {
+          current_password: this.state.oldPassword,
+          new_password: this.state.newPassword,
+        };
         url = "https://receiptplus.pythonanywhere.com/api/change_user_password";
       }
 
       fetch(url, {
-        method: "POST", body: JSON.stringify(args),
-        headers: {"Content-Type": "application/json"},
-        credentials: "include"
+        method: "POST",
+        body: JSON.stringify(args),
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
       })
-      .then(this.handleResponse)
-      .catch(() => this.handleError("failed to connect to the server"));
+        .then(this.handleResponse)
+        .catch(() => this.handleError("failed to connect to the server"));
     }
-  }
+  };
 
-  handleResponse = (res:Response) => {
+  handleResponse = (res: Response) => {
     if (res.ok) {
       return res.json().then((data) => {
         // this.setState({showModal: true});
@@ -262,13 +320,13 @@ export class EditProfile extends Component<EditProfileProps, EditProfileState> {
         this.props.navigation.navigate("Account");
       });
     } else {
-      return res.json().then(errorData => {
+      return res.json().then((errorData) => {
         this.handleError(errorData.error);
       });
     }
-  }
+  };
 
-  handleError = (errorMessage:string) => {
-    this.setState({message:errorMessage, messageType:"ERROR"});
-  }
+  handleError = (errorMessage: string) => {
+    this.setState({ message: errorMessage, messageType: "ERROR" });
+  };
 }
