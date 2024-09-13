@@ -241,8 +241,8 @@ export class SignUp extends Component<SignUpProps, SignUpState> {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
       })
-        .then(this.handleResponse)
-        .catch(() => this.handleError("failed to connect to the server"));
+      .then(this.handleResponse)
+      .catch(() => this.handleError("failed to connect to the server"));
     }
   };
 

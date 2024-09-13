@@ -97,10 +97,10 @@ export class Summary extends Component<SummaryProps, SummaryState> {
       headers: { "Content-Type": "application/json" },
       credentials: "include",
     })
-      .then(this.handleChange)
-      .catch((error) => {
-        console.error("Error fetching api/user_info");
-      });
+    .then(this.handleChange)
+    .catch((error) => {
+      console.error("Error fetching api/user_info");
+    });
   };
 
   handleChange = (res: Response) => {
