@@ -11,7 +11,7 @@ import {
 // Import screens
 import Summary from "@/pages/summary";
 import PriceWatch from "@/pages/pricewatch";
-import UserValid from "@/pages/uservalid";
+import {UserValid} from "@/pages/uservalid";
 import History from "@/pages/history";
 import {Account} from "@/pages/account";
 import {EditProfile} from "@/pages/editprofile";
