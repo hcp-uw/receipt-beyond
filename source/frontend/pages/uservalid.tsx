@@ -1,11 +1,23 @@
-import { Text, View, TouchableOpacity, ScrollView, TextInput} from "react-native";
+import {
+  Text,
+  View,
+  TouchableOpacity,
+  ScrollView,
+  TextInput,
+} from "react-native";
 import React, { Component } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
 import { UserValidStackParamList } from "../app/StackParamList";
 import KeyboardAvoidingWrapper from "@/components/keyboardAvoidingWrapper";
-import { StyledContainer, InnerContainer,Spacer, MsgBox } from "@/components/style";
-import { isNewBackTitleImplementation } from "react-native-screens";
+import {
+  StyledContainer,
+  InnerContainer,
+  Spacer,
+  MsgBox,
+  InnerStyledContainer,
+  Colors,
+} from "@/components/style";
 
 interface Item {
   name: string,
@@ -42,105 +54,131 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
       category: "",
       items: [{name: "", price: "", quantity: ""}],
       message: "",
-      messageType: ""
+      messageType: "",
     };
   }
 
-  componentDidMount():void {
+  componentDidMount(): void {
     this.props.navigation.setOptions({
       headerRight: () => (
-        <TouchableOpacity 
-          onPress={this.handleSave}
-          style={{marginRight: 20}}
-        >
-          <Text style={{fontSize: 18, fontWeight: "bold"}}>Save</Text>
+        <TouchableOpacity onPress={this.handleSave} style={{ marginRight: 20 }}>
+          <Text style={{ fontSize: 18, fontWeight: "bold" }}>Save</Text>
         </TouchableOpacity>
-      )
+      ),
     });
-}
+  }
 
   render = (): JSX.Element => {
     return (
       <KeyboardAvoidingWrapper>
         <ScrollView>
           <StyledContainer>
-            <InnerContainer>
-              <View 
-                style={{ 
+            <InnerStyledContainer>
+              <View
+                style={{
                   marginBottom: 20,
                   padding: 20,
                   borderWidth: 1,
-                  borderRadius: 10
+                  borderRadius: 10,
                 }}
               >
-                <View style ={{flexDirection: 'row', alignItems: 'center'}}>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <Text>Store: </Text>
                   <TextInput
                     placeholder="Green Valley Market"
+                    placeholderTextColor={"gray"}
                     value={this.state.store}
                     onChangeText={(value) => this.handleChange("store", value)}
-                    style={{borderBottomWidth: 1, marginBottom: 10}}
+                    style={{ borderBottomWidth: 1, marginBottom: 10 }}
                   />
                 </View>
-                <View style ={{flexDirection: 'row', alignItems: 'center'}}>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <Text>Address: </Text>
                   <TextInput
                     placeholder="123 Greenway Ave, Springfield, IL 62701"
+                    placeholderTextColor={"gray"}
                     value={this.state.address}
-                    onChangeText={(value) => this.handleChange("address", value)}
-                    style={{ 
+                    onChangeText={(value) =>
+                      this.handleChange("address", value)
+                    }
+                    style={{
                       borderBottomWidth: 1,
                       marginBottom: 10,
                       marginLeft: 10,
                       flex: 1,
                       minHeight: 60,
-                      textAlignVertical: 'top'
+                      textAlignVertical: "top",
                     }}
                     multiline
                   />
                 </View>
-                <View style ={{flexDirection: 'row', alignItems: 'center'}}>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <Text>Date: </Text>
                   <TextInput
                     placeholder="YYYY-MM-DD"
+                    placeholderTextColor={"gray"}
                     value={this.state.date}
                     onChangeText={(value) => this.handleChange("date", value)}
-                    style={{ borderBottomWidth: 1, marginBottom: 10}}
+                    style={{ borderBottomWidth: 1, marginBottom: 10 }}
                   />
                 </View>
-                <View style ={{flexDirection: 'row', alignItems: 'center'}}>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <Text>Total: </Text>
                   <TextInput
                     placeholder="25.33"
+                    placeholderTextColor={"gray"}
                     value={String(this.state.total)}
                     onChangeText={(value) => this.handleChange("total", value)}
                     style={{ borderBottomWidth: 1, marginBottom: 10}}
                     keyboardType="decimal-pad"
                   />
                 </View>
-                <View style ={{flexDirection: 'row', alignItems: 'center'}}>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <Text>Category: </Text>
                   <TextInput
                     placeholder="Groceries"
+                    placeholderTextColor={"gray"}
                     value={this.state.category}
-                    onChangeText={(value) => this.handleChange("category", value)}
+                    onChangeText={(value) =>
+                      this.handleChange("category", value)
+                    }
                     style={{ borderBottomWidth: 1, marginBottom: 10 }}
                   />
                 </View>
               </View>
 
               {/** Items section */}
-              <Text style={{ fontWeight: 'bold', fontSize: 16, marginBottom: 10 }}>Items</Text>
+              <Text
+                style={{ fontWeight: "bold", fontSize: 16, marginBottom: 10 }}
+              >
+                Items
+              </Text>
               {this.state.items.map((item, index) => (
-                <View key={index} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
+                <View
+                  key={index}
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    marginBottom: 10,
+                  }}
+                >
                   <TextInput
                     placeholder="Item Name"
+                    placeholderTextColor={"gray"}
                     value={item.name}
-                    onChangeText={(value) => this.handleItemChange(index, 'name', value)}
-                    style={{ flex: 3, borderWidth: 1, padding: 10, marginRight: 5 }}
+                    onChangeText={(value) =>
+                      this.handleItemChange(index, "name", value)
+                    }
+                    style={{
+                      flex: 3,
+                      borderWidth: 1,
+                      padding: 10,
+                      marginRight: 5,
+                    }}
                   />
                   <TextInput
                     placeholder="Price"
+                    placeholderTextColor={"gray"}
                     value={String(item.price)}
                     onChangeText={(value) => this.handleItemChange(index, 'price', value)}
                     style={{ flex: 2, borderWidth: 1, padding: 10, marginRight: 5 }}
@@ -148,6 +186,7 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
                   />
                   <TextInput
                     placeholder="Qty"
+                    placeholderTextColor={"gray"}
                     value={String(item.quantity)}
                     onChangeText={(value) => this.handleItemChange(index, 'quantity', value)}
                     style={{ flex: 1, borderWidth: 1, padding: 10, marginRight: 5 }}
@@ -156,24 +195,43 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
                 </View>
               ))}
               <View>
-                <TouchableOpacity onPress={() => this.setState({items: [...this.state.items, { name: '', price: "", quantity: "" }]})} style={{ padding: 10, backgroundColor: 'blue' }}>
-                  <Text style={{ color: 'white', fontWeight: 'bold' }}>+</Text>
+                <TouchableOpacity
+                  onPress={() =>
+                    this.setState({
+                      items: [
+                        ...this.state.items,
+                        { name: "", price: "", quantity: ""},
+                      ],
+                    })
+                  }
+                  style={{
+                    padding: 10,
+                    backgroundColor: Colors.blue,
+                    justifyContent: "center", // Center vertically
+                    alignItems: "center", // Center horizontally
+                  }}
+                >
+                  <Text
+                    style={{ color: "white", fontWeight: "bold", fontSize: 20 }}
+                  >
+                    +
+                  </Text>
                 </TouchableOpacity>
               </View>
               <Spacer></Spacer>
               <MsgBox type={this.state.messageType}>
                 {this.state.message}
               </MsgBox>
-            </InnerContainer>
+            </InnerStyledContainer>
           </StyledContainer>
         </ScrollView>
       </KeyboardAvoidingWrapper>
     );
-  }
+  };
 
   // handleAddItem = () => {
 
-  //   /** 
+  //   /**
   //    * IDEA:
   //    * 1. Add a conditional where the name, price, quantity has to have
   //    *     some sort of an input before adding a new item row
@@ -204,7 +262,8 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
   };
 
   validate = (): boolean => {
-    if (this.state.store === "" ||
+    if (
+      this.state.store === "" ||
       this.state.address === "" ||
       this.state.date === "" ||
       this.state.total === "" ||
@@ -213,7 +272,7 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
     ) {
       this.setState({
         message: "Please fill in all fields",
-        messageType: "ERROR"
+        messageType: "ERROR",
       });
       return false;
     }
@@ -222,7 +281,7 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
     if (isNaN(date.getTime())) {
       this.setState({
         message: "Invalid date",
-        messageType: "ERROR"
+        messageType: "ERROR",
       });
       return false;
     }
@@ -230,7 +289,7 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
     const month = date.getMonth() + 1;
     const day = date.getDate();
     const currDate = `${year}-${month}-${day}`;
-    this.setState({date: currDate});
+    this.setState({ date: currDate });
 
     const totalAsNumber = Number(this.state.total);
     if (isNaN(totalAsNumber)) {
@@ -255,7 +314,7 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
       if (item.name === "" || item.price === "" || item.quantity === "") {
         this.setState({
           message: "Please fill all the fields of the Items",
-          messageType: "ERROR"
+          messageType: "ERROR",
         });
         return false;
       } 
@@ -281,7 +340,7 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
       item.quantity = quantityAsNumber;
     }
     return true;
-  }
+  };
 
   handleSave = () => {
     if (this.validate()) {
@@ -291,7 +350,7 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
         total: this.state.total,
         store: this.state.store,
         location: this.state.address,
-        purchases: this.state.items
+        purchases: this.state.items,
       };
       fetch("https://receiptplus.pythonanywhere.com/api/receipts", {
         method: "POST",
@@ -299,10 +358,10 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
       })
-      .then(this.handleResponse)
-      .catch(() => this.handleError("failed to connect to the server"));
+        .then(this.handleResponse)
+        .catch(() => this.handleError("failed to connect to the server"));
     }
-  }
+  };
 
   handleResponse = (res: Response) => {
     // res.ok: 200 ~ 299
@@ -310,8 +369,8 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
       return res.json().then((data) => {
         this.setState({
           message: data.message,
-          messageType: "SUCCESS"
-        })
+          messageType: "SUCCESS",
+        });
         this.resetForm();
       });
     } else {

@@ -42,8 +42,8 @@ const ReceiptForm: React.FC<ReceiptFormProps> = ({ receipt }) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "white",
-    borderRadius: 8,
+    backgroundColor: "#E6E6E6",
+    borderRadius: 10,
     padding: 16,
     marginVertical: 8,
     marginHorizontal: 16,

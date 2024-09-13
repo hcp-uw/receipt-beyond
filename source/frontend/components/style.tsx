@@ -6,16 +6,17 @@ const StatusBarHeight = Constants.statusBarHeight;
 
 // colors
 export const Colors = {
-  primary: "#ffffff",
-  black: "#000000",
-  tertiary: "#1F2937",
+  primary: "#768A96",
+  secondary: "#E6E6E6",
+  tertiary: "#29353C",
+  quaternary: "#1F2937",
   darkLight: "#9CA3AF",
-  blue: "#007AFF",
+  blue: "#00008B",
   green: "#10B981",
   red: "#EF4444",
 };
 
-const { primary, black, tertiary, darkLight } = Colors;
+const { primary, quaternary, tertiary, darkLight, secondary } = Colors;
 
 export const StartLogo = styled.Image`
   width: 150px;
@@ -24,27 +25,42 @@ export const StartLogo = styled.Image`
 
 export const StyledContainer = styled.View`
   flex: 1;
-  padding: 25px;
-  padding-top: ${StatusBarHeight + 30}px;
   background-color: ${Colors.primary};
+  justify-content: center;
+  align-items: center;
+`;
+
+export const DetailedHistoryStyledContainer = styled.View`
+  flex: 1;
+  background-color: ${Colors.primary};
+`;
+
+export const InnerStyledContainer = styled.View`
+  width: 90%;
+  background-color: ${Colors.secondary};
+  border-radius: 10px;
+  padding: 25px;
+  justify-content: center;
 `;
 
 export const InnerContainer = styled.View`
   width: 100%;
   flex: 1;
+  margin-vertical: 30px;
   align-items: center;
+  justify-content: center;
 `;
 
-export const Container = styled.View`
-  flex: 1;
+export const ScrollableContainer = styled.ScrollView`
   background-color: ${Colors.primary};
+  justifycontent: "center";
 `;
 
 export const PageTitle = styled.Text`
   font-size: 30px;
   text-align: center;
   font-weight: bold;
-  color: ${Colors.tertiary};
+  color: ${Colors.secondary};
   padding: 10px;
 `;
 
@@ -63,7 +79,7 @@ export const StyledFormArea = styled.View`
 // Suggestion: change height to 40px. Update the following icons and placeholder size as well.
 // Change the style using FROSTED color pal
 export const StyledTextInput = styled.TextInput`
-  background-color: ${black};
+  background-color: ${secondary};
   padding: 12px;
   padding-left: 55px;
   padding-right: 20px;
@@ -72,11 +88,23 @@ export const StyledTextInput = styled.TextInput`
   height: 50px;
   margin-vertical: 3px;
   margin-bottom: 10px;
-  color: ${primary};
+  color: ${tertiary};
+`;
+
+export const StyledText = styled.Text`
+  font-size: 18px;
+  color: #e6e6e6;
+  font-weight: bold;
+`;
+
+export const StyledTextDark = styled.Text`
+  font-size: 18px;
+  color: #29353c;
+  font-weight: bold;
 `;
 
 export const StyledInputLabel = styled.Text`
-  color: ${tertiary};
+  color: ${secondary};
   font-size: 15px;
   text-align: left;
 `;
@@ -110,20 +138,20 @@ export const Line = styled.View`
 
 export const CenteredView = styled.View`
   flex: 1;
-  justifyContent: center;
-  alignItems: center;
-  marginTop: 22px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 22px;
 `;
 
 export const ModalView = styled.View`
   margin: 20px;
-  backgroundColor: lightgreen;
-  borderRadius: 20px;
+  backgroundcolor: lightgreen;
+  borderradius: 20px;
   padding: 35px;
-  alignItems: center;
-  shadowColor: #000;
-  shadowOpacity: 0.25;
-  shadowRadius: 4px;
+  alignitems: center;
+  shadowcolor: #000;
+  shadowopacity: 0.25;
+  shadowradius: 4px;
   elevation: 5;
 `;
 
