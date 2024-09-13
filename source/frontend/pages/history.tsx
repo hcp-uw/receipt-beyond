@@ -7,7 +7,6 @@ import { ScrollableContainer } from "../components/style";
 
 interface HistoryProps {
   navigation: NavigationProp<HistoryStackParamList, "History">;
-
   route: RouteProp<HistoryStackParamList, "History">;
 }
 
@@ -16,6 +15,8 @@ interface HistoryState {
 }
 
 export class History extends Component<HistoryProps, HistoryState> {
+  focusListener: any;
+
   constructor(props: HistoryProps) {
     super(props);
     this.state = {
@@ -24,7 +25,17 @@ export class History extends Component<HistoryProps, HistoryState> {
   }
 
   componentDidMount() {
-    this.fetchDateBrackets();
+    // Set up the listener that runs every time the screen is focused
+    this.focusListener = this.props.navigation.addListener("focus", () => {
+      this.fetchDateBrackets();
+    });
+  }
+
+  componentWillUnmount() {
+    // Remove the listener when the component unmounts
+    if (this.focusListener) {
+      this.focusListener();
+    }
   }
 
   fetchDateBrackets = async () => {
