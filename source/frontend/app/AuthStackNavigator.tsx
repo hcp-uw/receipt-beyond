@@ -6,6 +6,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import MyTabs from "./MainNavigator";
 import StartPage from "@/pages/startpage";
 import { AuthStackParamList } from "../app/StackParamList";
+import { Colors } from "@/components/style";
 
 const AuthStack = createStackNavigator<AuthStackParamList>();
 
@@ -15,10 +16,23 @@ function AuthStackNavigator() {
       initialRouteName="Start"
       screenOptions={{ headerShown: false }}
     >
-      <AuthStack.Screen name="Start" component={StartPage}/>
-      <AuthStack.Screen name="SignUp" component={SignUp}/>
-      <AuthStack.Screen name="Login" component={Login} options={{headerShown: true, headerTitle: "", headerBackTitleVisible: false}}/>
-      <AuthStack.Screen name="Main" component={MyTabs}/>
+      <AuthStack.Screen name="Start" component={StartPage} />
+      <AuthStack.Screen name="SignUp" component={SignUp} />
+      <AuthStack.Screen
+        name="Login"
+        component={Login}
+        options={{
+          headerShown: true,
+          headerTitle: "",
+          headerBackTitleVisible: true,
+          headerStyle: {
+            backgroundColor: "#768A96", // Set the top banner background to black
+            shadowOpacity: 0, // Remove shadow on iOS
+          },
+          headerTintColor: Colors.blue,
+        }}
+      />
+      <AuthStack.Screen name="Main" component={MyTabs} />
     </AuthStack.Navigator>
   );
 }

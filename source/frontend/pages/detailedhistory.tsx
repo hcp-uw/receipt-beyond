@@ -3,6 +3,8 @@ import { View, FlatList, StyleSheet } from "react-native";
 import { NavigationProp, RouteProp } from "@react-navigation/native";
 import { HistoryStackParamList } from "@/app/StackParamList";
 import ReceiptForm from "../components/receiptForm";
+import { DetailedHistoryStyledContainer } from "@/components/style";
+// import { Container } from "../components/style";
 
 interface Receipt {
   category: string;
@@ -61,20 +63,16 @@ export class DetailedHistory extends Component<
 
   render() {
     return (
-      <View style={styles.container}>
+      // <View style={styles.container}>
+      <DetailedHistoryStyledContainer>
         <FlatList
           data={this.state.receipts}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item }) => <ReceiptForm receipt={item} />}
         />
-      </View>
+      </DetailedHistoryStyledContainer>
+
+      // </View>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f0f0f0",
-  },
-});

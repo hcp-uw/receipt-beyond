@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Text,
 } from "react-native";
+import { StyledTextDark } from "../components/style";
 
 interface DateButton {
   dateString: string;
@@ -15,28 +16,26 @@ interface DateButton {
 const DateBracketButton: React.FC<DateButton> = ({ dateString, onPress }) => {
   return (
     <TouchableOpacity onPress={onPress} style={styles.button}>
-      <Text style={styles.buttonText}>{dateString}</Text>
+      <StyledTextDark>{dateString}</StyledTextDark>
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: "#AAC7D8",
-    borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 40,
+    alignItems: "center",
+    backgroundColor: "#E6E6E6",
+    borderRadius: 10,
+    paddingVertical: 10,
+    // paddingHorizontal: 100,
     elevation: 2,
     shadowColor: "rgba(0, 0, 0, 0.1)",
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
     shadowOpacity: 1,
-    margin: 4,
+    marginTop: 14,
+    marginHorizontal: 14,
     // width: "100%",
-  } as ViewStyle,
-  buttonText: {
-    color: "#29353C",
-    fontWeight: "bold",
   },
 });
 

@@ -3,7 +3,13 @@ import React, { Component } from "react";
 import { BarChart, PieChart } from "react-native-chart-kit";
 import { NavigationProp, RouteProp } from "@react-navigation/native";
 import { SummaryStackParamList } from "../app/StackParamList";
-import { PageTitle, Container } from "../components/style";
+import {
+  Colors,
+  InnerStyledContainer,
+  PageTitle,
+  ScrollableContainer,
+  Spacer,
+} from "../components/style";
 
 interface SummaryProps {
   navigation: NavigationProp<SummaryStackParamList, "Summary">;
@@ -46,20 +52,42 @@ export class Summary extends Component<SummaryProps, SummaryState> {
 
   render = (): JSX.Element => {
     return (
-      <Container>
-        <PageTitle>{this.state.month}</PageTitle>
-        {/** Erase the justifyContent and alignItems to
-         * have the piechart to go right below the date */}
-        <View
+      <ScrollableContainer>
+        {/* export const PageTitle = styled.Text` font-size: 30px; text-align:
+        center; font-weight: bold; color: ${Colors.secondary}; padding: 10px; `; */}
+
+        <InnerStyledContainer
           style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
+            marginHorizontal: 10,
+            width: Dimensions.get("window").width - 20,
           }}
         >
+          <Text
+            style={{
+              fontSize: 30,
+              textAlign: "center",
+              fontWeight: "bold",
+              color: Colors.tertiary,
+            }}
+          >
+            {this.state.month}
+          </Text>
+          <Spacer></Spacer>
+          <Spacer></Spacer>
+
+          <Text
+            style={{
+              fontSize: 15,
+              textAlign: "left",
+              fontWeight: "bold",
+              color: Colors.primary,
+            }}
+          >
+            Categorical Spending
+          </Text>
           <PieChart
             data={this.state.pieData}
-            width={Dimensions.get("window").width} // from react-native
+            width={Dimensions.get("window").width - 40} // from react-native
             height={220}
             chartConfig={{
               backgroundColor: "#1cc910",
@@ -69,10 +97,10 @@ export class Summary extends Component<SummaryProps, SummaryState> {
             }}
             accessor={"amount"}
             backgroundColor={"transparent"}
-            paddingLeft={"15"}
+            paddingLeft={"0"}
           />
-        </View>
-      </Container>
+        </InnerStyledContainer>
+      </ScrollableContainer>
     );
   };
 
@@ -97,10 +125,10 @@ export class Summary extends Component<SummaryProps, SummaryState> {
       headers: { "Content-Type": "application/json" },
       credentials: "include",
     })
-      .then(this.handleChange)
-      .catch((error) => {
-        console.error("Error fetching api/user_info");
-      });
+    .then(this.handleChange)
+    .catch((error) => {
+      console.error("Error fetching api/user_info");
+    });
   };
 
   handleChange = (res: Response) => {
@@ -124,7 +152,7 @@ export class Summary extends Component<SummaryProps, SummaryState> {
       name: category,
       amount: Number(((data[category] / totalSpending) * 100).toFixed(2)),
       color: Summary.categoryColors[category] || this.getRandomColor(),
-      legendFontColor: "#7F7F7F",
+      legendFontColor: Colors.tertiary,
       legendFontSize: 15,
     }));
 

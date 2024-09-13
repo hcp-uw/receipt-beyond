@@ -1,7 +1,7 @@
 import { Text, View, Button, TouchableOpacity } from "react-native";
 import React, { Component, ChangeEvent } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
-import {RouteProp} from "@react-navigation/native";
+import { RouteProp } from "@react-navigation/native";
 import { AuthStackParamList } from "../app/StackParamList";
 import {
   Colors,
@@ -65,7 +65,7 @@ export class Login extends Component<LoginProps, LoginState> {
               resizeMode="cover"
               source={require("../assets/ReceiptBeyondTransparent.png")}
             />
-            <PageTitle>Login</PageTitle>
+            <PageTitle>Log-in</PageTitle>
             <Spacer></Spacer>
             <StyledFormArea>
               <View>
@@ -74,7 +74,7 @@ export class Login extends Component<LoginProps, LoginState> {
                   <Octicons name="person" size={30} color={Colors.darkLight} />
                 </LeftIcon>
                 <StyledTextInput
-                  placeholder="bob123 OR abc@gmail.com"
+                  placeholder="bob123"
                   placeholderTextColor={Colors.darkLight}
                   value={this.state.user_id}
                   onChangeText={(value) => this.handleChange("user_id", value)}
@@ -105,7 +105,11 @@ export class Login extends Component<LoginProps, LoginState> {
               </View>
 
               <Spacer></Spacer>
-              <Button title="Login" onPress={this.handleLogin} />
+              <Button
+                title="Login"
+                onPress={this.handleLogin}
+                color={Colors.blue}
+              />
               <MsgBox type={this.state.messageType}>
                 {this.state.message}
               </MsgBox>
@@ -189,7 +193,7 @@ export class Login extends Component<LoginProps, LoginState> {
       return res.json().then((data) => {
         this.props.navigation.reset({
           index: 0,
-          routes: [{name: "Main"}]
+          routes: [{ name: "Main" }],
         });
       });
     } else {

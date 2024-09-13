@@ -1,7 +1,7 @@
 import { Text, View, Button, TouchableOpacity } from "react-native";
 import React, { Component, ChangeEvent } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
-import {RouteProp} from "@react-navigation/native";
+import { RouteProp } from "@react-navigation/native";
 import { AuthStackParamList } from "../app/StackParamList";
 import {
   Colors,
@@ -66,7 +66,7 @@ export class SignUp extends Component<SignUpProps, SignUpState> {
               resizeMode="cover"
               source={require("../assets/ReceiptBeyondTransparent.png")}
             />
-            <PageTitle>SIGN UP</PageTitle>
+            <PageTitle>Sign-up</PageTitle>
             <Spacer></Spacer>
             <StyledFormArea>
               <View>
@@ -144,7 +144,11 @@ export class SignUp extends Component<SignUpProps, SignUpState> {
               </View>
 
               <Spacer></Spacer>
-              <Button title="Submit" onPress={this.handleSubmit} />
+              <Button
+                title="Submit"
+                onPress={this.handleSubmit}
+                color={Colors.blue}
+              />
               <MsgBox type={this.state.messageType}>
                 {this.state.message}
               </MsgBox>
@@ -241,8 +245,8 @@ export class SignUp extends Component<SignUpProps, SignUpState> {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
       })
-        .then(this.handleResponse)
-        .catch(() => this.handleError("failed to connect to the server"));
+      .then(this.handleResponse)
+      .catch(() => this.handleError("failed to connect to the server"));
     }
   };
 
@@ -253,7 +257,7 @@ export class SignUp extends Component<SignUpProps, SignUpState> {
         // this.props.navigation.replace("Main");
         this.props.navigation.reset({
           index: 0,
-          routes: [{name: "Main"}]
+          routes: [{ name: "Main" }],
         });
       });
     } else {
