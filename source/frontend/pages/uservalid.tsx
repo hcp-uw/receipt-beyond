@@ -15,6 +15,8 @@ import {
   InnerContainer,
   Spacer,
   MsgBox,
+  InnerStyledContainer,
+  Colors,
 } from "@/components/style";
 
 interface Item {
@@ -71,7 +73,7 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
       <KeyboardAvoidingWrapper>
         <ScrollView>
           <StyledContainer>
-            <InnerContainer>
+            <InnerStyledContainer>
               <View
                 style={{
                   marginBottom: 20,
@@ -84,6 +86,7 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
                   <Text>Store: </Text>
                   <TextInput
                     placeholder="Green Valley Market"
+                    placeholderTextColor={"gray"}
                     value={this.state.store}
                     onChangeText={(value) => this.handleChange("store", value)}
                     style={{ borderBottomWidth: 1, marginBottom: 10 }}
@@ -93,6 +96,7 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
                   <Text>Address: </Text>
                   <TextInput
                     placeholder="123 Greenway Ave, Springfield, IL 62701"
+                    placeholderTextColor={"gray"}
                     value={this.state.address}
                     onChangeText={(value) =>
                       this.handleChange("address", value)
@@ -112,6 +116,7 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
                   <Text>Date: </Text>
                   <TextInput
                     placeholder="YYYY-MM-DD"
+                    placeholderTextColor={"gray"}
                     value={this.state.date}
                     onChangeText={(value) => this.handleChange("date", value)}
                     style={{ borderBottomWidth: 1, marginBottom: 10 }}
@@ -121,6 +126,7 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
                   <Text>Total: </Text>
                   <TextInput
                     placeholder="25.33"
+                    placeholderTextColor={"gray"}
                     value={
                       this.state.total !== 0 ? String(this.state.total) : ""
                     }
@@ -135,6 +141,7 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
                   <Text>Category: </Text>
                   <TextInput
                     placeholder="Groceries"
+                    placeholderTextColor={"gray"}
                     value={this.state.category}
                     onChangeText={(value) =>
                       this.handleChange("category", value)
@@ -161,6 +168,7 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
                 >
                   <TextInput
                     placeholder="Item Name"
+                    placeholderTextColor={"gray"}
                     value={item.name}
                     onChangeText={(value) =>
                       this.handleItemChange(index, "name", value)
@@ -174,6 +182,7 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
                   />
                   <TextInput
                     placeholder="Price"
+                    placeholderTextColor={"gray"}
                     value={item.price !== 0 ? String(item.price) : ""}
                     onChangeText={(value) =>
                       this.handleItemChange(index, "price", value)
@@ -188,6 +197,7 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
                   />
                   <TextInput
                     placeholder="Qty"
+                    placeholderTextColor={"gray"}
                     value={item.quantity !== 0 ? String(item.quantity) : ""}
                     onChangeText={(value) =>
                       this.handleItemChange(index, "quantity", value)
@@ -212,16 +222,25 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
                       ],
                     })
                   }
-                  style={{ padding: 10, backgroundColor: "blue" }}
+                  style={{
+                    padding: 10,
+                    backgroundColor: Colors.blue,
+                    justifyContent: "center", // Center vertically
+                    alignItems: "center", // Center horizontally
+                  }}
                 >
-                  <Text style={{ color: "white", fontWeight: "bold" }}>+</Text>
+                  <Text
+                    style={{ color: "white", fontWeight: "bold", fontSize: 20 }}
+                  >
+                    +
+                  </Text>
                 </TouchableOpacity>
               </View>
               <Spacer></Spacer>
               <MsgBox type={this.state.messageType}>
                 {this.state.message}
               </MsgBox>
-            </InnerContainer>
+            </InnerStyledContainer>
           </StyledContainer>
         </ScrollView>
       </KeyboardAvoidingWrapper>

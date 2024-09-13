@@ -36,6 +36,7 @@ export const DetailedHistoryStyledContainer = styled.View`
 `;
 
 export const InnerStyledContainer = styled.View`
+  width: 90%;
   background-color: ${Colors.secondary};
   border-radius: 10px;
   padding: 25px;
