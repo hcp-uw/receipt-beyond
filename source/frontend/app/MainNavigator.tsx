@@ -3,7 +3,10 @@ import {
   createBottomTabNavigator,
   useBottomTabBarHeight,
 } from "@react-navigation/bottom-tabs";
-import { createStackNavigator } from "@react-navigation/stack";
+import {
+  createStackNavigator,
+  StackNavigationOptions,
+} from "@react-navigation/stack";
 import {
   Entypo,
   MaterialIcons,
@@ -45,15 +48,15 @@ const AccountStack = createStackNavigator<AccountStackParamList>();
   types.d.ts(318, 5): The expected type comes from property 'component' which is declared here on type 'IntrinsicAttributes & RouteConfig<AccountStackParamList,
  */
 
-const defaultScreenOptions = {
+const defaultScreenOptions: StackNavigationOptions = {
   headerStyle: {
-    backgroundColor: "#768A96", // Vibrant background color
+    backgroundColor: "#768A96",
   },
-  headerTintColor: "#E6E6E6", // Text and icon color
+  headerTintColor: "#E6E6E6",
   headerTitleStyle: {
     fontWeight: "bold",
     fontSize: 22,
-    fontFamily: "roboto", // Custom font
+    fontFamily: "roboto",
   },
 };
 
@@ -86,7 +89,7 @@ function UserValidStackNavigator() {
   return (
     <UserValidStack.Navigator screenOptions={defaultScreenOptions}>
       <UserValidStack.Screen
-        name="UserValid"
+        name="UserValidation"
         component={UserValid}
         options={{ title: "Add Receipt" }}
       />
