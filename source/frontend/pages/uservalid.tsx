@@ -5,11 +5,12 @@ import { RouteProp } from "@react-navigation/native";
 import { UserValidStackParamList } from "../app/StackParamList";
 import KeyboardAvoidingWrapper from "@/components/keyboardAvoidingWrapper";
 import { StyledContainer, InnerContainer,Spacer, MsgBox } from "@/components/style";
+import { isNewBackTitleImplementation } from "react-native-screens";
 
 interface Item {
   name: string,
-  price: number,
-  quantity: number
+  price: string | number,
+  quantity: string | number
 }
 
 interface UserValidProps {
@@ -22,7 +23,7 @@ interface UserValidState {
   store: string;
   address: string;
   date: string;
-  total: number;
+  total: string | number;
   category: string;
   items: Item[];
   message: string;
@@ -37,9 +38,9 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
       store: "",
       address: "",
       date: "",
-      total: 0,
+      total: "",
       category: "",
-      items: [{name: "", price: 0, quantity: 0}],
+      items: [{name: "", price: "", quantity: ""}],
       message: "",
       messageType: ""
     };
@@ -111,8 +112,8 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
                   <Text>Total: </Text>
                   <TextInput
                     placeholder="25.33"
-                    value={(this.state.total !== 0) ? String(this.state.total) : ""}
-                    onChangeText={(value) => this.handleChange("total", parseFloat(value))}
+                    value={String(this.state.total)}
+                    onChangeText={(value) => this.handleChange("total", value)}
                     style={{ borderBottomWidth: 1, marginBottom: 10}}
                     keyboardType="decimal-pad"
                   />
@@ -140,14 +141,14 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
                   />
                   <TextInput
                     placeholder="Price"
-                    value={(item.price !== 0) ? String(item.price) : ""}
+                    value={String(item.price)}
                     onChangeText={(value) => this.handleItemChange(index, 'price', value)}
                     style={{ flex: 2, borderWidth: 1, padding: 10, marginRight: 5 }}
                     keyboardType="numeric"
                   />
                   <TextInput
                     placeholder="Qty"
-                    value={(item.quantity !== 0) ? String(item.quantity) : ""}
+                    value={String(item.quantity)}
                     onChangeText={(value) => this.handleItemChange(index, 'quantity', value)}
                     style={{ flex: 1, borderWidth: 1, padding: 10, marginRight: 5 }}
                     keyboardType="numeric"
@@ -155,7 +156,7 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
                 </View>
               ))}
               <View>
-                <TouchableOpacity onPress={() => this.setState({items: [...this.state.items, { name: '', price: 0, quantity: 0 }]})} style={{ padding: 10, backgroundColor: 'blue' }}>
+                <TouchableOpacity onPress={() => this.setState({items: [...this.state.items, { name: '', price: "", quantity: "" }]})} style={{ padding: 10, backgroundColor: 'blue' }}>
                   <Text style={{ color: 'white', fontWeight: 'bold' }}>+</Text>
                 </TouchableOpacity>
               </View>
@@ -184,29 +185,29 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
   //   });
   // };
 
-  handleChange = (name: keyof UserValidState, value: string | number) => {
+  handleChange = (name: keyof UserValidState, value: string) => {
     this.setState({ [name]: value } as unknown as Pick<
       UserValidState,
       keyof UserValidState
     >);
   };
 
-  handleItemChange = (index: number, field: string, value: any) => {
+  handleItemChange = (index: number, field: string, value: string) => {
     const items = [...this.state.items];
-    if (field === 'quantity' || field === 'price') {
-      items[index] = { ...items[index], [field]: parseFloat(value) || 0 };
-    } else {
-      items[index] = { ...items[index], [field]: value };
-    }
+    // if (field === 'quantity' || field === 'price') {
+    //   items[index] = { ...items[index], [field]: parseFloat(value) || 0 };
+    // } else {
+    //   items[index] = { ...items[index], [field]: value };
+    // }
+    items[index] = { ...items[index], [field]: value };
     this.setState({ items });
-    console.log(items);
   };
 
   validate = (): boolean => {
     if (this.state.store === "" ||
       this.state.address === "" ||
       this.state.date === "" ||
-      this.state.total === 0 ||
+      this.state.total === "" ||
       this.state.category === "" ||
       this.state.items.length === 0
     ) {
@@ -231,25 +232,54 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
     const currDate = `${year}-${month}-${day}`;
     this.setState({date: currDate});
 
-    if (Number(this.state.total) < 0) {
+    const totalAsNumber = Number(this.state.total);
+    if (isNaN(totalAsNumber)) {
       this.setState({
-        message: "Total amount can not be negative",
+        message: "Total amount is not a number",
         messageType: "ERROR"
       });
       return false;
     }
 
+    if (totalAsNumber < 0) {
+      this.setState({
+        message: "Total amount can not be a negative value",
+        messageType: "ERROR"
+      });
+      return false;
+    }
+
+    this.setState({total: totalAsNumber})
+
     for (const item of this.state.items) {
-      if (item.name === "" || item.price === 0 || item.quantity === 0) {
+      if (item.name === "" || item.price === "" || item.quantity === "") {
         this.setState({
           message: "Please fill all the fields of the Items",
           messageType: "ERROR"
         });
         return false;
+      } 
+
+      const priceAsNumber = parseFloat(item.price as string);
+      const quantityAsNumber = parseFloat(item.quantity as string);
+      
+      if (isNaN(priceAsNumber)) {
+        this.setState({
+          message: "Price is not a number",
+          messageType: "ERROR"
+        });
+        return false;
+      } else if (isNaN(quantityAsNumber)) {
+        this.setState({
+          message: "Quantity is not a number",
+          messageType: "ERROR"
+        });
+        return false;
       }
+
+      item.price = priceAsNumber;
+      item.quantity = quantityAsNumber;
     }
-
-
     return true;
   }
 
@@ -297,15 +327,15 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
   };
 
   resetForm = () => {
-    this.state = {
+    this.setState({
       store: "",
       address: "",
       date: "",
-      total: 0,
+      total: "",
       category: "",
-      items: [{name: "", price: 0, quantity: 0}],
+      items: [{name: "", price: "", quantity: ""}],
       message: "",
       messageType: ""
-    };
+    });
   }
 }
