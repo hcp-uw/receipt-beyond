@@ -47,7 +47,7 @@ const AccountStack = createStackNavigator<AccountStackParamList>();
 
 const defaultScreenOptions = {
   headerStyle: {
-    backgroundColor: "#44576D", // Vibrant background color
+    backgroundColor: "#768A96", // Vibrant background color
   },
   headerTintColor: "#E6E6E6", // Text and icon color
   headerTitleStyle: {
@@ -136,7 +136,7 @@ function MyTabs() {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: "#44576D", // Set the background color of the tab bar
+          backgroundColor: "#768A96", // Set the background color of the tab bar
         },
       }}
     >
@@ -149,7 +149,7 @@ function MyTabs() {
             <Entypo
               name="home"
               size={24}
-              color={focused ? "#E6E6E6" : "gray"}
+              color={focused ? "#E6E6E6" : "#444444"}
             />
           ),
         }}
@@ -163,7 +163,7 @@ function MyTabs() {
             <AntDesign
               name="eye"
               size={24}
-              color={focused ? "#E6E6E6" : "gray"}
+              color={focused ? "#E6E6E6" : "#444444"}
             />
           ),
         }}
@@ -177,7 +177,7 @@ function MyTabs() {
             <Entypo
               name="camera"
               size={24}
-              color={focused ? "#E6E6E6" : "gray"}
+              color={focused ? "#E6E6E6" : "#444444"}
             />
           ),
         }}
@@ -191,7 +191,7 @@ function MyTabs() {
             <Foundation
               name="list-bullet"
               size={24}
-              color={focused ? "#E6E6E6" : "gray"}
+              color={focused ? "#E6E6E6" : "#444444"}
             />
           ),
         }}
@@ -205,7 +205,7 @@ function MyTabs() {
             <MaterialIcons
               name="account-circle"
               size={24}
-              color={focused ? "#E6E6E6" : "gray"}
+              color={focused ? "#E6E6E6" : "#444444"}
             />
           ),
         }}

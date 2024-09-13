@@ -1,10 +1,10 @@
 import { Text, View } from "react-native";
-import { StyledContainerCentered, StyledText } from "../components/style";
+import { StyledContainer, StyledText } from "../components/style";
 
 export default function PriceWatch() {
   return (
-    <StyledContainerCentered>
+    <StyledContainer>
       <StyledText>PriceWatch Screen</StyledText>
-    </StyledContainerCentered>
+    </StyledContainer>
   );
 }

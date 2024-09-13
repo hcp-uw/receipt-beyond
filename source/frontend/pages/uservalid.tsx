@@ -1,15 +1,9 @@
 import { Text, View } from "react-native";
-
+import { StyledContainer, StyledText } from "@/components/style";
 export default function UserValid() {
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-    <Text>UserValid Screen</Text>
-    </View>
+    <StyledContainer>
+      <StyledText>UserValid Screen</StyledText>
+    </StyledContainer>
   );
 }

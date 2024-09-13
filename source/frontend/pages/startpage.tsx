@@ -3,7 +3,11 @@ import { View, Text, Button } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
 import { AuthStackParamList } from "../app/StackParamList";
-import { StyledContainerCentered, StyledText } from "../components/style";
+import {
+  InnerStyledContainer,
+  StyledContainer,
+  StyledTextDark,
+} from "../components/style";
 
 interface StartPageProps {
   navigation: StackNavigationProp<AuthStackParamList, "Start">;
@@ -28,10 +32,12 @@ export default class StartPage extends Component<
 
   render() {
     return (
-      <StyledContainerCentered>
-        <StyledText>Welcome to Receipt Beyond</StyledText>
-        <Button title="Get Started" onPress={this.navigateToSignUp} />
-      </StyledContainerCentered>
+      <StyledContainer>
+        <InnerStyledContainer>
+          <StyledTextDark>Welcome to Receipt Beyond</StyledTextDark>
+          <Button title="Get Started" onPress={this.navigateToSignUp} />
+        </InnerStyledContainer>
+      </StyledContainer>
     );
   }
 

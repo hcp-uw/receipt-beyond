@@ -74,7 +74,7 @@ export class Login extends Component<LoginProps, LoginState> {
                   <Octicons name="person" size={30} color={Colors.darkLight} />
                 </LeftIcon>
                 <StyledTextInput
-                  placeholder="bob123 OR abc@gmail.com"
+                  placeholder="bob123"
                   placeholderTextColor={Colors.darkLight}
                   value={this.state.user_id}
                   onChangeText={(value) => this.handleChange("user_id", value)}
@@ -105,7 +105,11 @@ export class Login extends Component<LoginProps, LoginState> {
               </View>
 
               <Spacer></Spacer>
-              <Button title="Login" onPress={this.handleLogin} />
+              <Button
+                title="Login"
+                onPress={this.handleLogin}
+                color={Colors.blue}
+              />
               <MsgBox type={this.state.messageType}>
                 {this.state.message}
               </MsgBox>

@@ -6,17 +6,17 @@ const StatusBarHeight = Constants.statusBarHeight;
 
 // colors
 export const Colors = {
-  primary: "#29353C",
+  primary: "#768A96",
   secondary: "#E6E6E6",
-  black: "#000000",
-  tertiary: "#1F2937",
+  tertiary: "#29353C",
+  quaternary: "#1F2937",
   darkLight: "#9CA3AF",
-  blue: "#007AFF",
+  blue: "#00008B",
   green: "#10B981",
   red: "#EF4444",
 };
 
-const { primary, black, tertiary, darkLight, secondary } = Colors;
+const { primary, quaternary, tertiary, darkLight, secondary } = Colors;
 
 export const StartLogo = styled.Image`
   width: 150px;
@@ -25,33 +25,29 @@ export const StartLogo = styled.Image`
 
 export const StyledContainer = styled.View`
   flex: 1;
-  padding: 25px;
-  background-color: ${Colors.primary};
-  justify-content: center;
-`;
-
-export const StyledContainerCentered = styled.View`
-  flex: 1;
-  padding: 25px;
   background-color: ${Colors.primary};
   justify-content: center;
   align-items: center;
 `;
 
-// not sure if padding-top is important to keep
-// so duplicated StyledContainer
-export const StyledContainer2 = styled.View`
+export const DetailedHistoryStyledContainer = styled.View`
   flex: 1;
-  padding: 25px;
-  padding-top: ${StatusBarHeight + 30}px;
   background-color: ${Colors.primary};
+`;
+
+export const InnerStyledContainer = styled.View`
+  background-color: ${Colors.secondary};
+  border-radius: 10px;
+  padding: 25px;
   justify-content: center;
 `;
 
 export const InnerContainer = styled.View`
   width: 100%;
   flex: 1;
+  margin-vertical: 30px;
   align-items: center;
+  justify-content: center;
 `;
 
 export const ScrollableContainer = styled.ScrollView`
@@ -82,7 +78,7 @@ export const StyledFormArea = styled.View`
 // Suggestion: change height to 40px. Update the following icons and placeholder size as well.
 // Change the style using FROSTED color pal
 export const StyledTextInput = styled.TextInput`
-  background-color: ${black};
+  background-color: ${secondary};
   padding: 12px;
   padding-left: 55px;
   padding-right: 20px;
@@ -91,12 +87,18 @@ export const StyledTextInput = styled.TextInput`
   height: 50px;
   margin-vertical: 3px;
   margin-bottom: 10px;
-  color: ${secondary};
+  color: ${tertiary};
 `;
 
 export const StyledText = styled.Text`
   font-size: 18px;
   color: #e6e6e6;
+  font-weight: bold;
+`;
+
+export const StyledTextDark = styled.Text`
+  font-size: 18px;
+  color: #29353c;
   font-weight: bold;
 `;
 
@@ -135,9 +137,9 @@ export const Line = styled.View`
 
 export const CenteredView = styled.View`
   flex: 1;
-  justifycontent: center;
-  alignitems: center;
-  margintop: 22px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 22px;
 `;
 
 export const ModalView = styled.View`

@@ -144,7 +144,11 @@ export class SignUp extends Component<SignUpProps, SignUpState> {
               </View>
 
               <Spacer></Spacer>
-              <Button title="Submit" onPress={this.handleSubmit} />
+              <Button
+                title="Submit"
+                onPress={this.handleSubmit}
+                color={Colors.blue}
+              />
               <MsgBox type={this.state.messageType}>
                 {this.state.message}
               </MsgBox>

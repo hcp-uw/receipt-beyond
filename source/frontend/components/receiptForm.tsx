@@ -42,8 +42,8 @@ const ReceiptForm: React.FC<ReceiptFormProps> = ({ receipt }) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#44576D",
-    borderRadius: 8,
+    backgroundColor: "#E6E6E6",
+    borderRadius: 10,
     padding: 16,
     marginVertical: 8,
     marginHorizontal: 16,
@@ -61,14 +61,14 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#E6E6E6",
+    color: "#29353C",
   },
   body: {
     marginTop: 8,
   },
   bodyText: {
     fontSize: 14,
-    color: "#E6E6E6",
+    color: "#29353C",
     marginBottom: 4,
   },
   purchaseItem: {
@@ -78,12 +78,12 @@ const styles = StyleSheet.create({
   },
   purchaseItemText: {
     fontSize: 14,
-    color: "#E6E6E6",
+    color: "#29353C",
   },
   totalText: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#E6E6E6",
+    color: "#29353C",
     marginTop: 8,
   },
 });
