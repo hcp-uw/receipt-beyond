@@ -42,7 +42,9 @@
     "react-native-screens": "3.31.1",
     "react-native-svg": "^15.6.0",
     "react-native-web": "~0.19.10",
-    "styled-components": "^6.1.11"
+    "styled-components": "^6.1.11",
+    "expo-image-picker": "~15.0.7",
+    "expo-camera": "~15.0.16"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
