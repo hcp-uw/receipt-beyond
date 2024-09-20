@@ -22,12 +22,15 @@ import { History } from "@/pages/history";
 import { Account } from "@/pages/account";
 import { EditProfile } from "@/pages/editprofile";
 import { DetailedHistory } from "@/pages/detailedhistory";
+import { Capture } from "@/pages/capture";
+
 import {
   SummaryStackParamList,
   PriceWatchStackParamList,
   UserValidStackParamList,
   HistoryStackParamList,
   AccountStackParamList,
+  CaptureStackParamList,
 } from "./StackParamList";
 
 const SummaryStack = createStackNavigator<SummaryStackParamList>();
@@ -35,7 +38,7 @@ const PriceWatchStack = createStackNavigator<PriceWatchStackParamList>();
 const UserValidStack = createStackNavigator<UserValidStackParamList>();
 const HistoryStack = createStackNavigator<HistoryStackParamList>();
 const AccountStack = createStackNavigator<AccountStackParamList>();
-
+const CaptureStack = createStackNavigator<CaptureStackParamList>();
 // Create stack navigators for each tab
 
 /**
@@ -85,15 +88,27 @@ function PriceWatchStackNavigator() {
   );
 }
 
-function UserValidStackNavigator() {
+// function UserValidStackNavigator() {
+//   return (
+//     <UserValidStack.Navigator screenOptions={defaultScreenOptions}>
+//       <UserValidStack.Screen
+//         name="UserValidation"
+//         component={UserValid}
+//         options={{ title: "Add Receipt" }}
+//       />
+//     </UserValidStack.Navigator>
+//   );
+// }
+
+function CaptureStackNavigator() {
   return (
-    <UserValidStack.Navigator screenOptions={defaultScreenOptions}>
-      <UserValidStack.Screen
-        name="UserValidation"
-        component={UserValid}
+    <CaptureStack.Navigator screenOptions={defaultScreenOptions}>
+      <CaptureStack.Screen
+        name="Capture"
+        component={Capture}
         options={{ title: "Add Receipt" }}
       />
-    </UserValidStack.Navigator>
+    </CaptureStack.Navigator>
   );
 }
 
@@ -172,8 +187,8 @@ function MyTabs() {
         }}
       />
       <Tab.Screen
-        name="UserValidTab"
-        component={UserValidStackNavigator}
+        name="CaptureTab"
+        component={CaptureStackNavigator}
         options={{
           tabBarShowLabel: false,
           tabBarIcon: ({ focused }) => (

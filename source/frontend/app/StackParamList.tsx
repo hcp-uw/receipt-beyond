@@ -34,6 +34,12 @@ export type HistoryStackParamList = {
 // Param list for the Account stack
 export type AccountStackParamList = {
   Account: undefined;
-  EditProfile: { view: "email" | "password"}
+  EditProfile: { view: "email" | "password" };
+  // Add other screens and their params in Account Stack if necessary
+};
+
+// Param list for the Account stack
+export type CaptureStackParamList = {
+  Capture: undefined;
   // Add other screens and their params in Account Stack if necessary
 };
