@@ -108,8 +108,6 @@ def receipts_parsing():
 
     outputDate = year + "-" + month + "-" + day
 
-    print(outputDate)
-    
     output = {
         'receipt_date': outputDate,
         'total': result['amazon']['extracted_data'][0]['payment_information']['amount_due'],
