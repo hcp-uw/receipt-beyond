@@ -113,36 +113,6 @@ export class Capture extends Component<CaptureProps, CaptureState> {
   resetCamera = () => {
     this.setState({ photo: null }); // Reset the state to show the camera again
   };
-  // TODO: Re-route to uservalid page and pass in 'data'
-  // uservalid has to accept json of this liking:
-  // this is data parsed from a real receipt picture, though purchases is truncated to 2 items to save space
-  // {
-  //     "location": "#8403 MICHALISSIORE 15600 NI 8th St, Ste D-4",
-  //     "purchases": [
-  //       {
-  //         "name": "Gildan Short Sleev",
-  //         "price": 2.99,
-  //         "quantity": 1
-  //       },
-  //       {
-  //         "name": "Gildanio Short Sleev",
-  //         "price": 2.99,
-  //         "quantity": 1
-  //       }
-  //     ],
-  //     "receipt_date": "11/27/2022",
-  //     "store": "Michaels",
-  //     "total": null
-  //   }
-  //       alert("Photo submitted successfully!");
-  //     } catch (error) {
-  //       console.error("Error submitting photo:", error);
-  //       alert("Failed to submit photo.");
-  //     } finally {
-  //       this.setState({ loading: false });
-  //     }
-  //   }
-  // };
 
   onTapToFocus = (x: number, y: number): void => {
     if (this.state.isRefreshing) {
