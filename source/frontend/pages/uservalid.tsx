@@ -7,8 +7,8 @@ import {
 } from "react-native";
 import React, { Component } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RouteProp } from "@react-navigation/native";
-import { UserValidStackParamList } from "../app/StackParamList";
+import { NavigationProp, RouteProp } from "@react-navigation/native";
+// import { UserValidStackParamList } from "../app/StackParamList";
 import KeyboardAvoidingWrapper from "@/components/keyboardAvoidingWrapper";
 import {
   StyledContainer,
@@ -18,17 +18,12 @@ import {
   InnerStyledContainer,
   Colors,
 } from "@/components/style";
+import { CaptureStackParamList } from "@/app/StackParamList";
 
 interface Item {
-  name: string,
-  price: string | number,
-  quantity: string | number
-}
-
-interface UserValidProps {
-  navigation: StackNavigationProp<UserValidStackParamList, "UserValidation">;
-
-  route: RouteProp<UserValidStackParamList, "UserValidation">;
+  name: string;
+  price: string | number;
+  quantity: string | number;
 }
 
 interface UserValidState {
@@ -42,6 +37,12 @@ interface UserValidState {
   messageType: string;
 }
 
+// Define props to include navigation and route
+interface UserValidProps {
+  navigation: NavigationProp<CaptureStackParamList, "UserValid">;
+  route: RouteProp<CaptureStackParamList, "UserValid">;
+}
+
 export class UserValid extends Component<UserValidProps, UserValidState> {
   constructor(props: UserValidProps) {
     super(props);
@@ -52,13 +53,29 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
       date: "",
       total: "",
       category: "",
-      items: [{name: "", price: "", quantity: ""}],
+      items: [{ name: "", price: "", quantity: "" }],
       message: "",
       messageType: "",
     };
   }
 
   componentDidMount(): void {
+    const { receiptData } = this.props.route.params; // Access passed data
+
+    if (receiptData) {
+      this.setState({
+        store: receiptData.store,
+        address: receiptData.location,
+        date: receiptData.receipt_date,
+        total: receiptData.total ?? "", // Set to empty if total is null
+        items: receiptData.purchases.map((purchase: any) => ({
+          name: purchase.name,
+          price: purchase.price,
+          quantity: purchase.quantity,
+        })),
+      });
+    }
+
     this.props.navigation.setOptions({
       headerRight: () => (
         <TouchableOpacity onPress={this.handleSave} style={{ marginRight: 20 }}>
@@ -129,7 +146,7 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
                     placeholderTextColor={"gray"}
                     value={String(this.state.total)}
                     onChangeText={(value) => this.handleChange("total", value)}
-                    style={{ borderBottomWidth: 1, marginBottom: 10}}
+                    style={{ borderBottomWidth: 1, marginBottom: 10 }}
                     keyboardType="decimal-pad"
                   />
                 </View>
@@ -180,16 +197,30 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
                     placeholder="Price"
                     placeholderTextColor={"gray"}
                     value={String(item.price)}
-                    onChangeText={(value) => this.handleItemChange(index, 'price', value)}
-                    style={{ flex: 2, borderWidth: 1, padding: 10, marginRight: 5 }}
+                    onChangeText={(value) =>
+                      this.handleItemChange(index, "price", value)
+                    }
+                    style={{
+                      flex: 2,
+                      borderWidth: 1,
+                      padding: 10,
+                      marginRight: 5,
+                    }}
                     keyboardType="numeric"
                   />
                   <TextInput
                     placeholder="Qty"
                     placeholderTextColor={"gray"}
                     value={String(item.quantity)}
-                    onChangeText={(value) => this.handleItemChange(index, 'quantity', value)}
-                    style={{ flex: 1, borderWidth: 1, padding: 10, marginRight: 5 }}
+                    onChangeText={(value) =>
+                      this.handleItemChange(index, "quantity", value)
+                    }
+                    style={{
+                      flex: 1,
+                      borderWidth: 1,
+                      padding: 10,
+                      marginRight: 5,
+                    }}
                     keyboardType="numeric"
                   />
                 </View>
@@ -200,7 +231,7 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
                     this.setState({
                       items: [
                         ...this.state.items,
-                        { name: "", price: "", quantity: ""},
+                        { name: "", price: "", quantity: "" },
                       ],
                     })
                   }
@@ -295,7 +326,7 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
     if (isNaN(totalAsNumber)) {
       this.setState({
         message: "Total amount is not a number",
-        messageType: "ERROR"
+        messageType: "ERROR",
       });
       return false;
     }
@@ -303,12 +334,12 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
     if (totalAsNumber < 0) {
       this.setState({
         message: "Total amount can not be a negative value",
-        messageType: "ERROR"
+        messageType: "ERROR",
       });
       return false;
     }
 
-    this.setState({total: totalAsNumber})
+    this.setState({ total: totalAsNumber });
 
     for (const item of this.state.items) {
       if (item.name === "" || item.price === "" || item.quantity === "") {
@@ -317,21 +348,21 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
           messageType: "ERROR",
         });
         return false;
-      } 
+      }
 
       const priceAsNumber = parseFloat(item.price as string);
       const quantityAsNumber = parseFloat(item.quantity as string);
-      
+
       if (isNaN(priceAsNumber)) {
         this.setState({
           message: "Price is not a number",
-          messageType: "ERROR"
+          messageType: "ERROR",
         });
         return false;
       } else if (isNaN(quantityAsNumber)) {
         this.setState({
           message: "Quantity is not a number",
-          messageType: "ERROR"
+          messageType: "ERROR",
         });
         return false;
       }
@@ -372,6 +403,14 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
           messageType: "SUCCESS",
         });
         this.resetForm();
+
+        // Trigger the reset of the camera by calling the callback function
+        const { onReturnToCamera } = this.props.route.params;
+        if (onReturnToCamera) {
+          onReturnToCamera(); // Reset the camera state
+        }
+
+        this.props.navigation.goBack();
       });
     } else {
       // errorData is the object return from the Response for error status >= 400
@@ -392,9 +431,9 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
       date: "",
       total: "",
       category: "",
-      items: [{name: "", price: "", quantity: ""}],
+      items: [{ name: "", price: "", quantity: "" }],
       message: "",
-      messageType: ""
+      messageType: "",
     });
-  }
+  };
 }

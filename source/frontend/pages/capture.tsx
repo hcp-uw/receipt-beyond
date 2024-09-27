@@ -69,6 +69,32 @@ export class Capture extends Component<CaptureProps, CaptureState> {
     this.setState({ photo: null });
   };
 
+  // submitPicture = async () => {
+  //   const { photo } = this.state;
+  //   if (photo) {
+  //     this.setState({ loading: true });
+  //     const formData = new FormData();
+  //     formData.append("receipt_image", {
+  //       uri: photo,
+  //       name: "receipt.jpg",
+  //       type: "image/jpeg",
+  //     } as any);
+
+  //     try {
+  //       const response = await fetch(
+  //         "https://receiptplus.pythonanywhere.com/api/receipts_parsing",
+  //         {
+  //           method: "POST",
+  //           body: formData, // Send the formData
+  //           headers: {
+  //             Accept: "application/json", // If the API expects JSON response
+  //           },
+  //           credentials: "include", // Include cookies for authentication if needed
+  //         }
+  //       );
+  //       const data = await response.json();
+  //       console.log("Response from API:", data);
+
   submitPicture = async () => {
     const { photo } = this.state;
     if (photo) {
@@ -94,28 +120,12 @@ export class Capture extends Component<CaptureProps, CaptureState> {
         );
         const data = await response.json();
         console.log("Response from API:", data);
-        // TODO: Re-route to uservalid page and pass in 'data'
-        // uservalid has to accept json of this liking:
-        // this is data parsed from a real receipt picture, though purchases is truncated to 2 items to save space
-        // {
-        //     "location": "#8403 MICHALISSIORE 15600 NI 8th St, Ste D-4",
-        //     "purchases": [
-        //       {
-        //         "name": "Gildan Short Sleev",
-        //         "price": 2.99,
-        //         "quantity": 1
-        //       },
-        //       {
-        //         "name": "Gildanio Short Sleev",
-        //         "price": 2.99,
-        //         "quantity": 1
-        //       }
-        //     ],
-        //     "receipt_date": "11/27/2022",
-        //     "store": "Michaels",
-        //     "total": null
-        //   }
-        alert("Photo submitted successfully!");
+
+        // Assuming 'data' is the parsed receipt information
+        this.props.navigation.navigate("UserValid", {
+          receiptData: data, // Pass the parsed data to the next screen
+          onReturnToCamera: this.resetCamera,
+        });
       } catch (error) {
         console.error("Error submitting photo:", error);
         alert("Failed to submit photo.");
@@ -124,6 +134,41 @@ export class Capture extends Component<CaptureProps, CaptureState> {
       }
     }
   };
+
+  // Function to reset the camera state (clear the photo)
+  resetCamera = () => {
+    this.setState({ photo: null }); // Reset the state to show the camera again
+  };
+  // TODO: Re-route to uservalid page and pass in 'data'
+  // uservalid has to accept json of this liking:
+  // this is data parsed from a real receipt picture, though purchases is truncated to 2 items to save space
+  // {
+  //     "location": "#8403 MICHALISSIORE 15600 NI 8th St, Ste D-4",
+  //     "purchases": [
+  //       {
+  //         "name": "Gildan Short Sleev",
+  //         "price": 2.99,
+  //         "quantity": 1
+  //       },
+  //       {
+  //         "name": "Gildanio Short Sleev",
+  //         "price": 2.99,
+  //         "quantity": 1
+  //       }
+  //     ],
+  //     "receipt_date": "11/27/2022",
+  //     "store": "Michaels",
+  //     "total": null
+  //   }
+  //       alert("Photo submitted successfully!");
+  //     } catch (error) {
+  //       console.error("Error submitting photo:", error);
+  //       alert("Failed to submit photo.");
+  //     } finally {
+  //       this.setState({ loading: false });
+  //     }
+  //   }
+  // };
 
   onTapToFocus = (x: number, y: number): void => {
     if (this.state.isRefreshing) {
