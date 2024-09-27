@@ -88,18 +88,6 @@ function PriceWatchStackNavigator() {
   );
 }
 
-// function UserValidStackNavigator() {
-//   return (
-//     <UserValidStack.Navigator screenOptions={defaultScreenOptions}>
-//       <UserValidStack.Screen
-//         name="UserValid"
-//         component={UserValid}
-//         options={{ title: "Add Receipt" }}
-//       />
-//     </UserValidStack.Navigator>
-//   );
-// }
-
 function CaptureStackNavigator() {
   return (
     <CaptureStack.Navigator screenOptions={defaultScreenOptions}>
