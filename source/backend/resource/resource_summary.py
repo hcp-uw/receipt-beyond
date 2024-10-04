@@ -76,7 +76,7 @@ def month_exp():
         else:  # For days after the current date, set 'y' as null
             response_data.append({'x': day, 'y': None})
 
-    return jsonify(data=response_data), 200
+    return response_data, 200
 
 
 # Key: categories (string)
