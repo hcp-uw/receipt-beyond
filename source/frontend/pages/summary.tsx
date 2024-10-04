@@ -38,6 +38,7 @@ export class Summary extends Component<SummaryProps, SummaryState> {
      * FURTURE: When a new catergory is add, choose a random color and add
      *          Might have to change the structure to a Map
      */
+    Food: "#FF4545", // Red
     Groceries: "#4CAF50", // Green
     Dining: "#FF9800", // Orange
     Gas: "#2196F3", // Blue
