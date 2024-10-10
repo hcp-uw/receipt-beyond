@@ -9,6 +9,7 @@ from config import Config
 import requests
 import os
 import uuid
+import re
 
 receipts_bp = Blueprint('receipts', __name__)
 
@@ -190,8 +191,8 @@ def receipts():
     # Call the helper function for each purchase item in the receipt
     for item in receipt.purchases:
         update_price_watch(
-            zip_code=data.get('location'),  # Assuming 'location' corresponds to zip_code
-            store_address=data.get('store'), 
+            zip_code=find_zip_code(data.get('location')), 
+            store_address=parse_address(data.get('location')), 
             store_name=receipt.store,
             item_name=item.get('name'),
             item_price=item.get('price'),
@@ -199,38 +200,128 @@ def receipts():
         )
     return jsonify({'message': 'Receipt uploaded successfully.'}), 201
 
+def parse_address(location):
+    address_parts = location.split(',')
+    return address_parts[0]
+
+def find_zip_code(address):
+    zip_code_regex = re.compile(r"[0-9]{5}(?:-[0-9]{4})?")
+    match = zip_code_regex.search(address)
+    return match.group() if match else None
+
 def update_price_watch(zip_code, store_address, store_name, item_name, item_price, current_date):
     db = current_app.db
-    address_to_price = db.collection('ZipCodes').document(zip_code).collection('Items').document(item_name).collection('stores').document(store_name).collection('Locations').document(store_address)
+    address_to_price = db.collection('ZipCodes').document(zip_code).collection('Items').document(item_name)
     
     doc = address_to_price.get()
 
     if doc.exists:
         # Document exists; retrieve the stored data
         stored_data = doc.to_dict()
-        stored_date = stored_data.get('date')
+        stores = stored_data.get('stores', {})
 
-        # Compare the stored date with the current date
-        if stored_date:
-            if current_date > stored_date:
-                address_to_price.update({
+        # Check if the specific store address exists in the 'stores' map
+        store_data = stores.get(store_address)
+
+        if store_data:
+            # Store exists, compare dates
+            stored_date = store_data.get('date')
+
+            if stored_date and current_date > stored_date:
+                # Update the store with the new price and date
+                stores[store_address] = {
                     'date': current_date,
-                    'price': item_price
+                    'price': item_price,
+                    'store_address': store_address,
+                    'store_name': store_name
+                }
+                # Update the document with the new 'stores' map
+                address_to_price.update({
+                    'stores': stores
                 })
         else:
-            # If there is no stored date, add the current date and price
-            address_to_price.update({
+            # Store does not exist, add it
+            stores[store_address] = {
                 'date': current_date,
-                'price': item_price
+                'price': item_price,
+                'store_address': store_address,
+                'store_name': store_name
+            }
+            # Update the document with the new 'stores' map
+            address_to_price.update({
+                'stores': stores
             })
 
     else:
-        # Document does not exist; create it with the current date and price
+        # Document does not exist; create it with the current date and price in 'stores' map
         address_to_price.set({
-            'date': current_date,
-            'price': item_price
+            'stores': {
+                store_address: {
+                    'date': current_date,
+                    'price': item_price,
+                    'store_address': store_address,
+                    'store_name': store_name
+                }
+            }
         })
 
+@receipts_bp.route('/receipt_info', methods=['GET'])
+@login_required
+def receipt_info():
+    # Returns [{'store_name':'{name of the store}', 'address':'{address of the store}','date':'{the date the item price corresponds to}','price':{price of the item}},
+    #  {'store_name':'{name of the store}', 'address':'{address of the store}','date':'{the date the item price corresponds to}','price':{price of the item}},...
+    # ]
+    zip_code = request.args.get('zip_code')
+    item_name = request.args.get('item_name')
+    
+    if not zip_code or not item_name:
+        return jsonify({'error': 'zip_code and item_name are required'}), 400
+    
+    receipt_info = []
+    db = current_app.db
+    zip_item = db.collection('ZipCodes').document(zip_code).collection('Items').document(item_name)
+    doc = zip_item.get()
+    
+    if doc.exists:
+        stored_data = doc.to_dict()
+        stores = stored_data.get('stores', {})
+        if stores:
+            for store_address, store_data in stores.items():
+                # Each 'store_data' is a dictionary with details about the store
+                receipt_info.append({
+                    'store_name': store_data.get('store_name'),
+                    'address': store_data.get('store_address'),
+                    'date': store_data.get('date'),
+                    'price': store_data.get('price')
+                })
+    return jsonify(receipt_info), 200
+
+
+@receipts_bp.route('/get_items_by_zipcode', methods=['GET'])
+@login_required
+def get_items_by_zipcode():
+    # Extract the 'zipcode' from the query parameters
+    zip_code = request.args.get('zipcode')
+
+    # Check if 'zipcode' is provided
+    if not zip_code:
+        return jsonify({'error': 'zipcode is required'}), 400
+
+    # Initialize an empty list to store item names
+    item_names = []
+    
+    # Access the Firestore database collection for the given zipcode
+    db = current_app.db
+    zip_items = db.collection('ZipCodes').document(zip_code).collection('Items')
+
+    # Get all documents in the 'Items' collection for the specified zipcode
+    items_docs = zip_items.stream()
+
+    # Loop through each document and append the item names
+    for doc in items_docs:
+        item_names.append(doc.id)  # The document ID corresponds to the item name
+
+    return jsonify(item_names), 200
 
 # Gets all the YYYY-MM the user has receipts in
 @receipts_bp.route('/receipt_date_brackets', methods=['GET'])
