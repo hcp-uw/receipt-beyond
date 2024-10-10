@@ -18,12 +18,6 @@ export type PriceWatchStackParamList = {
   // Add other screens and their params in Price Watch Stack if necessary
 };
 
-// Param list for the User Validation stack
-export type UserValidStackParamList = {
-  UserValidation: undefined;
-  // Add other screens and their params in User Validation Stack if necessary
-};
-
 // Param list for the History stack
 export type HistoryStackParamList = {
   History: undefined;
@@ -41,5 +35,9 @@ export type AccountStackParamList = {
 // Param list for the Account stack
 export type CaptureStackParamList = {
   Capture: undefined;
+  UserValid: {
+    receiptData: any;
+    onReturnToCamera: () => void;
+  }; // Define the type of data passed
   // Add other screens and their params in Account Stack if necessary
 };

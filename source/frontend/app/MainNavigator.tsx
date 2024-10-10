@@ -27,7 +27,6 @@ import { Capture } from "@/pages/capture";
 import {
   SummaryStackParamList,
   PriceWatchStackParamList,
-  UserValidStackParamList,
   HistoryStackParamList,
   AccountStackParamList,
   CaptureStackParamList,
@@ -35,7 +34,6 @@ import {
 
 const SummaryStack = createStackNavigator<SummaryStackParamList>();
 const PriceWatchStack = createStackNavigator<PriceWatchStackParamList>();
-const UserValidStack = createStackNavigator<UserValidStackParamList>();
 const HistoryStack = createStackNavigator<HistoryStackParamList>();
 const AccountStack = createStackNavigator<AccountStackParamList>();
 const CaptureStack = createStackNavigator<CaptureStackParamList>();
@@ -88,18 +86,6 @@ function PriceWatchStackNavigator() {
   );
 }
 
-// function UserValidStackNavigator() {
-//   return (
-//     <UserValidStack.Navigator screenOptions={defaultScreenOptions}>
-//       <UserValidStack.Screen
-//         name="UserValidation"
-//         component={UserValid}
-//         options={{ title: "Add Receipt" }}
-//       />
-//     </UserValidStack.Navigator>
-//   );
-// }
-
 function CaptureStackNavigator() {
   return (
     <CaptureStack.Navigator screenOptions={defaultScreenOptions}>
@@ -107,6 +93,11 @@ function CaptureStackNavigator() {
         name="Capture"
         component={Capture}
         options={{ title: "Add Receipt" }}
+      />
+      <CaptureStack.Screen
+        name="UserValid"
+        component={UserValid}
+        options={{ title: "Validate Receipt" }}
       />
     </CaptureStack.Navigator>
   );

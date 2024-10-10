@@ -1,3 +1,4 @@
+import calendar
 from datetime import datetime
 from flask_login import login_required
 from flask_login import current_user, login_required
@@ -19,6 +20,23 @@ summary_bp = Blueprint('summary', __name__)
 #    '2024-3-15':5,
 #    '2024-3-27':0 (in this case, the user spent no money on the current date)
 # }
+# @summary_bp.route('/month_exp', methods=['POST'])
+# @login_required
+# def month_exp():
+#     db = current_app.db
+#     user_id = current_user.id
+#     data = request.get_json()
+#     date = data.get('date')
+#     if not date:
+#         raise MissingUserDate()
+#     try:
+#         date = datetime.strptime(date, '%Y-%m-%d')
+#     except:
+#         raise InvalidDateFormat()
+#     collection_date = date.strftime('%Y-%m')
+#     monthly_summary = db.collection('Users').document(user_id).collection(collection_date).document('Monthly Summary').get().to_dict()
+#     return jsonify(monthly_summary['total']), 200
+
 @summary_bp.route('/month_exp', methods=['POST'])
 @login_required
 def month_exp():
@@ -26,15 +44,40 @@ def month_exp():
     user_id = current_user.id
     data = request.get_json()
     date = data.get('date')
+    
     if not date:
         raise MissingUserDate()
+
+    # Convert the date string into a datetime object
     try:
         date = datetime.strptime(date, '%Y-%m-%d')
-    except:
+    except ValueError:
         raise InvalidDateFormat()
+
+    # Extract the collection date in 'YYYY-MM' format
     collection_date = date.strftime('%Y-%m')
+
+    # Fetch the monthly summary document from the database
     monthly_summary = db.collection('Users').document(user_id).collection(collection_date).document('Monthly Summary').get().to_dict()
-    return jsonify(monthly_summary['total']), 200
+    monthly_summary = monthly_summary['total']
+    print(monthly_summary)
+    # Determine the number of days in the month
+    days_in_month = calendar.monthrange(date.year, date.month)[1]
+
+    # Initialize the response with 'x' as the day and 'y' as null or amount spent
+    response_data = []
+    
+    for day in range(1, days_in_month + 1):
+        day_str = f"{day}"
+        
+        if day <= date.day:  # Up to current day, populate spent amount
+            amount_spent = monthly_summary.get(day_str, 0)  # Default to 0 if no data exists
+            response_data.append({'x': day, 'y': amount_spent})
+        else:  # For days after the current date, set 'y' as null
+            response_data.append({'x': day, 'y': None})
+
+    return response_data, 200
+
 
 # Key: categories (string)
 # Value: amount spent from beginning of this month to now, aka a running total (number)
