@@ -31,20 +31,7 @@ def login():
     user = User(user_id)
     login_user(user)
     return jsonify({"message": f'{current_user.id} logged in successfully.'}), 200
-    # users_ref = db.collection('Users')
-    # docs = users_ref.stream()
-    # for doc in docs:
-    #     user_id_db = doc.id
-    #     email_db = doc.get('email')
-    #     if user_id == user_id_db or user_id == email_db:
-    #         true_password_hash = doc.get('passwordHash')
-    #         if not sha256_crypt.verify(password, true_password_hash):
-    #             raise InvalidPassword()
-    #         else:
-    #             user = User(user_id)
-    #             login_user(user)
-    #             return jsonify({"message": f'{current_user.id} logged in successfully.'}), 200
-    # raise UserNotFound()
+
 
 @auth_bp.route('/logout', methods=['POST'])
 @login_required
@@ -52,10 +39,8 @@ def logout():
     logout_user()
     return jsonify({"message": "Logged out successfully"}), 200
 
-### Delete email collection, no dependencies (duplicate data editing, causes consistency issues)
-### check user_id and email, shouldn't be too much more expensive since
-### subcollections don't automatically load
-# return email already exists error code 400
+# Register, Login, and new month should not cause error (in front end). For new month, if doesn't exist,
+# frontend has a way of dealing with it.
 @auth_bp.route('/register', methods=['POST'])
 def register():
     db = current_app.db
