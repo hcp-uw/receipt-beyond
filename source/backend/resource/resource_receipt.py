@@ -265,7 +265,7 @@ def update_price_watch(zip_code, store_address, store_name, item_name, item_pric
             }
         })
 
-@receipts_bp.route('/receipt_info', methods=['GET'])
+@receipts_bp.route('/receipt_info', methods=['POST'])
 @login_required
 def receipt_info():
     # Returns [{'store_name':'{name of the store}', 'address':'{address of the store}','date':'{the date the item price corresponds to}','price':{price of the item}},
@@ -297,7 +297,7 @@ def receipt_info():
     return jsonify(receipt_info), 200
 
 
-@receipts_bp.route('/get_items_by_zipcode', methods=['GET'])
+@receipts_bp.route('/get_items_by_zipcode', methods=['POST'])
 @login_required
 def get_items_by_zipcode():
     # Extract the 'zipcode' from the query parameters

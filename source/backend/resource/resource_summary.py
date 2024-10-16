@@ -56,11 +56,17 @@ def month_exp():
 
     # Extract the collection date in 'YYYY-MM' format
     collection_date = date.strftime('%Y-%m')
-
+    monthly_summary_ref = db.collection('Users').document(user_id).collection(collection_date)
+    # Check if the collection has any documents, limit to 1 to minimize read costs
+    docs = monthly_summary_ref.limit(1).get()
+    if not docs:
+        raise MissingCollection()
     # Fetch the monthly summary document from the database
-    monthly_summary = db.collection('Users').document(user_id).collection(collection_date).document('Monthly Summary').get().to_dict()
-    monthly_summary = monthly_summary['total']
-    print(monthly_summary)
+    monthly_summary = monthly_summary_ref.document('Monthly Summary').get().to_dict()
+    
+    # monthly_summary = db.collection('Users').document(user_id).collection(collection_date).document('Monthly Summary').get().to_dict()
+    # monthly_summary = monthly_summary['total']
+    # print(monthly_summary)
     # Determine the number of days in the month
     days_in_month = calendar.monthrange(date.year, date.month)[1]
 
@@ -101,5 +107,11 @@ def month_cat_exp():
     except:
         raise InvalidDateFormat()
     collection_date = date.strftime('%Y-%m')
+    monthly_summary_ref = db.collection('Users').document(user_id).collection(collection_date)
+    # Check if the collection has any documents, limit to 1 to minimize read costs
+    docs = monthly_summary_ref.limit(1).get()
+    if not docs:
+        raise MissingCollection()
+    # Fetch the monthly summary document from the database  
     monthly_summary = db.collection('Users').document(user_id).collection(collection_date).document('Monthly Summary').get().to_dict()
     return jsonify(monthly_summary['category']), 200

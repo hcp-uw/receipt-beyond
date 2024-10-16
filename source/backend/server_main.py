@@ -49,7 +49,8 @@ error_handlers = [
     (MissingNewPasswordError, handle_missing_new_password),
     (MissingNewEmail, handle_missing_new_email),
     (InvalidOldPassword, handle_invalid_old_password),
-    (Exception, handle_general_error)
+    (Exception, handle_general_error),
+    (MissingCollection, handle_missing_collection)
 ]
 
 for error, handler in error_handlers:
