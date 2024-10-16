@@ -93,7 +93,6 @@ export class Capture extends Component<CaptureProps, CaptureState> {
           }
         );
         const data = await response.json();
-        console.log("Response from API:", data);
 
         // Assuming 'data' is the parsed receipt information
         this.props.navigation.navigate("UserValid", {
