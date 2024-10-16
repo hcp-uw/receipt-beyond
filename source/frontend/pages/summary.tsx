@@ -1,4 +1,4 @@
-import { Text, View, Dimensions } from "react-native";
+import { Text, Dimensions } from "react-native";
 import React, { Component } from "react";
 import { BarChart, PieChart } from "react-native-chart-kit";
 import { NavigationProp, RouteProp } from "@react-navigation/native";
