@@ -122,7 +122,8 @@ def month_cat_exp():
     docs = monthly_summary_ref.limit(1).get()
     if not docs:
         # raise MissingCollection()
-        return {}, 200
+        # return {}, 200
+        return {"Null": 1}, 200
     # Fetch the monthly summary document from the database  
     monthly_summary = db.collection('Users').document(user_id).collection(collection_date).document('Monthly Summary').get().to_dict()
     return jsonify(monthly_summary['category']), 200
