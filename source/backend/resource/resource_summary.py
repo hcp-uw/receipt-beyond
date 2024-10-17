@@ -65,7 +65,7 @@ def month_exp():
     monthly_summary = monthly_summary_ref.document('Monthly Summary').get().to_dict()
     
     # monthly_summary = db.collection('Users').document(user_id).collection(collection_date).document('Monthly Summary').get().to_dict()
-    # monthly_summary = monthly_summary['total']
+    monthly_summary = monthly_summary['total']
     # print(monthly_summary)
     # Determine the number of days in the month
     days_in_month = calendar.monthrange(date.year, date.month)[1]
