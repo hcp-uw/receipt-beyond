@@ -37,7 +37,7 @@ export type CaptureStackParamList = {
   Capture: undefined;
   UserValid: {
     receiptData: any;
-    onReturnToCamera: () => void;
+    // onReturnToCamera: () => void;
   }; // Define the type of data passed
   // Add other screens and their params in Account Stack if necessary
 };

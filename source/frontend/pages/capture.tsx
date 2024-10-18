@@ -97,8 +97,9 @@ export class Capture extends Component<CaptureProps, CaptureState> {
         // Assuming 'data' is the parsed receipt information
         this.props.navigation.navigate("UserValid", {
           receiptData: data, // Pass the parsed data to the next screen
-          onReturnToCamera: this.resetCamera,
+          // onReturnToCamera: this.resetCamera,
         });
+        this.resetCamera();
       } catch (error) {
         console.error("Error submitting photo:", error);
         alert("Failed to submit photo.");
