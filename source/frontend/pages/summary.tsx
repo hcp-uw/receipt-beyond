@@ -96,7 +96,6 @@ export class Summary extends Component<SummaryProps, SummaryState> {
           >
             {this.state.month}
           </Text>
-          {/* <Spacer></Spacer> */}
           <Spacer></Spacer>
 
           <Text
@@ -124,7 +123,6 @@ export class Summary extends Component<SummaryProps, SummaryState> {
             backgroundColor={"transparent"}
             paddingLeft={"0"}
           />
-          <Spacer></Spacer>
           <Spacer></Spacer>
 
           <Text
