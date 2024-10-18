@@ -205,7 +205,7 @@ def parse_address(location):
     return address_parts[0]
 
 def find_zip_code(address):
-    zip_code_regex = re.compile(r"[0-9]{5}(?:-[0-9]{4})?")
+    zip_code_regex = re.compile(r"[0-9]{5}")
     match = zip_code_regex.search(address)
     return match.group() if match else None
 
