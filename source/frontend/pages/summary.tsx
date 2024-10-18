@@ -134,7 +134,7 @@ export class Summary extends Component<SummaryProps, SummaryState> {
         >
           <Text
             style={{
-              fontSize: 30,
+              fontSize: 22,
               textAlign: "center",
               fontWeight: "bold",
               color: Colors.tertiary,
@@ -142,7 +142,7 @@ export class Summary extends Component<SummaryProps, SummaryState> {
           >
             {this.state.month}
           </Text>
-          <Spacer></Spacer>
+          {/* <Spacer></Spacer> */}
           <Spacer></Spacer>
 
           <Text
@@ -150,7 +150,7 @@ export class Summary extends Component<SummaryProps, SummaryState> {
               fontSize: 15,
               textAlign: "left",
               fontWeight: "bold",
-              color: Colors.primary,
+              color: Colors.tertiary,
             }}
           >
             Categorical Spending
@@ -169,14 +169,14 @@ export class Summary extends Component<SummaryProps, SummaryState> {
             backgroundColor={"transparent"}
             paddingLeft={"0"}
           />
-          <Spacer></Spacer>
+          {/* <Spacer></Spacer> */}
           <Spacer></Spacer>
           <Text
             style={{
               fontSize: 15,
               textAlign: "left",
               fontWeight: "bold",
-              color: Colors.primary,
+              color: Colors.tertiary,
             }}
           >
             Total Spending
@@ -197,7 +197,7 @@ export class Summary extends Component<SummaryProps, SummaryState> {
                 fontWeight: "bold",
               }}
             >
-              Total: {this.state.totalAmount}
+              Total: ${this.state.totalAmount.toFixed(2)}
             </Text>
             <VictoryChart
               width={Dimensions.get("window").width - 20}
@@ -212,7 +212,7 @@ export class Summary extends Component<SummaryProps, SummaryState> {
               domainPadding={{ y: 10 }}
             >
               <VictoryAxis
-                label="DAYS"
+                label="Day"
                 style={{
                   axis: { stroke: "#756f6a" },
                   axisLabel: { padding: 30, fontSize: 16 },
@@ -221,7 +221,7 @@ export class Summary extends Component<SummaryProps, SummaryState> {
               />
               <VictoryAxis
                 dependentAxis
-                label="AMOUNTS"
+                label="Spending ($)"
                 style={{
                   axis: { stroke: "#756f6a" },
                   axisLabel: { padding: 40, fontSize: 16 },
@@ -233,7 +233,7 @@ export class Summary extends Component<SummaryProps, SummaryState> {
                 labels={({ datum }) => datum.y}
                 labelComponent={<VictoryLabel renderInPortal dy={-20} />}
                 style={{
-                  data: { stroke: "#c43a31" },
+                  data: { stroke: "#44576D", strokeWidth: 2 },
                   parent: { border: "1px solid #ccc" },
                 }}
               ></VictoryLine>
@@ -286,21 +286,31 @@ export class Summary extends Component<SummaryProps, SummaryState> {
     if (res.ok) {
       res.json().then((data) => {
         if (graph === "pie") {
+          console.log(data);
           this.processPieData(data);
         } else if (graph === "line") {
+          console.log(data);
           this.processlineData(data);
         }
       });
     } else {
       console.error("Error receiving user info");
+      // this.setState({ loading: false }); // Stop loading if there's an error
     }
   };
 
   processPieData = (data: { [key: string]: number }) => {
+    // if (Object.keys(data).length === 0) {
+    //   // Handle empty data case
+    //   this.setState({ pieData: [], loading: false });
+    //   return;
+    // }
+
     const totalSpending = Object.values(data).reduce(
       (acc, amount) => acc + amount,
       0
     );
+    console.log(totalSpending);
 
     // Transform the data into a format suitable for the PieChart
     const newData = Object.keys(data).map((category) => ({
@@ -324,7 +334,7 @@ export class Summary extends Component<SummaryProps, SummaryState> {
     this.setState({
       lineData: data,
       loading: false,
-      maxY: max,
+      maxY: max === 0 ? 1 : max, // Set maxY to 1 if max is 0
       totalAmount: total,
     });
   };
