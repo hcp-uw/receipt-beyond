@@ -1,5 +1,5 @@
-import { Text, View, Button, TouchableOpacity } from "react-native";
-import React, { Component, ChangeEvent } from "react";
+import {View, Button } from "react-native";
+import React, { Component } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
 import { AuthStackParamList } from "../app/StackParamList";
@@ -60,7 +60,6 @@ export class Login extends Component<LoginProps, LoginState> {
       <KeyboardAvoidingWrapper>
         <StyledContainer>
           <InnerContainer>
-            {/** Replace the logo here */}
             <StartLogo
               resizeMode="cover"
               source={require("../assets/ReceiptBeyondTransparent.png")}
@@ -87,7 +86,6 @@ export class Login extends Component<LoginProps, LoginState> {
                   <Octicons name="lock" size={30} color={Colors.darkLight} />
                 </LeftIcon>
                 {/** Future Idea: Change the Icon as well if the eye is pressed (icon with a slash in the eye)*/}
-                {/** Decrease the placeholder text size or update StyledTextInput */}
                 <StyledTextInput
                   placeholder="********"
                   placeholderTextColor={Colors.darkLight}
@@ -128,12 +126,7 @@ export class Login extends Component<LoginProps, LoginState> {
   };
 
   validate = () => {
-    {
-      /** Add more cases if needed 
-      1. Proper Email Format
-      2. Stronger Password? (Future Idea)
-      */
-    }
+    // Future: add more condition to check for stronger password
     if (
       (this.state.user_id === "" && this.state.email === "") ||
       this.state.password === ""
@@ -186,10 +179,7 @@ export class Login extends Component<LoginProps, LoginState> {
   };
 
   handleResponse = (res: Response) => {
-    // res.ok: 200 ~ 299
     if (res.ok) {
-      // TODO: Delete later
-      console.log("success");
       return res.json().then((data) => {
         this.props.navigation.reset({
           index: 0,
@@ -197,7 +187,6 @@ export class Login extends Component<LoginProps, LoginState> {
         });
       });
     } else {
-      // errorData is the object return from the Response for error status >= 400
       return res.json().then((errorData) => {
         this.handleError(errorData.error);
       });

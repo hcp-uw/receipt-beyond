@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity } from "react-native";
+import {View, TouchableOpacity } from "react-native";
 import React, { Component } from "react";
 import {
   Spacer,
@@ -23,7 +23,6 @@ interface AccountState {
 }
 
 export class Account extends Component<AccountProps, AccountState> {
-  // Follow the design of Discord Account Page
   constructor(props: AccountProps) {
     super(props);
     this.state = {
@@ -41,7 +40,7 @@ export class Account extends Component<AccountProps, AccountState> {
   }
 
   render = (): JSX.Element => {
-    // TODO: Show something when loading
+    // Future: Show something when loading
     if (this.state.loading) {
       return <View></View>;
     }
