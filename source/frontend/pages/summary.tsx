@@ -184,7 +184,7 @@ export class Summary extends Component<SummaryProps, SummaryState> {
               />
               <VictoryLine
                 data={this.state.lineData}
-                labels={({ datum }) => datum.y}
+                // labels={({ datum }) => datum.y}
                 labelComponent={<VictoryLabel renderInPortal dy={-20} />}
                 style={{
                   data: { stroke: "#44576D", strokeWidth: 2 },
