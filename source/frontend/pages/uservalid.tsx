@@ -1,18 +1,9 @@
-import {
-  Text,
-  View,
-  TouchableOpacity,
-  ScrollView,
-  TextInput,
-} from "react-native";
+import { Text, View, TouchableOpacity, ScrollView, TextInput } from "react-native";
 import React, { Component } from "react";
-import { StackNavigationProp } from "@react-navigation/stack";
 import { NavigationProp, RouteProp } from "@react-navigation/native";
-// import { UserValidStackParamList } from "../app/StackParamList";
 import KeyboardAvoidingWrapper from "@/components/keyboardAvoidingWrapper";
 import {
   StyledContainer,
-  InnerContainer,
   Spacer,
   MsgBox,
   InnerStyledContainer,
@@ -37,7 +28,6 @@ interface UserValidState {
   messageType: string;
 }
 
-// Define props to include navigation and route
 interface UserValidProps {
   navigation: NavigationProp<CaptureStackParamList, "UserValid">;
   route: RouteProp<CaptureStackParamList, "UserValid">;
@@ -62,7 +52,7 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
   componentDidMount(): void {
     const { receiptData } = this.props.route.params; // Access passed data
 
-    if (receiptData) {
+    if (receiptData != undefined && receiptData != null) {
       this.setState({
         store: receiptData.store,
         address: receiptData.location,
@@ -170,7 +160,7 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
               >
                 Items
               </Text>
-              {this.state.items.map((item, index) => (
+              {this.state.items.length > 0 && this.state.items.map((item, index) => (
                 <View
                   key={index}
                   style={{
@@ -260,20 +250,6 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
     );
   };
 
-  // handleAddItem = () => {
-
-  //   /**
-  //    * IDEA:
-  //    * 1. Add a conditional where the name, price, quantity has to have
-  //    *     some sort of an input before adding a new item row
-  //    * 2. Create a limit of numbers of empty items that could be created
-  //   */
-
-  //   this.setState({
-  //     items: [...this.state.items, { name: '', price: 0, quantity: 0 }],  // Add new item to list
-  //   });
-  // };
-
   handleChange = (name: keyof UserValidState, value: string) => {
     this.setState({ [name]: value } as unknown as Pick<
       UserValidState,
@@ -283,12 +259,8 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
 
   handleItemChange = (index: number, field: string, value: string) => {
     const items = [...this.state.items];
-    // if (field === 'quantity' || field === 'price') {
-    //   items[index] = { ...items[index], [field]: parseFloat(value) || 0 };
-    // } else {
-    //   items[index] = { ...items[index], [field]: value };
-    // }
     items[index] = { ...items[index], [field]: value };
+
     this.setState({ items });
   };
 
@@ -395,7 +367,6 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
   };
 
   handleResponse = (res: Response) => {
-    // res.ok: 200 ~ 299
     if (res.ok) {
       return res.json().then((data) => {
         this.setState({
@@ -413,7 +384,6 @@ export class UserValid extends Component<UserValidProps, UserValidState> {
         this.props.navigation.goBack();
       });
     } else {
-      // errorData is the object return from the Response for error status >= 400
       return res.json().then((errorData) => {
         this.handleError(errorData.error);
       });
