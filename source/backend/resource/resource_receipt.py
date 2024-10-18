@@ -75,40 +75,42 @@ def receipts_parsing():
             "sep": "09", "oct": "10", "nov": "11", "dec": "12"}
     splitList = []
 
-    # 09/12/2024
-    if "/" in inputDate:
-        splitList = inputDate.split("/")
+    if inputDate is not None:
+        # 09/12/2024
+        if "/" in inputDate:
+            splitList = inputDate.split("/")
 
-    # 09-12-2024
-    elif "-" in inputDate:
-        splitList = inputDate.split("-")
+        # 09-12-2024
+        elif "-" in inputDate:
+            splitList = inputDate.split("-")
 
-    # Sep 12, 2024
-    elif inputDate[0:3].lower() in months:
-        splitList = inputDate.split(" ")
+        # Sep 12, 2024
+        elif inputDate[0:3].lower() in months:
+            splitList = inputDate.split(" ")
 
-    try:
-        month = months[splitList[0][0:3].lower()]
-    except:
-        month = splitList[0]
-    day = splitList[1]
-    year = splitList[2]
+        try:
+            month = months[splitList[0][0:3].lower()]
+        except:
+            month = splitList[0]
+        day = splitList[1]
+        year = splitList[2]
 
-    if len(year) == 2:
-        year = "20" + year
-    if len(month) == 1:
-        month = "0" + month
-    if "," in day:
-        day = day[:-1]
-    if len(day) == 1:
-        day = "0" + day
-        
-    assert int(month) >= 1 and int(month) <= 12
-    assert int(day) >= 1 and int(day) <= 31
-    assert int(year) >= 2000 and int(year) < 2100
+        if len(year) == 2:
+            year = "20" + year
+        if len(month) == 1:
+            month = "0" + month
+        if "," in day:
+            day = day[:-1]
+        if len(day) == 1:
+            day = "0" + day
+            
+        assert int(month) >= 1 and int(month) <= 12
+        assert int(day) >= 1 and int(day) <= 31
+        assert int(year) >= 2000 and int(year) < 2100
 
-    outputDate = year + "-" + month + "-" + day
-
+        outputDate = year + "-" + month + "-" + day
+    else:
+        outputDate = datetime.now().strftime("%Y-%m-%d")
     output = {
         'receipt_date': outputDate,
         'total': result['amazon']['extracted_data'][0]['payment_information']['amount_due'],
