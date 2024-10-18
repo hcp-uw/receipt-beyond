@@ -189,15 +189,17 @@ def receipts():
         })
     
     # Call the helper function for each purchase item in the receipt
-    for item in receipt.purchases:
-        update_price_watch(
-            zip_code=find_zip_code(data.get('location')), 
-            store_address=parse_address(data.get('location')), 
-            store_name=receipt.store,
-            item_name=item.get('name'),
-            item_price=item.get('price'),
-            current_date=data.get('receipt_date')
-        )
+    zip_code = find_zip_code(data.get('location'))
+    if zip_code:
+        for item in receipt.purchases:
+            update_price_watch(
+                zip_code=zip_code, 
+                store_address=parse_address(data.get('location')), 
+                store_name=receipt.store,
+                item_name=item.get('name'),
+                item_price=item.get('price'),
+                current_date=data.get('receipt_date')
+            )
     return jsonify({'message': 'Receipt uploaded successfully.'}), 201
 
 def parse_address(location):
@@ -205,7 +207,7 @@ def parse_address(location):
     return address_parts[0]
 
 def find_zip_code(address):
-    zip_code_regex = re.compile(r"[0-9]{5}(?:-[0-9]{4})?")
+    zip_code_regex = re.compile(r"[0-9]{5}")
     match = zip_code_regex.search(address)
     return match.group() if match else None
 
