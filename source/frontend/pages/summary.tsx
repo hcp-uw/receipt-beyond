@@ -1,7 +1,13 @@
 import { Text, View, Dimensions } from "react-native";
 import React, { Component } from "react";
-import {PieChart } from "react-native-chart-kit";
-import {VictoryChart, VictoryLine, VictoryTheme, VictoryLabel, VictoryAxis} from "victory-native";
+import { PieChart } from "react-native-chart-kit";
+import {
+  VictoryChart,
+  VictoryLine,
+  VictoryTheme,
+  VictoryLabel,
+  VictoryAxis,
+} from "victory-native";
 import { NavigationProp, RouteProp } from "@react-navigation/native";
 import { SummaryStackParamList } from "../app/StackParamList";
 
@@ -39,7 +45,7 @@ export class Summary extends Component<SummaryProps, SummaryState> {
       lineData: [],
       maxY: 0,
       loading: true,
-      totalAmount: 0
+      totalAmount: 0,
     };
   }
 
@@ -52,7 +58,7 @@ export class Summary extends Component<SummaryProps, SummaryState> {
     Dining: "#FF9800", // Orange
     Gas: "#2196F3", // Blue
     Shopping: "#9C27B0", // Purple
-    Food: "#FF4545", // Red 
+    Food: "#FF4545", // Red
   };
 
   componentDidMount(): void {
@@ -132,7 +138,7 @@ export class Summary extends Component<SummaryProps, SummaryState> {
           <View
             style={{
               alignItems: "center",
-              marginLeft: -20
+              marginLeft: -20,
             }}
           >
             <Text
@@ -150,11 +156,14 @@ export class Summary extends Component<SummaryProps, SummaryState> {
             <VictoryChart
               width={Dimensions.get("window").width - 20}
               height={300}
-              scale={{x: "linear", y: "linear"}}
+              scale={{ x: "linear", y: "linear" }}
               theme={VictoryTheme.material}
-              padding={{ top: 50, bottom: 50, left:70, right: 20 }}
-              domain={{x: [1, this.state.lineData.length], y: [0, this.state.maxY * 1.1]}}
-              domainPadding={{y:10}}
+              padding={{ top: 50, bottom: 50, left: 70, right: 20 }}
+              domain={{
+                x: [1, this.state.lineData.length],
+                y: [0, this.state.maxY * 1.1],
+              }}
+              domainPadding={{ y: 10 }}
             >
               <VictoryAxis
                 label="DAYS"
@@ -174,13 +183,12 @@ export class Summary extends Component<SummaryProps, SummaryState> {
               <VictoryLine
                 data={this.state.lineData}
                 labels={({ datum }) => datum.y}
-                labelComponent={<VictoryLabel renderInPortal dy={-20}/>}
+                labelComponent={<VictoryLabel renderInPortal dy={-20} />}
                 style={{
                   data: { stroke: "#c43a31" },
-                  parent: { border: "1px solid #ccc"}
+                  parent: { border: "1px solid #ccc" },
                 }}
-              >
-              </VictoryLine>
+              ></VictoryLine>
             </VictoryChart>
           </View>
         </InnerStyledContainer>
@@ -205,24 +213,24 @@ export class Summary extends Component<SummaryProps, SummaryState> {
       headers: { "Content-Type": "application/json" },
       credentials: "include",
     })
-    .then((res) => this.handleChange(res, "pie"))
-    .catch((error) => {
-      console.error("Error fetching api/month_cat_exp");
-    });
+      .then((res) => this.handleChange(res, "pie"))
+      .catch((error) => {
+        console.error("Error fetching api/month_cat_exp");
+      });
 
-    fetch("https://receiptplus.pythonanywhere.com/api/month_exp ", {
+    fetch("https://receiptplus.pythonanywhere.com/api/month_exp", {
       method: "POST",
       body: JSON.stringify(args),
       headers: { "Content-Type": "application/json" },
       credentials: "include",
     })
-    .then((res) => this.handleChange(res, "line"))
-    .catch((error) => {
-      console.error("Error fetching api/month_exp");
-    });
+      .then((res) => this.handleChange(res, "line"))
+      .catch((error) => {
+        console.error("Error fetching api/month_exp");
+      });
   };
 
-  handleChange = (res: Response, graph:string) => {
+  handleChange = (res: Response, graph: string) => {
     if (res.ok) {
       res.json().then((data) => {
         if (graph === "pie") {
@@ -257,11 +265,16 @@ export class Summary extends Component<SummaryProps, SummaryState> {
   processLineData = (data: {x:number, y:number}[]) => {
     const validY = data.map(point=>point.y).filter(y => y != null);
     const max = Math.max(...validY);
-  
+
     const total = data.reduce((sum, point) => sum + point.y, 0);
 
-    this.setState({lineData: data, loading: false, maxY: max, totalAmount: total});
-  }
+    this.setState({
+      lineData: data,
+      loading: false,
+      maxY: max,
+      totalAmount: total,
+    });
+  };
 
   getRandomColor = () => {
     const letters = "0123456789ABCDEF";

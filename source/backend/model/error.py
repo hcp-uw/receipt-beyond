@@ -52,6 +52,14 @@ class MissingNewPasswordError(Exception):
 class InvalidOldPassword(Exception):
     pass
 
+class MissingCollection(Exception):
+    pass
+
+def handle_missing_collection(error):
+    response = jsonify({'error': 'Collection does not exist'})
+    response.status_code = 400
+    return response, response.status_code
+
 def handle_invalid_old_password(error):
     response = jsonify({'error': 'Invalid old password'})
     response.status_code = 401

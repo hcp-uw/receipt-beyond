@@ -56,16 +56,32 @@ def month_exp():
 
     # Extract the collection date in 'YYYY-MM' format
     collection_date = date.strftime('%Y-%m')
-
-    # Fetch the monthly summary document from the database
-    monthly_summary = db.collection('Users').document(user_id).collection(collection_date).document('Monthly Summary').get().to_dict()
-    monthly_summary = monthly_summary['total']
-    print(monthly_summary)
-    # Determine the number of days in the month
+    monthly_summary_ref = db.collection('Users').document(user_id).collection(collection_date)
+    # Check if the collection has any documents, limit to 1 to minimize read costs
+    docs = monthly_summary_ref.limit(1).get()
     days_in_month = calendar.monthrange(date.year, date.month)[1]
-
     # Initialize the response with 'x' as the day and 'y' as null or amount spent
     response_data = []
+    if not docs:
+        # raise MissingCollection()
+        for day in range(1, days_in_month + 1):
+            day_str = f"{day}"
+            if day <= date.day:  # Up to current day, populate spent amount
+                amount_spent = 0  # Default to 0 if no data exists
+                response_data.append({'x': day, 'y': amount_spent})
+            else:  # For days after the current date, set 'y' as null
+                response_data.append({'x': day, 'y': None})
+        return response_data, 200
+    # Fetch the monthly summary document from the database
+    monthly_summary = monthly_summary_ref.document('Monthly Summary').get().to_dict()
+    
+    # monthly_summary = db.collection('Users').document(user_id).collection(collection_date).document('Monthly Summary').get().to_dict()
+    monthly_summary = monthly_summary['total']
+    # print(monthly_summary)
+    # Determine the number of days in the month
+    # days_in_month = calendar.monthrange(date.year, date.month)[1]
+
+
     
     for day in range(1, days_in_month + 1):
         day_str = f"{day}"
@@ -101,5 +117,13 @@ def month_cat_exp():
     except:
         raise InvalidDateFormat()
     collection_date = date.strftime('%Y-%m')
+    monthly_summary_ref = db.collection('Users').document(user_id).collection(collection_date)
+    # Check if the collection has any documents, limit to 1 to minimize read costs
+    docs = monthly_summary_ref.limit(1).get()
+    if not docs:
+        # raise MissingCollection()
+        # return {}, 200
+        return {"Null": 1}, 200
+    # Fetch the monthly summary document from the database  
     monthly_summary = db.collection('Users').document(user_id).collection(collection_date).document('Monthly Summary').get().to_dict()
     return jsonify(monthly_summary['category']), 200

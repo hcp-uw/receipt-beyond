@@ -265,15 +265,17 @@ def update_price_watch(zip_code, store_address, store_name, item_name, item_pric
             }
         })
 
-@receipts_bp.route('/receipt_info', methods=['GET'])
+@receipts_bp.route('/receipt_info', methods=['POST'])
 @login_required
 def receipt_info():
     # Returns [{'store_name':'{name of the store}', 'address':'{address of the store}','date':'{the date the item price corresponds to}','price':{price of the item}},
     #  {'store_name':'{name of the store}', 'address':'{address of the store}','date':'{the date the item price corresponds to}','price':{price of the item}},...
     # ]
-    zip_code = request.args.get('zip_code')
-    item_name = request.args.get('item_name')
-    
+    # zip_code = request.args.get('zip_code')
+    # item_name = request.args.get('item_name')
+    data = request.get_json()
+    zip_code = data.get('zip_code')
+    item_name = data.get('item_name')
     if not zip_code or not item_name:
         return jsonify({'error': 'zip_code and item_name are required'}), 400
     
@@ -297,11 +299,13 @@ def receipt_info():
     return jsonify(receipt_info), 200
 
 
-@receipts_bp.route('/get_items_by_zipcode', methods=['GET'])
+@receipts_bp.route('/get_items_by_zipcode', methods=['POST'])
 @login_required
 def get_items_by_zipcode():
     # Extract the 'zipcode' from the query parameters
-    zip_code = request.args.get('zipcode')
+    data = request.get_json()
+    zip_code = data.get('zip_code')
+    # zip_code = request.args.get('zipcode')
 
     # Check if 'zipcode' is provided
     if not zip_code:
