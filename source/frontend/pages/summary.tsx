@@ -70,8 +70,12 @@ export class Summary extends Component<SummaryProps, SummaryState> {
   }
 
   render = (): JSX.Element => {
-    if (this.state.loading || this.state.pieData.length == 0 || this.state.lineData.length == 0) {
-      return <View></View>
+    if (
+      this.state.loading ||
+      this.state.pieData.length == 0 ||
+      this.state.lineData.length == 0
+    ) {
+      return <View></View>;
     }
 
     return (
@@ -84,7 +88,7 @@ export class Summary extends Component<SummaryProps, SummaryState> {
         >
           <Text
             style={{
-              fontSize: 30,
+              fontSize: 22,
               textAlign: "center",
               fontWeight: "bold",
               color: Colors.tertiary,
@@ -93,14 +97,13 @@ export class Summary extends Component<SummaryProps, SummaryState> {
             {this.state.month}
           </Text>
           <Spacer></Spacer>
-          <Spacer></Spacer>
 
           <Text
             style={{
               fontSize: 15,
               textAlign: "left",
               fontWeight: "bold",
-              color: Colors.primary,
+              color: Colors.tertiary,
             }}
           >
             Categorical Spending
@@ -121,14 +124,13 @@ export class Summary extends Component<SummaryProps, SummaryState> {
             paddingLeft={"0"}
           />
           <Spacer></Spacer>
-          <Spacer></Spacer>
 
           <Text
             style={{
               fontSize: 15,
               textAlign: "left",
               fontWeight: "bold",
-              color: Colors.primary,
+              color: Colors.tertiary,
             }}
           >
             Total Spending
@@ -150,7 +152,7 @@ export class Summary extends Component<SummaryProps, SummaryState> {
                 fontWeight: "bold",
               }}
             >
-              Total: {this.state.totalAmount}
+              Total: ${this.state.totalAmount.toFixed(2)}
             </Text>
 
             <VictoryChart
@@ -166,18 +168,18 @@ export class Summary extends Component<SummaryProps, SummaryState> {
               domainPadding={{ y: 10 }}
             >
               <VictoryAxis
-                label="DAYS"
+                label="Day"
                 style={{
-                  axis: {stroke: "#756f6a"},
-                  axisLabel: {padding: 30, fontSize: 16}
+                  axis: { stroke: "#756f6a" },
+                  axisLabel: { padding: 30, fontSize: 16 },
                 }}
               />
               <VictoryAxis
                 dependentAxis
-                label="AMOUNTS"
+                label="Spending ($)"
                 style={{
-                  axis: {stroke: "#756f6a"},
-                  axisLabel: {padding: 40, fontSize: 16}
+                  axis: { stroke: "#756f6a" },
+                  axisLabel: { padding: 40, fontSize: 16 },
                 }}
               />
               <VictoryLine
@@ -185,7 +187,7 @@ export class Summary extends Component<SummaryProps, SummaryState> {
                 labels={({ datum }) => datum.y}
                 labelComponent={<VictoryLabel renderInPortal dy={-20} />}
                 style={{
-                  data: { stroke: "#c43a31" },
+                  data: { stroke: "#44576D", strokeWidth: 2 },
                   parent: { border: "1px solid #ccc" },
                 }}
               ></VictoryLine>
@@ -206,7 +208,7 @@ export class Summary extends Component<SummaryProps, SummaryState> {
     const monthName = date.toLocaleString("en-US", { month: "long" });
     this.setState({ month: monthName, date: currDate });
 
-    const args = {date: '2024-10-30'};
+    const args = { date: "2024-10-30" };
     fetch("https://receiptplus.pythonanywhere.com/api/month_cat_exp", {
       method: "POST",
       body: JSON.stringify(args),
@@ -234,6 +236,7 @@ export class Summary extends Component<SummaryProps, SummaryState> {
     if (res.ok) {
       res.json().then((data) => {
         if (graph === "pie") {
+          console.log(data);
           this.processPieData(data);
         } else if (graph === "line") {
           this.processLineData(data);
@@ -241,14 +244,22 @@ export class Summary extends Component<SummaryProps, SummaryState> {
       });
     } else {
       console.error("Error receiving user info");
+      // this.setState({ loading: false }); // Stop loading if there's an error
     }
   };
 
   processPieData = (data: { [key: string]: number }) => {
+    // if (Object.keys(data).length === 0) {
+    //   // Handle empty data case
+    //   this.setState({ pieData: [], loading: false });
+    //   return;
+    // }
+
     const totalSpending = Object.values(data).reduce(
       (acc, amount) => acc + amount,
       0
     );
+    console.log(totalSpending);
 
     // Transform the data into a format suitable for the PieChart
     const newData = Object.keys(data).map((category) => ({
@@ -259,11 +270,11 @@ export class Summary extends Component<SummaryProps, SummaryState> {
       legendFontSize: 15,
     }));
 
-    this.setState({ pieData: newData, loading: false});
+    this.setState({ pieData: newData, loading: false });
   };
 
-  processLineData = (data: {x:number, y:number}[]) => {
-    const validY = data.map(point=>point.y).filter(y => y != null);
+  processLineData = (data: { x: number; y: number }[]) => {
+    const validY = data.map((point) => point.y).filter((y) => y != null);
     const max = Math.max(...validY);
 
     const total = data.reduce((sum, point) => sum + point.y, 0);
@@ -271,7 +282,7 @@ export class Summary extends Component<SummaryProps, SummaryState> {
     this.setState({
       lineData: data,
       loading: false,
-      maxY: max,
+      maxY: max === 0 ? 1 : max, // Set maxY to 1 if max is 0
       totalAmount: total,
     });
   };
