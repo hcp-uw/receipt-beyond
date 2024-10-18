@@ -1,5 +1,5 @@
 import { Text, View, Button, TouchableOpacity } from "react-native";
-import React, { Component, ChangeEvent } from "react";
+import React, { Component } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
 import { AuthStackParamList } from "../app/StackParamList";
@@ -53,15 +53,11 @@ export class SignUp extends Component<SignUpProps, SignUpState> {
     };
   }
 
-  //TODO: Figure out where the app is slowing down and how to optimize the perfomance
-  //UPDATE: 7/10/2024 the speed is good
-
   render = (): JSX.Element => {
     return (
       <KeyboardAvoidingWrapper>
         <StyledContainer>
           <InnerContainer>
-            {/** Replace the logo here */}
             <StartLogo
               resizeMode="cover"
               source={require("../assets/ReceiptBeyondTransparent.png")}
@@ -178,12 +174,7 @@ export class SignUp extends Component<SignUpProps, SignUpState> {
   };
 
   validate = () => {
-    {
-      /** Add more cases if needed 
-      1. Proper Email Format
-      2. Stronger Password? (Future Idea)
-      */
-    }
+    // Future: add more condition to check for stronger password
     if (
       this.state.user_id === "" ||
       this.state.password === "" ||
@@ -251,17 +242,14 @@ export class SignUp extends Component<SignUpProps, SignUpState> {
   };
 
   handleResponse = (res: Response) => {
-    // res.ok: 200 ~ 299
     if (res.ok) {
       return res.json().then((data) => {
-        // this.props.navigation.replace("Main");
         this.props.navigation.reset({
           index: 0,
           routes: [{ name: "Main" }],
         });
       });
     } else {
-      // errorData is the object return from the Response for error status >= 400
       return res.json().then((errorData) => {
         this.handleError(errorData.error);
       });

@@ -4,7 +4,6 @@ import { NavigationProp, RouteProp } from "@react-navigation/native";
 import { HistoryStackParamList } from "@/app/StackParamList";
 import ReceiptForm from "../components/receiptForm";
 import { DetailedHistoryStyledContainer } from "@/components/style";
-// import { Container } from "../components/style";
 
 interface Receipt {
   category: string;
@@ -15,7 +14,6 @@ interface Receipt {
   total: number;
 }
 
-// Define props to include navigation and route
 interface DetailedHistoryProps {
   navigation: NavigationProp<HistoryStackParamList, "DetailedHistory">;
   route: RouteProp<HistoryStackParamList, "DetailedHistory">;
@@ -63,7 +61,6 @@ export class DetailedHistory extends Component<
 
   render() {
     return (
-      // <View style={styles.container}>
       <DetailedHistoryStyledContainer>
         <FlatList
           data={this.state.receipts}
@@ -71,8 +68,6 @@ export class DetailedHistory extends Component<
           renderItem={({ item }) => <ReceiptForm receipt={item} />}
         />
       </DetailedHistoryStyledContainer>
-
-      // </View>
     );
   }
 }

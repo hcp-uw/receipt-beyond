@@ -1,4 +1,5 @@
 import { Text, View, TouchableOpacity, Modal } from "react-native";
+// Future: Adding the blur
 // npx expo install expo-blur
 // import { BlurView } from "expo-blur";
 import React, { Component } from "react";
@@ -14,8 +15,6 @@ import {
   RightIcon,
   MsgBox,
   StyledContainer,
-  CenteredView,
-  ModalView,
 } from "../components/style";
 import KeyboardAvoidingWrapper from "@/components/keyboardAvoidingWrapper";
 
@@ -35,6 +34,7 @@ interface EditProfileState {
   hideOldPass: boolean;
   hideNewPass: boolean;
   hideConfirmPass: boolean;
+  // Future: blur
   // showModal: boolean
 }
 
@@ -54,6 +54,7 @@ export class EditProfile extends Component<EditProfileProps, EditProfileState> {
       hideOldPass: true,
       hideNewPass: true,
       hideConfirmPass: true,
+      // Future: blue
       // showModal: false
     };
   }
@@ -76,7 +77,9 @@ export class EditProfile extends Component<EditProfileProps, EditProfileState> {
     return (
       <KeyboardAvoidingWrapper>
         <StyledContainer>
-          {/* <Modal
+          
+          {/* Future: blur
+          <Modal
             visible={this.state.showModal}
             transparent={true}
             animationType="slide"
@@ -310,6 +313,7 @@ export class EditProfile extends Component<EditProfileProps, EditProfileState> {
   handleResponse = (res: Response) => {
     if (res.ok) {
       return res.json().then((data) => {
+        // Future: blur
         // this.setState({showModal: true});
 
         // setTimeout(() => {

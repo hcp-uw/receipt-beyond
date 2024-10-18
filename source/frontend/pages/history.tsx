@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
 import DateBracketButton from "../components/dateButton"; // Adjust the path
 import { NavigationProp, RouteProp } from "@react-navigation/native";
 import { HistoryStackParamList } from "../app/StackParamList";
