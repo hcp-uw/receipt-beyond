@@ -213,10 +213,15 @@ def find_zip_code(address):
     match = zip_code_regex.search(address)
     return match.group() if match else None
 
+def normalize_address(address):
+    # Replace multiple newlines or spaces with a single space
+    return ' '.join(address.split()).lower()
+
 def update_price_watch(zip_code, store_address, store_name, item_name, item_price, current_date):
     db = current_app.db
     address_to_price = db.collection('ZipCodes').document(zip_code).collection('Items').document(item_name)
-    
+    store_address_norm = normalize_address(store_address)
+
     doc = address_to_price.get()
 
     if doc.exists:
@@ -224,8 +229,13 @@ def update_price_watch(zip_code, store_address, store_name, item_name, item_pric
         stored_data = doc.to_dict()
         stores = stored_data.get('stores', {})
 
-        # Check if the specific store address exists in the 'stores' map
-        store_data = stores.get(store_address)
+        store_data = None
+        matching_key = None
+        for key in stores:
+            if normalize_address(key) == store_address_norm:
+                store_data = stores[key]
+                matching_key = key
+                break
 
         if store_data:
             # Store exists, compare dates
@@ -233,10 +243,10 @@ def update_price_watch(zip_code, store_address, store_name, item_name, item_pric
 
             if stored_date and current_date > stored_date:
                 # Update the store with the new price and date
-                stores[store_address] = {
+                stores[matching_key] = {
                     'date': current_date,
                     'price': item_price,
-                    'store_address': store_address,
+                    'store_address': matching_key,
                     'store_name': store_name
                 }
                 # Update the document with the new 'stores' map
@@ -245,10 +255,10 @@ def update_price_watch(zip_code, store_address, store_name, item_name, item_pric
                 })
         else:
             # Store does not exist, add it
-            stores[store_address] = {
+            stores[matching_key] = {
                 'date': current_date,
                 'price': item_price,
-                'store_address': store_address,
+                'store_address': matching_key,
                 'store_name': store_name
             }
             # Update the document with the new 'stores' map
@@ -268,6 +278,7 @@ def update_price_watch(zip_code, store_address, store_name, item_name, item_pric
                 }
             }
         })
+
 
 @receipts_bp.route('/receipt_info', methods=['POST'])
 @login_required
