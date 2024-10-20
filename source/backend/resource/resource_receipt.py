@@ -255,10 +255,10 @@ def update_price_watch(zip_code, store_address, store_name, item_name, item_pric
                 })
         else:
             # Store does not exist, add it
-            stores[matching_key] = {
+            stores[store_address] = {
                 'date': current_date,
                 'price': item_price,
-                'store_address': matching_key,
+                'store_address': store_address,
                 'store_name': store_name
             }
             # Update the document with the new 'stores' map
