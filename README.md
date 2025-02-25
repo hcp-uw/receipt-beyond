@@ -1,4 +1,10 @@
-# receipt-plus
+# Receipt Beyond
+**Receipt Beyond: “Your smart shopping companion.”**
+
+* [2024 Showcase Slides](https://docs.google.com/presentation/d/1bkHtieGzrSxKD_83zFP1c3SSykYSqAfxHYx917vrEhU/edit?usp=sharing)
+* [2024 Showcase Poster](https://drive.google.com/file/d/1cEZgCrJqcG2RHxb9STjfFrk4TMl4x45k/view?usp=sharing)
+* [Receipt Beyond Short Demo](https://www.youtube.com/shorts/UcsY_245DnE?si=7TQ4pQx1uFbUOhiY)
+
 
 ## Team Members:
 
@@ -12,12 +18,12 @@
 
 ## Environment Setup:
 
-# Recommendations
+### Recommendations
 
 - Install Expo Go on mobile device
 - Develop inside a virtual environment (recommend Conda)
 
-# Frontend Setup
+### Frontend Setup
 
 ```
 npm install
@@ -25,7 +31,7 @@ cd .\source\frontend\
 npx expo start -c
 ```
 
-# Backend Setup
+### Backend Setup
 
 ```
 pip install -r requirements.txt
